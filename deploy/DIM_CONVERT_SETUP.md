@@ -14,6 +14,19 @@ DraftFly and draftfly.app are not touched by any step below.
 
 Run everything as root on the server (`ssh root@169.58.133.24`).
 
+## Quick way: one script
+
+After step 0 below, this does steps 1–5 for you (and adds a catch-all so an
+address the server does not know is refused instead of showing DraftFly):
+
+```bash
+git clone -b claude/sleepy-davinci-bjm5wz https://github.com/Anya9910-eng/dim.map.git /opt/apps/dimconvert
+bash /opt/apps/dimconvert/deploy/setup-dimconvert.sh
+```
+
+It asks for your email, the Resend key and the Anthropic key, and is safe to
+run again. The manual steps below do the same thing by hand.
+
 ## 0. Before you start
 
 - **DNS:** `convert.dim.capital` must point to `169.58.133.24`. Check with
