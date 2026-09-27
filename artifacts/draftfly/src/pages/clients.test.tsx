@@ -1,30 +1,20 @@
 /**
- * Create Client form — channel ID guard tests
- *
- * Verifies that the "Create Client" dialog blocks placeholder Slack channel
- * values before ever calling the API, and that a valid channel ID proceeds
- * to call createClient.mutate.
- *
- * The component shows the same text ("Must be a Slack channel ID…") as both a
- * hint (text-muted-foreground, no error) and as an inline error
- * (text-destructive, after a bad submit). We distinguish the two states by
- * checking the CSS class of the message element.
+ * Create Client form: the client is created from name, company and mode
+ * alone — there is no Slack channel to fill in any more.
  */
 
 import { vi, describe, it, expect, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-
-// ─── Mock workspace hooks ──────────────────────────────────────────────────────
 
 const mockMutate = vi.fn();
 
 vi.mock("@workspace/api-client-react", () => ({
-  useListClients: () => ({ data: [], isLoading: false }),
-  useCreateClient: () => ({
-    mutate: mockMutate,
-    isPending: false,
+  useListClients: () => ({
+    data: [{ id: 1, name: "Palm Heights", company: "Palm Heights Developments", mode: "draft", plan: "growth", billingStatus: "managed", trialDaysLeft: null }],
+    isLoading: false,
   }),
+  useCreateClient: () => ({ mutate: mockMutate, isPending: false }),
   getListClientsQueryKey: () => ["clients"],
 }));
 
@@ -32,9 +22,8 @@ vi.mock("@tanstack/react-query", () => ({
   useQueryClient: () => ({ invalidateQueries: vi.fn() }),
 }));
 
-const mockToast = vi.fn();
 vi.mock("@/hooks/use-toast", () => ({
-  useToast: () => ({ toast: mockToast }),
+  useToast: () => ({ toast: vi.fn() }),
 }));
 
 vi.mock("wouter", () => ({
@@ -43,106 +32,32 @@ vi.mock("wouter", () => ({
   ),
 }));
 
-// ─── Component under test ──────────────────────────────────────────────────────
-
 import ClientsPage from "./clients";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+describe("Clients page", () => {
+  beforeEach(() => mockMutate.mockClear());
 
-async function openDialog() {
-  const user = userEvent.setup();
-  render(<ClientsPage />);
-  await user.click(screen.getByRole("button", { name: /new client/i }));
-  return user;
-}
+  it("creates a client from name, company and mode, with no Slack channel", async () => {
+    const user = userEvent.setup();
+    render(<ClientsPage />);
+    await user.click(screen.getByRole("button", { name: /new client/i }));
 
-async function fillRequiredFields(user: ReturnType<typeof userEvent.setup>, channel: string) {
-  await user.type(screen.getByLabelText(/^name$/i), "Acme Corp");
-  const channelInput = screen.getByPlaceholderText("C012AB3CD45");
-  await user.clear(channelInput);
-  await user.type(channelInput, channel);
-}
+    expect(screen.queryByText(/slack/i)).not.toBeInTheDocument();
 
-/** Returns the channel hint/error <p> element with the text-destructive class,
- *  indicating the field is in its error state (not just showing a hint). */
-function queryChannelError() {
-  return screen
-    .queryAllByText(/must be a slack channel id starting with c or g/i)
-    .find((el) => el.classList.contains("text-destructive")) ?? null;
-}
-
-// ─── Tests ────────────────────────────────────────────────────────────────────
-
-describe("Create Client form — Slack channel ID guard", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it("shows the inline error (text-destructive) and does NOT call the API when a placeholder name like #axiom-replies is submitted", async () => {
-    const user = await openDialog();
-    await fillRequiredFields(user, "#axiom-replies");
-
+    await user.type(screen.getByLabelText(/^name$/i), "Marina Group");
+    await user.type(screen.getByLabelText(/^company$/i), "Marina Group LLC");
     await user.click(screen.getByRole("button", { name: /create client/i }));
-
-    await waitFor(() => {
-      expect(queryChannelError()).not.toBeNull();
-    });
-
-    expect(mockMutate).not.toHaveBeenCalled();
-  });
-
-  it("shows the inline error and does NOT call the API when a plain channel name (no hash) is submitted", async () => {
-    const user = await openDialog();
-    await fillRequiredFields(user, "general");
-
-    await user.click(screen.getByRole("button", { name: /create client/i }));
-
-    await waitFor(() => {
-      expect(queryChannelError()).not.toBeNull();
-    });
-
-    expect(mockMutate).not.toHaveBeenCalled();
-  });
-
-  it("calls createClient.mutate with the correct payload when a valid C… channel ID is submitted", async () => {
-    const user = await openDialog();
-    await fillRequiredFields(user, "C012AB3CD45");
-
-    await user.click(screen.getByRole("button", { name: /create client/i }));
-
-    await waitFor(() => {
-      expect(mockMutate).toHaveBeenCalledTimes(1);
-    });
 
     expect(mockMutate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({ slackChannel: "C012AB3CD45" }),
-      }),
-      expect.any(Object),
+      { data: { name: "Marina Group", company: "Marina Group LLC", mode: "draft" } },
+      expect.anything(),
     );
-
-    expect(queryChannelError()).toBeNull();
   });
 
-  it("clears the inline error once the user corrects a bad value and resubmits with a valid ID", async () => {
-    const user = await openDialog();
-    await fillRequiredFields(user, "#bad-channel");
-    await user.click(screen.getByRole("button", { name: /create client/i }));
-
-    await waitFor(() => {
-      expect(queryChannelError()).not.toBeNull();
-    });
-
-    const channelInput = screen.getByPlaceholderText("C012AB3CD45");
-    await user.clear(channelInput);
-    await user.type(channelInput, "C0BK6NPBHKJ");
-
-    await user.click(screen.getByRole("button", { name: /create client/i }));
-
-    await waitFor(() => {
-      expect(mockMutate).toHaveBeenCalledTimes(1);
-    });
-
-    expect(queryChannelError()).toBeNull();
+  it("lists clients with their plan and no Slack channel", () => {
+    render(<ClientsPage />);
+    expect(screen.getByText("Palm Heights")).toBeInTheDocument();
+    expect(screen.getByText(/growth plan/i)).toBeInTheDocument();
+    expect(screen.queryByText(/no channel|slack/i)).not.toBeInTheDocument();
   });
 });

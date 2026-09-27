@@ -566,7 +566,7 @@ export default function Home() {
                   { name: "Google Ads", status: "live" },
                   { name: "YouTube", status: "live" },
                   { name: "WhatsApp Business", status: "live" },
-                  { name: "Slack", status: "live" },
+                  { name: "Instantly", status: "soon" },
                   { name: "HubSpot", status: "soon" },
                   { name: "Salesforce", status: "soon" },
                   { name: "Property Finder", status: "soon" },

@@ -17,7 +17,6 @@ import {
   Database,
   Bot,
   Zap,
-  MessageSquare,
   Link2,
   Shield,
   Loader2,
@@ -27,6 +26,7 @@ import {
   Copy,
   Check,
   Webhook,
+  Info,
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTheme } from "@/hooks/use-theme";
@@ -271,19 +271,9 @@ export default function SettingsPage() {
       testFn: () => testService("lemlist"),
     },
     {
-      id: "slack",
-      name: "Slack App",
-      description: "Bot token for posting drafts and handling block_action callbacks",
-      icon: MessageSquare,
-      credentialLabel: "Bot Token",
-      credentialPlaceholder: "xoxb-••••••••••••••••••••••••••••••",
-      secretEnvVar: "SLACK_BOT_TOKEN",
-      testFn: () => testService("slack", { channelId: "C0000000000" }),
-    },
-    {
       id: "claude",
       name: "Claude API (Anthropic)",
-      description: "claude-3-5-sonnet for AI reply draft generation",
+      description: "Lead qualification and reply drafting",
       icon: Bot,
       credentialLabel: "API Key",
       credentialPlaceholder: "sk-ant-••••••••••••••••••••••••••••••",
@@ -293,7 +283,7 @@ export default function SettingsPage() {
     {
       id: "n8n",
       name: "n8n Webhook",
-      description: "Self-hosted n8n orchestration layer — Lemlist → Claude → Slack pipeline",
+      description: "Optional self-hosted n8n layer, e.g. for forwarding Meta leads",
       icon: Zap,
       credentialLabel: "Webhook Base URL",
       credentialPlaceholder: "https://n8n.your-domain.internal",
@@ -325,7 +315,6 @@ export default function SettingsPage() {
     if (!serverStatus) return "unconfigured";
     switch (id) {
       case "lemlist": return statusFromServer(serverStatus.lemlist.configured);
-      case "slack": return statusFromServer(serverStatus.slack.configured);
       case "claude": return statusFromServer(serverStatus.claude.configured);
       case "n8n": return statusFromServer(serverStatus.n8n.configured);
       case "database": return statusFromServer(serverStatus.database.configured);
@@ -334,7 +323,7 @@ export default function SettingsPage() {
   }
 
   const configuredCount = serverStatus
-    ? [serverStatus.slack.configured, serverStatus.lemlist.configured, serverStatus.claude.configured, serverStatus.database.configured].filter(Boolean).length
+    ? [serverStatus.lemlist.configured, serverStatus.claude.configured, serverStatus.database.configured].filter(Boolean).length
     : 0;
 
   return (
@@ -381,7 +370,7 @@ export default function SettingsPage() {
             <div>
               <CardTitle className="text-base">Webhook Endpoints</CardTitle>
               <CardDescription className="text-xs mt-0.5">
-                Register these URLs in Slack and Lemlist so they can reach your production server.
+                Where each lead source sends its leads.
               </CardDescription>
             </div>
           </div>
@@ -391,25 +380,18 @@ export default function SettingsPage() {
             <div className="flex items-start gap-2 rounded-md bg-amber-500/5 border border-amber-500/20 px-3 py-2 text-xs text-amber-400">
               <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
               <p>
-                <span className="font-medium">APP_BASE_URL is not set.</span> Add it to Replit environment variables to show the correct production URLs here.
+                <span className="font-medium">APP_BASE_URL is not set.</span> Add it to the server settings (deploy/.env) to show the correct production URLs here.
               </p>
             </div>
           )}
 
           <div className="space-y-4">
-            {/* Slack */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <MessageSquare className="h-3.5 w-3.5 text-primary shrink-0" />
-                <p className="text-xs font-medium">Slack — Interactivity &amp; Shortcuts</p>
-              </div>
-              <CopyableUrl
-                label="Request URL"
-                step="api.slack.com/apps → your app → Interactivity & Shortcuts"
-                url={`${serverStatus?.appBaseUrl ?? "https://<your-domain>"}/api/slack/actions`}
-              />
-              <p className="text-[11px] text-muted-foreground pl-0.5">
-                Paste this into <span className="font-mono text-foreground">Interactivity &amp; Shortcuts → Request URL</span>. Slack sends button clicks (Send / Edit / Discard) here.
+            {/* Per-client lead sources */}
+            <div className="flex items-start gap-2 rounded-md bg-muted/30 border border-border px-3 py-2.5 text-xs text-muted-foreground">
+              <Info className="h-3.5 w-3.5 shrink-0 mt-0.5 text-primary" />
+              <p>
+                Each client has their own webhook addresses for <span className="text-foreground">Lemlist, Meta, Google Ads, YouTube and WhatsApp</span>.
+                Find them under <span className="text-foreground">Clients → the client → Lead sources</span>, or the client sees them in their own Settings.
               </p>
             </div>
 
@@ -419,7 +401,7 @@ export default function SettingsPage() {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Link2 className="h-3.5 w-3.5 text-primary shrink-0" />
-                <p className="text-xs font-medium">Lemlist — Campaign Webhook</p>
+                <p className="text-xs font-medium">Lemlist — shared legacy webhook</p>
               </div>
               <CopyableUrl
                 label="Webhook URL (emailReplied event)"
@@ -436,7 +418,7 @@ export default function SettingsPage() {
             <div className="flex items-start gap-2 rounded-md bg-emerald-500/5 border border-emerald-500/20 px-3 py-2 text-xs text-emerald-400">
               <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5" />
               <p>
-                Production domain is set to <span className="font-mono text-emerald-300">{serverStatus.appBaseUrl}</span>. Register the URLs above in Slack and Lemlist to complete the webhook setup.
+                Production domain is set to <span className="font-mono text-emerald-300">{serverStatus.appBaseUrl}</span>. Webhook addresses are built from this domain.
               </p>
             </div>
           )}
@@ -525,7 +507,7 @@ export default function SettingsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="draft">Draft — Manual Slack approval</SelectItem>
+                  <SelectItem value="draft">Draft — approve in the Lead Inbox</SelectItem>
                   <SelectItem value="auto">Auto — Direct send (disabled)</SelectItem>
                 </SelectContent>
               </Select>
@@ -539,7 +521,7 @@ export default function SettingsPage() {
             <Shield className="h-3.5 w-3.5 shrink-0 mt-0.5 text-primary" />
             <div>
               <span className="text-foreground font-medium">Draft Mode is default and required for beta. </span>
-              Every AI-generated reply requires operator approval via Slack before it is sent. Auto Mode will be enabled per-client once quality benchmarks are confirmed.
+              Every AI-generated reply waits for approval in the Lead Inbox before it is sent. Auto Mode will be enabled per-client once quality benchmarks are confirmed.
             </div>
           </div>
         </CardContent>

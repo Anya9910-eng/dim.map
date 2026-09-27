@@ -69,13 +69,21 @@ describe("client settings", () => {
     expect(screen.getByText(/1 mapped campaign is switched off/)).toBeInTheDocument();
   });
 
-  it("clears the Slack channel by saving an empty field", async () => {
-    mockData!["slack"] = { channel: "C0BK6NPBHKJ" };
+  it("has no Slack settings", () => {
+    render(<ClientSettingsPage />);
+    expect(screen.queryByText(/slack/i)).not.toBeInTheDocument();
+  });
+
+  it("saves the WhatsApp phone number ID and token", async () => {
     render(<ClientSettingsPage />);
 
-    await userEvent.clear(screen.getByTestId("slack-channel"));
-    await userEvent.click(screen.getByTestId("save-slack-channel"));
+    await userEvent.type(screen.getByTestId("whatsapp-phone-id"), "1098765");
+    await userEvent.type(screen.getByTestId("whatsapp-token"), "EAAG-token");
+    await userEvent.click(screen.getByTestId("save-whatsapp"));
 
-    expect(mockUpdate).toHaveBeenCalledWith({ slackChannel: null }, expect.anything());
+    expect(mockUpdate).toHaveBeenCalledWith(
+      { whatsappPhoneNumberId: "1098765", whatsappAccessToken: "EAAG-token" },
+      expect.anything(),
+    );
   });
 });

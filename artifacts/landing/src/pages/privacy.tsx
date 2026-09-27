@@ -29,8 +29,8 @@ export default function Privacy() {
         <Table
           rows={[
             ["Account", "Your name, work email and company."],
-            ["Credentials", "Your Lemlist API key, your WhatsApp Business phone number ID and access token, your Slack bot token, and the secret for your webhooks."],
-            ["Configuration", "Personas, campaigns, tone and reply rules, and the Slack channel that receives your drafts."],
+            ["Credentials", "Your Lemlist API key, your WhatsApp Business phone number ID and access token, and the secret for your webhooks."],
+            ["Configuration", "Personas, campaigns, and tone, reply and qualification rules."],
             ["Lead data", "For each lead: their name, email address and/or phone number, company, role and country where given, the text of their message or lead-form answers, and the qualification grade we assign."],
             ["Generated content", "The drafts we produce, whether each was approved, edited or discarded, and by whom."],
             ["Operational logs", "Request metadata and errors, used to keep the service working and to investigate faults."],
@@ -41,8 +41,8 @@ export default function Privacy() {
       <Section heading="How we use it">
         <p>
           The lead's message and details are sent to Anthropic's Claude API to qualify the lead and
-          produce a draft. The draft and grade are stored, shown in your dashboard, and — if you
-          connected Slack — posted to your Slack channel. Nothing is used to train
+          produce a draft. The draft and grade are stored and shown in your dashboard.
+          Nothing is used to train
           any model: Anthropic does not train on data submitted through its API, and we do not use
           your data to build or improve models of our own.
         </p>
@@ -59,7 +59,6 @@ export default function Privacy() {
             ["Meta (WhatsApp Business, Lead Ads)", "Your own accounts. Send us leads and messages, and deliver approved WhatsApp replies."],
             ["Google (Google Ads, YouTube)", "Your own account. Sends us lead-form submissions from your Google Ads and YouTube campaigns."],
             ["Lemlist", "Your own account. Sends us replies and receives approved responses."],
-            ["Slack", "Optional. Delivers approval cards. Receives the draft and lead details."],
             ["Contabo", "Hosting. Servers located in Germany."],
           ]}
         />
@@ -68,7 +67,7 @@ export default function Privacy() {
       <Section heading="Where it is stored, and how">
         <p>
           Data is held in Germany, within the EU. Traffic to the service is encrypted with TLS.
-          Credentials — your Lemlist API key, WhatsApp access token, Slack bot token and webhook
+          Credentials — your Lemlist API key, WhatsApp access token and webhook
           secret — are encrypted
           before they are written to the database using AES-256-GCM, so a copy of the database or a
           backup file does not expose them. Backups are taken daily and kept for fourteen days.

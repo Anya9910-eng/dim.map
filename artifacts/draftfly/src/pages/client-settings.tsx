@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { BillingCard } from "@/components/billing-card";
-import { CheckCircle2, AlertCircle, Copy, Check, RefreshCw, Loader2, KeyRound, Webhook, MessageSquare, Gauge, MessageCircle } from "lucide-react";
+import { CheckCircle2, AlertCircle, Copy, Check, RefreshCw, Loader2, KeyRound, Webhook, Gauge, MessageCircle } from "lucide-react";
 import {
   useMySettings,
   useUpdateMySettings,
@@ -62,7 +62,6 @@ export default function ClientSettingsPage() {
   const { toast } = useToast();
 
   const [apiKey, setApiKey] = useState("");
-  const [channel, setChannel] = useState<string | null>(null);
   const [waPhoneId, setWaPhoneId] = useState<string | null>(null);
   const [waToken, setWaToken] = useState("");
 
@@ -80,7 +79,6 @@ export default function ClientSettingsPage() {
     );
   }
 
-  const channelValue = channel ?? data.slack.channel ?? "";
   const waPhoneIdValue = waPhoneId ?? data.whatsapp?.phoneNumberId ?? "";
 
   const saveWhatsApp = () => {
@@ -111,12 +109,6 @@ export default function ClientSettingsPage() {
     });
   };
 
-  const saveChannel = () => {
-    update.mutate({ slackChannel: channelValue.trim() === "" ? null : channelValue.trim() }, {
-      onSuccess: () => toast({ title: channelValue.trim() ? "Slack channel saved" : "Slack channel cleared" }),
-      onError: (e) => toast({ title: "Could not save", description: String(e), variant: "destructive" }),
-    });
-  };
 
   return (
     <div className="space-y-6">
@@ -339,33 +331,7 @@ export default function ClientSettingsPage() {
         </CardContent>
       </Card>
 
-      {/* ── 4. Slack (optional) ────────────────────────────────────────── */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <MessageSquare className="h-4 w-4" /> Slack channel
-            <Badge variant="secondary" className="ml-auto font-normal">Optional</Badge>
-          </CardTitle>
-          <CardDescription>
-            Get an approval card in Slack for every draft. Leave this empty to approve in the dashboard only.
-            In Slack: open the channel → View channel details → copy the ID at the bottom.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-2">
-            <Input
-              placeholder="C0123456789"
-              value={channelValue}
-              onChange={e => setChannel(e.target.value)}
-              className="font-mono"
-              data-testid="slack-channel"
-            />
-            <Button variant="outline" onClick={saveChannel} disabled={update.isPending} data-testid="save-slack-channel">Save</Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* ── 5. Plan usage ──────────────────────────────────────────────── */}
+      {/* ── 4. Plan usage ──────────────────────────────────────────────── */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">

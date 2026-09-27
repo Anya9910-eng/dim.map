@@ -20,14 +20,10 @@ import {
   CheckCircle2,
   Megaphone,
   ArrowRight,
-  Zap,
   Bot,
-  MessageSquare,
   Link2,
   Loader2,
-  TriangleAlert,
   AlertCircle,
-  X,
   RefreshCw,
   Clock,
   Flame,
@@ -45,45 +41,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const SLACK_CHANNEL_ID_RE = /^[CG][A-Z0-9]{9,}$/;
-
-/**
- * A channel that was filled in but is not a usable channel ID — a #name, a
- * leftover placeholder, a typo.
- *
- * A *blank* channel is deliberately not one of these. It used to be, back when
- * blank meant "falls through to the global channel" and every client needed one
- * of their own. Blank now means the client approves in the dashboard, which is
- * a finished configuration, not something to nag about.
- */
-function isMisconfiguredChannel(channel: string | null | undefined): boolean {
-  if (!channel) return false;
-  return !SLACK_CHANNEL_ID_RE.test(channel);
-}
-
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
-
-const PLACEHOLDER_ACK_KEY = "draftfly_placeholder_ack";
-
-function getAckedIds(): Set<string> {
-  try {
-    const raw = localStorage.getItem(PLACEHOLDER_ACK_KEY);
-    if (!raw) return new Set();
-    return new Set(JSON.parse(raw) as string[]);
-  } catch {
-    return new Set();
-  }
-}
-
-function ackIds(ids: string[]): void {
-  try {
-    const existing = getAckedIds();
-    for (const id of ids) existing.add(id);
-    localStorage.setItem(PLACEHOLDER_ACK_KEY, JSON.stringify([...existing]));
-  } catch {
-    // ignore storage errors
-  }
-}
 
 interface IntegrationStatus {
   slack: { configured: boolean };
@@ -140,12 +98,18 @@ export default function Dashboard() {
   const handleRetry = async (id: number) => {
     setRetryingId(id);
     try {
-      const res = await fetch(`${API_BASE}/api/drafts/${id}/repost`, { method: "POST" });
+      const res = await fetch(`${API_BASE}/api/drafts/${id}/action`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        // Sends it again the way the lead came in (Lemlist or WhatsApp).
+        body: JSON.stringify({ action: "send" }),
+      });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         toast({ title: "Retry failed", description: (body as any).error ?? `HTTP ${res.status}`, variant: "destructive" });
       } else {
-        toast({ title: "Draft requeued", description: "A fresh Slack approval card has been posted." });
+        toast({ title: "Reply sent" });
         queryClient.invalidateQueries({ queryKey: getListDraftsQueryKey({ status: "send_failed" }) });
         refetchFailed();
       }
@@ -198,52 +162,6 @@ export default function Dashboard() {
 
   const loading = statsLoading || intLoading;
 
-  const placeholderClients = (clients ?? []).filter((c) =>
-    isMisconfiguredChannel(c.slackChannel)
-  );
-
-  // Slack counts as connected when OAuth is configured and no client is left
-  // with a broken channel ID. A client with no channel at all is fine — that
-  // is a choice, not an unfinished setup.
-  const slackConnected =
-    !!integrations?.slack.configured && placeholderClients.length === 0;
-
-  // Banner is dismissed when every current placeholder ID has been acknowledged.
-  // New placeholder clients (IDs not yet acked) break through the dismissal.
-  const [ackedIds, setAckedIds] = useState<Set<string>>(() => getAckedIds());
-
-  // Prune stale acks: remove any stored ID that is no longer a placeholder client
-  // (the client was fixed or deleted). Runs once after the clients list loads.
-  useEffect(() => {
-    if (!clients) return;
-    const currentPlaceholderIds = new Set(
-      (clients ?? []).filter((c) => isMisconfiguredChannel(c.slackChannel)).map((c) => String(c.id))
-    );
-    const stored = getAckedIds();
-    const pruned = new Set<string>();
-    for (const id of stored) {
-      if (currentPlaceholderIds.has(id)) pruned.add(id);
-    }
-    if (pruned.size !== stored.size) {
-      try {
-        localStorage.setItem(PLACEHOLDER_ACK_KEY, JSON.stringify([...pruned]));
-      } catch {
-        // ignore storage errors
-      }
-      setAckedIds(pruned);
-    }
-  }, [clients]);
-
-  const unackedPlaceholders = placeholderClients.filter((c) => !ackedIds.has(String(c.id)));
-  // Operator-only. It counts *clients*, links to client pages a client user
-  // cannot open, and asks for a fix only an operator can make.
-  const showBanner = isOperator && unackedPlaceholders.length > 0;
-
-  function dismissBanner() {
-    const ids = placeholderClients.map((c) => String(c.id));
-    ackIds(ids);
-    setAckedIds(getAckedIds());
-  }
 
   return (
     <div className="space-y-5">
@@ -254,43 +172,6 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {showBanner && (
-        <div className="rounded-lg border border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 px-4 py-3 flex flex-col sm:flex-row sm:items-center gap-3">
-          <div className="flex items-start gap-2.5 flex-1 min-w-0">
-            <TriangleAlert className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-            <div className="text-sm text-amber-800 dark:text-amber-200">
-              <span className="font-semibold">
-                {unackedPlaceholders.length} {unackedPlaceholders.length === 1 ? "client has" : "clients have"} an
-                unrecognised Slack channel
-              </span>{" "}
-              — {unackedPlaceholders.length === 1 ? "it is" : "they are"} not a valid channel ID, so no approval card is posted. Fix the ID, or clear the field to approve in the dashboard only.
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 shrink-0 pl-6 sm:pl-0">
-            {unackedPlaceholders.slice(0, 3).map((c) => (
-              <Button key={c.id} variant="outline" size="sm" asChild
-                className="border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/40 text-xs h-7">
-                <Link href={`/clients/${c.id}`}>{c.name}</Link>
-              </Button>
-            ))}
-            {unackedPlaceholders.length > 3 && (
-              <Button variant="outline" size="sm" asChild
-                className="border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/40 text-xs h-7">
-                <Link href="/clients">+{unackedPlaceholders.length - 3} more</Link>
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Dismiss warning"
-              onClick={dismissBanner}
-              className="h-7 w-7 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/40 shrink-0 ml-1"
-            >
-              <X className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-        </div>
-      )}
 
       {!isOperator && <SetupChecklist />}
 
@@ -454,19 +335,11 @@ export default function Dashboard() {
             <CardContent className="space-y-4">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1 sm:gap-0">
                 <WorkflowStep
-                  name="Lemlist"
+                  name="Lead sources"
                   icon={Link2}
-                  connected={integrations?.lemlist.configured}
-                  loading={intLoading}
-                  description="Webhook source"
-                />
-                <ChainArrow />
-                <WorkflowStep
-                  name="n8n"
-                  icon={Zap}
-                  connected={integrations?.n8n.configured}
-                  loading={intLoading}
-                  description="Orchestration"
+                  connected={(stats?.activeCampaigns ?? 0) > 0}
+                  loading={intLoading || statsLoading}
+                  description="Lemlist, Meta, Google, YouTube, WhatsApp"
                 />
                 <ChainArrow />
                 <WorkflowStep
@@ -474,15 +347,15 @@ export default function Dashboard() {
                   icon={Bot}
                   connected={integrations?.claude.configured}
                   loading={intLoading}
-                  description="AI draft"
+                  description="Qualify & draft"
                 />
                 <ChainArrow />
                 <WorkflowStep
-                  name="Slack"
-                  icon={MessageSquare}
-                  connected={slackConnected}
-                  loading={intLoading}
-                  description="Operator approval"
+                  name="Lead Inbox"
+                  icon={Inbox}
+                  connected={true}
+                  loading={false}
+                  description="Your approval"
                 />
               </div>
 
@@ -604,7 +477,7 @@ export default function Dashboard() {
                               {isAutoFailed ? (
                                 <><Clock className="h-3 w-3" /> Timed out — auto-failed by sweeper</>
                               ) : (
-                                <>Send failed — Slack post error</>
+                                <>Send failed — check the lead source connection</>
                               )}
                             </div>
                           </div>

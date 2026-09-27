@@ -47,7 +47,7 @@ export function PlanPicker({ compact = false }: { compact?: boolean }) {
               <ul className="text-sm space-y-1 text-muted-foreground">
                 <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500" /> {plan.limits.activeCampaigns} active campaigns</li>
                 <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500" /> {plan.limits.repliesPerMonth} leads / month</li>
-                <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500" /> Approve in the dashboard or Slack</li>
+                <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500" /> Approve in the Lead Inbox</li>
               </ul>
               <Button
                 className="mt-auto"

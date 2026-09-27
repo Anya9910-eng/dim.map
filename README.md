@@ -2,7 +2,7 @@
 
 A product of [DIM](https://dim.capital) — Development Intelligence & Marketing — alongside DIM Map and DIM Invest. Served at **https://convert.dim.capital**.
 
-DIM Convert pulls in leads from cold email campaigns (Lemlist), Meta (Facebook / Instagram), Google Ads and YouTube lead forms, and WhatsApp Business, qualifies each buyer as **hot, warm, cold or unqualified**, and drafts the reply for one-click approval in the dashboard or Slack.
+DIM Convert pulls in leads from cold email campaigns (Lemlist), Meta (Facebook / Instagram), Google Ads and YouTube lead forms, and WhatsApp Business, qualifies each buyer as **hot, warm, cold or unqualified**, and drafts the reply for one-click approval in the dashboard.
 
 ## Features
 
@@ -12,7 +12,6 @@ DIM Convert pulls in leads from cold email campaigns (Lemlist), Meta (Facebook /
 - ✅ WhatsApp Business webhook — inbound chats (Cloud API format)
 - ✅ AI lead qualification (budget, timeline, financing, purpose, unit) with a one-line reason
 - ✅ Channel-aware reply drafting; approved replies go back through Lemlist or WhatsApp
-- ✅ Optional Slack approval cards
 - ✅ PostgreSQL database, email sign-in codes, Stripe billing
 
 ## Requirements
@@ -32,7 +31,7 @@ pnpm --filter @workspace/api-server run dev
 
 ## Lead webhooks
 
-Each client has one webhook secret, shown with ready-made URLs on the Settings page.
+Each client has one webhook secret, shown with ready-made URLs in the "Lead sources" card on the client's page.
 
 - `POST /api/webhooks/lemlist/:clientId?secret=…` — Lemlist reply events
 - `POST /api/webhooks/meta/:clientId?secret=…` — Meta lead-form leads

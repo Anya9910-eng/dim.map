@@ -134,8 +134,8 @@ cd deploy && docker compose build && docker compose --profile setup run --rm mig
    Until then sign-in emails come from Resend's shared sender and reach only
    your own address.
 2. **Mailbox** for `outreach@dim.capital` (Google Workspace, Zoho, …).
-3. **Lead sources:** paste the webhook addresses from Settings into Lemlist,
-   Meta, Google Ads and WhatsApp.
+3. **Lead sources:** open Clients → the client → "Lead sources" and paste each
+   address into Lemlist, Meta, Google Ads, YouTube and WhatsApp.
 4. **Backups:** nothing backs the database up yet. At minimum, before real
    customers:
    `docker compose exec -T db pg_dump -U draftfly draftfly | gzip > /root/dimconvert-$(date +%F).sql.gz`

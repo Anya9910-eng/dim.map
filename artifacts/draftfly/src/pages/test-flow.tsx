@@ -88,7 +88,7 @@ const STEPS = [
   { id: "persona", label: "Persona Selection" },
   { id: "region", label: "Regional Tone" },
   { id: "draft", label: "Claude Draft" },
-  { id: "slack", label: "Slack Approval" },
+  { id: "slack", label: "Lead Inbox Approval" },
   { id: "done", label: "Final Status" },
 ];
 
@@ -314,7 +314,7 @@ export default function TestFlow() {
         <Zap className="h-3.5 w-3.5 shrink-0 mt-0.5 text-primary" />
         <p>
           <span className="font-medium text-foreground">Production flow: </span>
-          Lemlist webhook → campaign / persona mapping → Claude draft → Slack approval card → operator decision → Lemlist send.
+          Lemlist webhook → campaign / persona mapping → Claude qualification and draft → Lead Inbox → your decision → Lemlist send.
           This calls <span className="font-mono text-foreground">POST /api/webhooks/lemlist/simulate</span> which runs the real server-side pipeline using configured API keys.
         </p>
       </div>
@@ -375,9 +375,6 @@ export default function TestFlow() {
                       {clients.map((c) => <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
-                )}
-                {selectedClient && (
-                  <p className="text-[10px] text-muted-foreground font-mono">Slack: {selectedClient.slackChannel}</p>
                 )}
               </div>
 
@@ -577,17 +574,15 @@ export default function TestFlow() {
             </Card>
           )}
 
-          {/* Slack approval card preview */}
+          {/* Approval preview, as it appears in the Lead Inbox */}
           {showApproval && draft && !decision && (
             <Card data-testid="result-slack-card">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4 text-primary" /> Slack Approval Card
+                  <MessageSquare className="h-4 w-4 text-primary" /> Approval preview
                 </CardTitle>
                 <CardDescription>
-                  {result?.slackTs
-                    ? `Posted to Slack — ts: ${result.slackTs}`
-                    : "Slack approval card (preview — configure SLACK_BOT_TOKEN to post real messages)"}
+                  The draft now waits in the Lead Inbox. Try the buttons below.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -739,7 +734,7 @@ const stepLabels: Record<string, string> = {
   persona: "Persona Selection",
   region: "Regional Tone",
   draft: "Claude Draft",
-  slack: "Slack Approval",
+  slack: "Lead Inbox Approval",
   done: "Done",
 };
 
@@ -749,8 +744,8 @@ function stepMessages(stepId: string, fields: FormFields, campaign: DbCampaign |
     case "campaign": return `Matched campaign "${campaign?.name ?? "—"}" (${campaign?.lemlistCampaignId ?? "?"}) by Lemlist campaign ID`;
     case "persona": return `Persona lookup — loading tone, CTA, objection handling, region rules`;
     case "region": return `Country "${fields.leadCountry}" → regional tone bucket applied`;
-    case "draft": return `claude-3-5-sonnet — generating personalised reply draft`;
-    case "slack": return `Approval card posted to client Slack channel`;
+    case "draft": return `Claude — qualifying the lead and drafting a reply`;
+    case "slack": return `Draft added to the Lead Inbox for approval`;
     default: return "";
   }
 }

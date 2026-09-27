@@ -68,12 +68,18 @@ export default function DraftDetail() {
   const handleRetry = async () => {
     setRetrying(true);
     try {
-      const res = await fetch(`${API_BASE}/api/drafts/${draftId}/repost`, { method: "POST" });
+      const res = await fetch(`${API_BASE}/api/drafts/${draftId}/action`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        // Sends it again the way the lead came in (Lemlist or WhatsApp).
+        body: JSON.stringify({ action: "send" }),
+      });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         toast({ title: "Retry failed", description: (body as any).error ?? `HTTP ${res.status}`, variant: "destructive" });
       } else {
-        toast({ title: "Draft requeued", description: "A fresh Slack approval card has been posted." });
+        toast({ title: "Reply sent" });
         queryClient.invalidateQueries({ queryKey: getGetDraftQueryKey(draftId) });
       }
     } catch {
@@ -110,7 +116,7 @@ export default function DraftDetail() {
         {isSendFailed && (
           <Button onClick={handleRetry} disabled={retrying} variant="outline" className="gap-2 border-orange-300 text-orange-700 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-400 dark:hover:bg-orange-950/30">
             <RefreshCw className={`h-4 w-4 ${retrying ? "animate-spin" : ""}`} />
-            {retrying ? "Retrying…" : "Retry — Repost to Slack"}
+            {retrying ? "Sending…" : "Try sending again"}
           </Button>
         )}
       </div>
@@ -121,8 +127,8 @@ export default function DraftDetail() {
             <Clock className="h-4 w-4 shrink-0 mt-0.5" />
             <div>
               {isAutoFailed
-                ? "This draft was automatically moved to send_failed by the sweeper because no operator acted on the Slack approval card within the configured time limit."
-                : "This draft failed to send. Click Retry to re-post the Slack approval card so an operator can approve it again."}
+                ? "This draft was marked as failed automatically because nobody approved it within the time limit. You can still review and send it."
+                : "This reply failed to send. Check the lead source is connected (Lemlist key or WhatsApp settings), then try again."}
             </div>
           </div>
         </div>
@@ -279,7 +285,7 @@ export default function DraftDetail() {
               <CardFooter className="border-t bg-muted/10 pt-4">
                 <Button onClick={handleRetry} disabled={retrying} className="w-full gap-2">
                   <RefreshCw className={`h-4 w-4 ${retrying ? "animate-spin" : ""}`} />
-                  {retrying ? "Retrying…" : "Retry — Repost Slack Approval Card"}
+                  {retrying ? "Sending…" : "Try sending again"}
                 </Button>
               </CardFooter>
             )}

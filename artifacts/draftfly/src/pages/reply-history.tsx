@@ -128,7 +128,7 @@ export default function ReplyHistoryPage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Reply History</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Every Lemlist reply that triggered a Slack draft, with its final outcome.
+            Every lead that got a drafted reply, with its final outcome.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">

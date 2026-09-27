@@ -19,13 +19,13 @@ export default function OnboardingPage() {
 
   // Hardcode the onboarding steps to match the specific requirement, using checklist items if they match
   const onboardingSteps = [
-    { title: "Install Slack App", description: "Invite the DIM Convert bot to your workspace." },
-    { title: "Provide Lemlist API key", description: "Securely share your Lemlist key for connection." },
-    { title: "Select approval channel", description: "Choose which Slack channel receives drafts." },
-    { title: "Provide campaign IDs", description: "List the Lemlist campaigns to monitor." },
-    { title: "Provide persona and reply rules", description: "Define your voice and qualification criteria." },
-    { title: "Run test reply", description: "Generate a mock reply to ensure end-to-end connectivity." },
-    { title: "Confirm Send / Edit / Discard flow", description: "Test the Slack buttons to verify permissions." }
+    { title: "Create the client and invite their user", description: "Add the developer or brokerage and the email they sign in with." },
+    { title: "Connect lead sources", description: "Paste their webhook URLs into Lemlist, Meta, Google Ads / YouTube lead forms and WhatsApp." },
+    { title: "Add sending credentials", description: "Lemlist API key for email replies; WhatsApp phone number ID and token for WhatsApp replies." },
+    { title: "Create campaigns", description: "One per launch or ad form, each with its lead source and ID." },
+    { title: "Write the sales persona", description: "Project details, pricing rules, tone and qualification criteria." },
+    { title: "Run a test lead", description: "Send a test lead (Google's \"Send test data\" or a WhatsApp message) and check it is qualified and drafted." },
+    { title: "Confirm Send / Edit / Discard", description: "Approve one reply from the Lead Inbox and check it reaches the lead." }
   ];
 
   // In a real app, these would map to specific DB items by an ID or type.

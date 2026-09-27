@@ -60,12 +60,18 @@ export default function DraftsPage() {
   const handleRetry = async (id: number) => {
     setRetryingId(id);
     try {
-      const res = await fetch(`${API_BASE}/api/drafts/${id}/repost`, { method: "POST" });
+      const res = await fetch(`${API_BASE}/api/drafts/${id}/action`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        // Sends it again the way the lead came in (Lemlist or WhatsApp).
+        body: JSON.stringify({ action: "send" }),
+      });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         toast({ title: "Retry failed", description: (body as any).error ?? `HTTP ${res.status}`, variant: "destructive" });
       } else {
-        toast({ title: "Draft requeued", description: "A fresh Slack approval card has been posted." });
+        toast({ title: "Reply sent" });
         queryClient.invalidateQueries({ queryKey: getListDraftsQueryKey(queryParams) });
         refetch();
       }

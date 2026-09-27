@@ -52,14 +52,32 @@ const router: IRouter = Router();
  */
 function buildWebhookInfo(
   req: import("express").Request,
-  client: { id: number; lemlistWebhookSecret: string | null; lemlistApiKey: string | null },
+  client: {
+    id: number;
+    lemlistWebhookSecret: string | null;
+    lemlistApiKey: string | null;
+    whatsappPhoneNumberId?: string | null;
+    whatsappAccessToken?: string | null;
+  },
 ) {
   const configured = process.env.APP_BASE_URL?.trim().replace(/\/+$/, "");
   const base = configured || `${req.protocol}://${req.get("host") ?? ""}`;
   const path = `/api/webhooks/lemlist/${client.id}`;
   const secret = client.lemlistWebhookSecret;
   const hasClientApiKey = !!client.lemlistApiKey?.trim();
+  // One secret, one address per lead source — the same URLs the client sees
+  // on their own Settings page.
+  const sourceUrl = (source: string) =>
+    secret ? `${base}/api/webhooks/${source}/${client.id}?secret=${encodeURIComponent(secret)}` : null;
   return {
+    sources: {
+      lemlist: sourceUrl("lemlist"),
+      meta: sourceUrl("meta"),
+      google: sourceUrl("google"),
+      youtube: sourceUrl("youtube"),
+      whatsapp: sourceUrl("whatsapp"),
+    },
+    whatsappSendingReady: !!client.whatsappPhoneNumberId?.trim() && !!client.whatsappAccessToken?.trim(),
     clientId: client.id,
     path,
     url: secret ? `${base}${path}?secret=${encodeURIComponent(secret)}` : null,

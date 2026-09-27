@@ -20,7 +20,6 @@ import Campaigns from "@/pages/campaigns";
 import CampaignDetail from "@/pages/campaign-detail";
 import Drafts from "@/pages/drafts";
 import DraftDetail from "@/pages/draft-detail";
-import SlackAppSetup from "@/pages/slack-app-setup";
 import TestFlow from "@/pages/test-flow";
 import Onboarding from "@/pages/onboarding";
 import InternalSetup from "@/pages/internal-setup";
@@ -72,7 +71,6 @@ function ProtectedRouter() {
           <Route path="/campaigns/:id" component={CampaignDetail} />
           <Route path="/drafts" component={Drafts} />
           <Route path="/drafts/:id" component={DraftDetail} />
-          <Route path="/slack-app-setup" component={SlackAppSetup} />
           <Route path="/test-flow" component={TestFlow} />
           <Route path="/onboarding" component={Onboarding} />
           <Route path="/internal-setup" component={InternalSetup} />

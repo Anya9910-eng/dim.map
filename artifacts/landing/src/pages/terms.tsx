@@ -17,7 +17,7 @@ export default function Terms() {
         <p>
           DIM Convert receives the leads your campaigns generate — replies to your outbound email, lead-form
           submissions from Meta, Google Ads and YouTube, and WhatsApp messages — grades each lead using Claude, and drafts a
-          suggested response for approval in the dashboard or Slack. In draft mode nothing is sent to
+          suggested response for approval in the dashboard. In draft mode nothing is sent to
           a lead until a person approves it. If you switch a client to auto mode, replies are sent
           without review — that is your decision and your responsibility.
         </p>
@@ -72,7 +72,7 @@ export default function Terms() {
 
       <Section heading="Third-party services">
         <p>
-          DIM Convert connects to Lemlist, Meta (Lead Ads and WhatsApp Business), Google (Google Ads and YouTube lead forms), Slack and Anthropic.
+          DIM Convert connects to Lemlist, Meta (Lead Ads and WhatsApp Business), Google (Google Ads and YouTube lead forms) and Anthropic.
           Your use of those services is governed by their own terms, and their availability is
           outside our control. If one of them changes or withdraws access, parts of DIM Convert may stop
           working.
