@@ -250,7 +250,7 @@ export default function Dashboard() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Live overview of your leads across Lemlist, Meta and WhatsApp.
+          Live overview of your leads across Lemlist, Meta, Google Ads, YouTube and WhatsApp.
         </p>
       </div>
 

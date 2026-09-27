@@ -123,7 +123,7 @@ export default function ClientSettingsPage() {
       <div>
         <h1 className="text-3xl font-bold">Settings</h1>
         <p className="text-muted-foreground mt-1">
-          Connect DIM Convert to Lemlist, Meta lead ads and WhatsApp. Everything here is yours alone.
+          Connect DIM Convert to Lemlist, Meta, Google Ads, YouTube and WhatsApp. Everything here is yours alone.
         </p>
       </div>
 
@@ -224,7 +224,7 @@ export default function ClientSettingsPage() {
             </Button>
             {data.webhook.hasSecret && (
               <span className="text-xs text-muted-foreground">
-                Regenerating breaks the old URLs (Lemlist, Meta and WhatsApp) until you paste the new ones in.
+                Regenerating breaks all the old webhook URLs below until you paste the new ones in.
               </span>
             )}
           </div>
@@ -235,7 +235,7 @@ export default function ClientSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <MessageCircle className="h-4 w-4" /> Meta lead ads &amp; WhatsApp
+            <MessageCircle className="h-4 w-4" /> Ad lead forms &amp; WhatsApp
             {data.whatsapp?.hasAccessToken && data.whatsapp.phoneNumberId && (
               <Badge variant="outline" className="ml-auto gap-1 text-green-600 border-green-600/30">
                 <CheckCircle2 className="h-3 w-3" /> Sending enabled
@@ -243,9 +243,9 @@ export default function ClientSettingsPage() {
             )}
           </CardTitle>
           <CardDescription>
-            Leads from your Facebook / Instagram lead forms and your WhatsApp Business number land in the
-            Lead Inbox, qualified and with a reply drafted. Add a Meta or WhatsApp campaign on the Campaigns page
-            so they have somewhere to go.
+            Leads from your Facebook / Instagram, Google Ads and YouTube lead forms and your WhatsApp Business
+            number land in the Lead Inbox, qualified and with a reply drafted. Add a matching campaign on the
+            Campaigns page so they have somewhere to go.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
@@ -260,6 +260,32 @@ export default function ClientSettingsPage() {
                   </div>
                   <p className="text-[11px] text-muted-foreground">
                     Send each new lead here from n8n, Zapier or Make — including the lead's <span className="font-mono">field_data</span> — or subscribe your Page's <span className="font-mono">leadgen</span> webhook.
+                  </p>
+                </div>
+              )}
+              {data.webhook.googleUrl && (
+                <div className="space-y-1.5">
+                  <Label>Google Ads lead form webhook</Label>
+                  <div className="flex gap-2">
+                    <Input readOnly value={data.webhook.googleUrl} className="font-mono text-xs" data-testid="google-webhook-url" />
+                    <CopyButton value={data.webhook.googleUrl} />
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    In Google Ads, open your lead form → Lead delivery → Webhook integration. Paste this as the webhook URL and the
+                    <span className="font-mono"> secret </span> at the end of the URL as the key, then press Send test data to check it.
+                  </p>
+                </div>
+              )}
+              {data.webhook.youtubeUrl && (
+                <div className="space-y-1.5">
+                  <Label>YouTube lead form webhook</Label>
+                  <div className="flex gap-2">
+                    <Input readOnly value={data.webhook.youtubeUrl} className="font-mono text-xs" data-testid="youtube-webhook-url" />
+                    <CopyButton value={data.webhook.youtubeUrl} />
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    For lead forms on YouTube video campaigns. Set it up the same way as Google Ads — using this URL means
+                    those leads are labelled YouTube in your inbox.
                   </p>
                 </div>
               )}
@@ -278,14 +304,14 @@ export default function ClientSettingsPage() {
               )}
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">Generate a webhook secret above to get your Meta and WhatsApp URLs.</p>
+            <p className="text-sm text-muted-foreground">Generate a webhook secret above to get your Meta, Google Ads, YouTube and WhatsApp URLs.</p>
           )}
 
           <div className="space-y-3 border-t pt-4">
             <div>
               <Label className="text-sm">Reply from your WhatsApp Business number</Label>
               <p className="text-[11px] text-muted-foreground mt-1">
-                Optional. With these, pressing Send on a WhatsApp or Meta lead delivers the reply on WhatsApp. Without them
+                Optional. With these, pressing Send on a WhatsApp lead, or an ad lead who left a phone number, delivers the reply on WhatsApp. Without them
                 you can still review and qualify leads, and copy the reply across yourself.
                 {data.whatsapp?.hasAccessToken && <> Saved token ends in <span className="font-mono">{data.whatsapp.tokenHint}</span>.</>}
               </p>

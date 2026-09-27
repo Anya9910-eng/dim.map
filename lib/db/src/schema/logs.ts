@@ -3,7 +3,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
 export const logLevelEnum = pgEnum("log_level", ["info", "warning", "error"]);
-export const logSourceEnum = pgEnum("log_source", ["lemlist", "n8n", "claude", "slack", "system", "meta", "whatsapp"]);
+export const logSourceEnum = pgEnum("log_source", ["lemlist", "n8n", "claude", "slack", "system", "meta", "whatsapp", "google", "youtube"]);
 export const logFinalStatusEnum = pgEnum("log_final_status", ["draft", "sent", "edited", "discarded", "send_failed"]);
 
 export const logsTable = pgTable("logs", {

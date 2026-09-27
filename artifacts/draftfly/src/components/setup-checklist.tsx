@@ -23,7 +23,7 @@ export function SetupChecklist() {
     {
       key: "lemlist",
       title: "Connect a lead source",
-      detail: "Add your Lemlist API key, or your WhatsApp Business details, in Settings — or connect a Meta lead form on the Campaigns page.",
+      detail: "Add your Lemlist API key, or your WhatsApp Business details, in Settings — or connect a Meta, Google Ads or YouTube lead form on the Campaigns page.",
       // A Meta-only account needs no key at all: its leads arrive by webhook
       // once a Meta campaign exists.
       done: settings.lemlist.hasApiKey || !!settings.whatsapp?.hasAccessToken || settings.usage.totalCampaigns > 0,
@@ -39,14 +39,14 @@ export function SetupChecklist() {
     {
       key: "campaign",
       title: "Activate a campaign",
-      detail: "Pick a Lemlist campaign, Meta lead form or WhatsApp line, attach the persona, and switch it on.",
+      detail: "Pick a Lemlist campaign, an ad lead form or a WhatsApp line, attach the persona, and switch it on.",
       done: settings.usage.activeCampaigns > 0,
       href: "/campaigns",
     },
     {
       key: "reply",
       title: "Receive your first lead",
-      detail: "Point your Lemlist, Meta or WhatsApp webhook at DIM Convert (the URLs are in Settings). The next lead is qualified and gets a draft.",
+      detail: "Point your Lemlist, Meta, Google Ads or WhatsApp webhook at DIM Convert (the URLs are in Settings). The next lead is qualified and gets a draft.",
       done: settings.usage.repliesThisMonth > 0,
       href: "/settings",
     },

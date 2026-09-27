@@ -15,8 +15,8 @@ export default function Terms() {
 
       <Section heading="What the service does">
         <p>
-          DIM Convert receives the leads your campaigns generate — replies to your outbound email, Meta
-          lead-form submissions and WhatsApp messages — grades each lead using Claude, and drafts a
+          DIM Convert receives the leads your campaigns generate — replies to your outbound email, lead-form
+          submissions from Meta, Google Ads and YouTube, and WhatsApp messages — grades each lead using Claude, and drafts a
           suggested response for approval in the dashboard or Slack. In draft mode nothing is sent to
           a lead until a person approves it. If you switch a client to auto mode, replies are sent
           without review — that is your decision and your responsibility.
@@ -35,8 +35,8 @@ export default function Terms() {
         <p>
           You decide who you contact and what you say to them. You are responsible for complying
           with the law that applies to that outreach and advertising — including anti-spam rules such
-          as CAN-SPAM, data protection law such as the GDPR, Meta's advertising and WhatsApp Business
-          policies, and any rules on marketing property — and for having a lawful basis for
+          as CAN-SPAM, data protection law such as the GDPR, Meta's and Google's advertising policies,
+          WhatsApp Business policies, and any rules on marketing property — and for having a lawful basis for
           processing the personal data of the people you contact. DIM Convert is a tool for replying to
           people who already wrote to you; it is not a way to bypass those obligations.
         </p>
@@ -72,7 +72,7 @@ export default function Terms() {
 
       <Section heading="Third-party services">
         <p>
-          DIM Convert connects to Lemlist, Meta (Lead Ads and WhatsApp Business), Slack and Anthropic.
+          DIM Convert connects to Lemlist, Meta (Lead Ads and WhatsApp Business), Google (Google Ads and YouTube lead forms), Slack and Anthropic.
           Your use of those services is governed by their own terms, and their availability is
           outside our control. If one of them changes or withdraws access, parts of DIM Convert may stop
           working.

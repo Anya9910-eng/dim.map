@@ -87,15 +87,17 @@ export function ClientBillingBadge({
   }
 }
 
-const CHANNEL_LABELS = { lemlist: "Lemlist", meta: "Meta Ads", whatsapp: "WhatsApp" } as const;
+const CHANNEL_LABELS = { lemlist: "Lemlist", meta: "Meta Ads", whatsapp: "WhatsApp", google: "Google Ads", youtube: "YouTube" } as const;
 
 /** Where the lead came from. Absent on rows from before channels existed: those are Lemlist. */
-export function LeadChannelBadge({ channel }: { channel?: "lemlist" | "meta" | "whatsapp" | null }) {
+export function LeadChannelBadge({ channel }: { channel?: keyof typeof CHANNEL_LABELS | null }) {
   const c = channel ?? "lemlist";
   const styles = {
     lemlist: "bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700",
     meta: "bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-900/30 dark:text-sky-300 dark:border-sky-900/50",
     whatsapp: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-900/50",
+    google: "bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-900/50",
+    youtube: "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/30 dark:text-rose-300 dark:border-rose-900/50",
   }[c];
   return <Badge variant="secondary" className={`${styles} hover:opacity-100`}>{CHANNEL_LABELS[c]}</Badge>;
 }

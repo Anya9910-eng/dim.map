@@ -14,7 +14,7 @@ describe("email templates", () => {
     const html = welcomeHtml("Jane Doe");
     expect(html).toContain("Welcome to DIM Convert, Jane Doe");
     expect(html).toContain("https://draftfly.app/app");
-    expect(html).toContain("Connect Lemlist, Meta or WhatsApp");
+    expect(html).toContain("Connect your lead sources");
   });
 
   it("escapes HTML in a person's name so a name can't inject markup", () => {

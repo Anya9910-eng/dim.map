@@ -81,7 +81,7 @@ export default function DraftsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Lead Inbox</h1>
-          <p className="text-sm text-muted-foreground mt-1">Every lead from Lemlist, Meta and WhatsApp — qualified by AI, with a reply drafted and ready to approve.</p>
+          <p className="text-sm text-muted-foreground mt-1">Every lead from Lemlist, Meta, Google Ads, YouTube and WhatsApp — qualified by AI, with a reply drafted and ready to approve.</p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           <Select value={channelFilter} onValueChange={setChannelFilter}>
@@ -93,6 +93,8 @@ export default function DraftsPage() {
               <SelectItem value="lemlist">Lemlist</SelectItem>
               <SelectItem value="meta">Meta Ads</SelectItem>
               <SelectItem value="whatsapp">WhatsApp</SelectItem>
+              <SelectItem value="google">Google Ads</SelectItem>
+              <SelectItem value="youtube">YouTube</SelectItem>
             </SelectContent>
           </Select>
           <Select value={qualificationFilter} onValueChange={setQualificationFilter}>

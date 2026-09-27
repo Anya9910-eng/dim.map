@@ -7,11 +7,14 @@ import { pgEnum } from "drizzle-orm/pg-core";
  * still the default, so every row that predates this column reads as one.
  * `meta`: a Meta (Facebook / Instagram) Lead Ads form submission.
  * `whatsapp`: an inbound WhatsApp Business message.
+ * `google`: a Google Ads lead form (Search / Performance Max).
+ * `youtube`: a Google Ads lead form on a YouTube video campaign. Same webhook
+ * format as `google`; kept apart so the inbox shows where the lead was won.
  *
  * Shared by campaigns (which channel a campaign listens on) and drafts (which
  * channel a given lead arrived through).
  */
-export const leadChannelEnum = pgEnum("lead_channel", ["lemlist", "meta", "whatsapp"]);
+export const leadChannelEnum = pgEnum("lead_channel", ["lemlist", "meta", "whatsapp", "google", "youtube"]);
 export type LeadChannel = (typeof leadChannelEnum.enumValues)[number];
 
 /**

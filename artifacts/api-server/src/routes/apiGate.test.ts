@@ -148,7 +148,7 @@ describe("apiGate — routes with their own credential check stay reachable", ()
     expect(res.body).toHaveProperty("ok", false);
   });
 
-  it.each(["meta", "whatsapp"])("POST /api/webhooks/%s/:clientId reaches its own secret check, not the gate", async (source) => {
+  it.each(["meta", "whatsapp", "google", "youtube"])("POST /api/webhooks/%s/:clientId reaches its own secret check, not the gate", async (source) => {
     const res = await request(app).post(`/api/webhooks/${source}/1`).send({});
     // No secret supplied: requireClientWebhookSecret answers with `ok: false`,
     // which the gate's own 401 body does not carry.

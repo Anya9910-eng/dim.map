@@ -379,7 +379,7 @@ export default function Home() {
                 variants={fadeIn}
                 className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
               >
-                DIM Convert pulls in the leads from your cold email, Meta ads and WhatsApp, qualifies each buyer as hot, warm or cold, and drafts the reply — so your agents spend their day on viewings, not inboxes.
+                DIM Convert pulls in the leads from your cold email, Meta, Google and YouTube ads and WhatsApp, qualifies each buyer as hot, warm or cold, and drafts the reply — so your agents spend their day on viewings, not inboxes.
               </motion.p>
 
               <motion.div
@@ -424,7 +424,7 @@ export default function Home() {
               <div className="divide-y divide-foreground/5">
                 {[
                   { name: "Sara K.", src: "WhatsApp", text: "3-bed with sea view, budget 2.5M, buying in 3 months", grade: "Hot", time: "9:15" },
-                  { name: "Priya N.", src: "Cold email", text: "What yields are you seeing on the Q4 units?", grade: "Warm", time: "9:14" },
+                  { name: "Priya N.", src: "YouTube ad", text: "Saw the tour video. What yields on the Q4 units?", grade: "Warm", time: "9:14" },
                   { name: "Omar H.", src: "Meta ad", text: "2-bed off-plan, is there a payment plan?", grade: "Warm", time: "9:12" },
                 ].map((row, i) => (
                   <div key={i} className="flex items-center gap-4 px-6 py-4">
@@ -466,7 +466,7 @@ export default function Home() {
             </div>
             <div className="grid md:grid-cols-4 gap-8">
               {[
-                { icon: Inbox, title: "1. Capture", desc: "Replies to your cold email campaigns, Meta lead-form submissions and WhatsApp chats land in one inbox." },
+                { icon: Inbox, title: "1. Capture", desc: "Cold email replies, lead forms from Meta, Google Ads and YouTube, and WhatsApp chats land in one inbox." },
                 { icon: Filter, title: "2. Qualify", desc: "AI reads budget, timeline, financing and unit type, and grades every buyer hot, warm, cold or unqualified." },
                 { icon: Bot, title: "3. Draft", desc: "A reply in your project's voice — right channel, right length, never an invented price or handover date." },
                 { icon: CheckCircle, title: "4. Approve", desc: "One click sends it back on WhatsApp or email. Your agents follow up with the hot ones first." },
@@ -496,7 +496,7 @@ export default function Home() {
           <DemoSection />
         </div>
 
-        {/* Features — Meta campaigns */}
+        {/* Features — ad campaigns */}
         <section className="py-24 px-6 bg-foreground/[0.02] border-y border-foreground/5">
           <div className="container mx-auto max-w-6xl">
             <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -507,12 +507,12 @@ export default function Home() {
                 transition={{ duration: 0.6 }}
               >
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-mist text-forest dark:bg-sage/10 dark:text-sage text-xs font-medium mb-6">
-                  <Megaphone className="w-3.5 h-3.5" /> Meta campaigns
+                  <Megaphone className="w-3.5 h-3.5" /> Meta, Google &amp; YouTube ads
                 </div>
-                <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight [text-wrap:balance] mb-6">Your Meta leads, answered in minutes.</h2>
-                <p className="text-lg text-muted-foreground mb-6">A Facebook or Instagram lead that waits a day is a lead your competitor already called. DIM Convert picks up every lead-form submission the moment it lands, reads the answers, and has a first message ready before your agent has finished their coffee.</p>
+                <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight [text-wrap:balance] mb-6">Your ad leads, answered in minutes.</h2>
+                <p className="text-lg text-muted-foreground mb-6">A lead from Facebook, Instagram, Google or YouTube that waits a day is a lead your competitor already called. DIM Convert picks up every lead-form submission the moment it lands, reads the answers, and has a first message ready before your agent has finished their coffee.</p>
                 <ul className="space-y-3">
-                  {["Every Meta lead form, mapped to its launch", "Form answers read as buying signals", "First reply sent over WhatsApp from your own number"].map((item, i) => (
+                  {["Meta, Google Ads and YouTube lead forms, each mapped to its launch", "Form answers read as buying signals", "First reply sent over WhatsApp from your own number"].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm text-foreground/80">
                       <Shield className={`w-4 h-4 ${HIGHLIGHT}`} />
                       {item}
@@ -558,11 +558,13 @@ export default function Home() {
             >
               <GitMerge className={`w-10 h-10 mx-auto mb-6 ${HIGHLIGHT}`} />
               <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight [text-wrap:balance] mb-6">Where your buyers already are.</h2>
-              <p className="text-lg text-muted-foreground mb-12">Keep your ad accounts, your sequences and your WhatsApp number. DIM Convert sits on top as the layer that qualifies and answers. Lemlist, Meta and WhatsApp are live today; CRM sync is on the way.</p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <p className="text-lg text-muted-foreground mb-12">Keep your ad accounts, your sequences and your WhatsApp number. DIM Convert sits on top as the layer that qualifies and answers. Lemlist, Meta, Google Ads, YouTube and WhatsApp are live today; CRM sync is on the way.</p>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {[
                   { name: "Lemlist", status: "live" },
                   { name: "Meta Lead Ads", status: "live" },
+                  { name: "Google Ads", status: "live" },
+                  { name: "YouTube", status: "live" },
                   { name: "WhatsApp Business", status: "live" },
                   { name: "Slack", status: "live" },
                   { name: "HubSpot", status: "soon" },
@@ -595,7 +597,7 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 { metric: "< 5 min", label: "First response", desc: "Every lead gets a drafted reply the moment it arrives — nights and weekends included." },
-                { metric: "3", label: "Channels, one inbox", desc: "Cold email, Meta lead ads and WhatsApp side by side, each lead tagged by source." },
+                { metric: "5", label: "Lead sources, one inbox", desc: "Cold email, Meta, Google Ads, YouTube and WhatsApp side by side, each lead tagged by source." },
                 { metric: "Hot first", label: "Agents' time spent right", desc: "Leads graded by budget and timeline, so the team calls buyers before browsers." },
               ].map((stat, i) => (
                 <motion.div
@@ -641,7 +643,7 @@ export default function Home() {
                   name: "Starter",
                   price: "$49",
                   desc: "For a single project or launch, before rolling it out across your portfolio.",
-                  features: ["2 campaigns", "100 leads / mo", "Lemlist, Meta & WhatsApp", "AI lead qualification", "Replies in your project's voice", "Email support"],
+                  features: ["2 campaigns", "100 leads / mo", "All 5 lead sources", "AI lead qualification", "Replies in your project's voice", "Email support"],
                   cta: "Start free trial",
                   highlight: false,
                 },
@@ -649,7 +651,7 @@ export default function Home() {
                   name: "Growth",
                   price: "$149",
                   desc: "For developers and brokers running several launches and ad sets at once.",
-                  features: ["10 campaigns", "500 leads / mo", "Lemlist, Meta & WhatsApp", "AI lead qualification", "Learns from your approved replies", "Priority support"],
+                  features: ["10 campaigns", "500 leads / mo", "All 5 lead sources", "AI lead qualification", "Learns from your approved replies", "Priority support"],
                   cta: "Start free trial",
                   highlight: true,
                 },
@@ -823,11 +825,11 @@ export default function Home() {
 const FAQ = [
   {
     q: "How does the free trial work?",
-    a: "Sign up with your email — no card — and you get three days on Starter's limits: two active campaigns and a hundred leads. Connect Lemlist, a Meta lead form or your WhatsApp number, describe your project in a persona, switch a campaign on, and the next lead is qualified with a reply drafted. When the three days are up, pick a plan to carry on; nothing you set up is lost.",
+    a: "Sign up with your email — no card — and you get three days on Starter's limits: two active campaigns and a hundred leads. Connect Lemlist, a Meta, Google Ads or YouTube lead form, or your WhatsApp number, describe your project in a persona, switch a campaign on, and the next lead is qualified with a reply drafted. When the three days are up, pick a plan to carry on; nothing you set up is lost.",
   },
   {
     q: "Who is DIM Convert for?",
-    a: "Property developers and real-estate brokers who generate leads from outbound email, Meta (Facebook and Instagram) lead ads and WhatsApp — and lose buyers because nobody answers fast enough, or because agents spend their day on tyre-kickers.",
+    a: "Property developers and real-estate brokers who generate leads from outbound email, Meta (Facebook and Instagram), Google Ads and YouTube lead ads, and WhatsApp — and lose buyers because nobody answers fast enough, or because agents spend their day on tyre-kickers.",
   },
   {
     q: "How does lead qualification work?",
@@ -835,15 +837,15 @@ const FAQ = [
   },
   {
     q: "Which channels does it work with?",
-    a: "Lemlist for cold email and LinkedIn replies, Meta Lead Ads for Facebook and Instagram forms, and WhatsApp Business for inbound chats — all live today. Approved replies go back out the way the lead came in: through Lemlist for email, and from your own WhatsApp Business number for WhatsApp and Meta leads. CRM sync is on the roadmap.",
+    a: "Lemlist for cold email and LinkedIn replies; Meta Lead Ads for Facebook and Instagram forms; Google Ads lead forms, including on YouTube video campaigns; and WhatsApp Business for inbound chats — all live today. Approved replies go back through Lemlist for email leads, and from your own WhatsApp Business number for WhatsApp chats and ad leads who left a phone number. CRM sync is on the roadmap.",
   },
   {
     q: "Does it replace my sales agents?",
     a: "No. DIM Convert does the first touch and the triage; your agents do the viewings and the closing. Every reply waits for a person to approve it before it is sent, and the AI never invents prices, availability, payment plans or handover dates — if it doesn't know, it offers a call.",
   },
   {
-    q: "Can I run Meta campaigns through it?",
-    a: "Yes. Connect each Meta lead form to a campaign in DIM Convert, and every submission arrives with the form answers attached — ready to qualify and answer. Forward leads from Meta directly, or through n8n, Zapier or Make if you already use them.",
+    q: "Can I run Meta, Google and YouTube ad campaigns through it?",
+    a: "Yes. Connect each lead form — Meta Instant Forms, or Google Ads lead forms on Search, Performance Max and YouTube — to a campaign in DIM Convert, and every submission arrives with the form answers attached, ready to qualify and answer. Google and YouTube forms connect directly with the webhook URL from your Settings; Meta connects directly or through n8n, Zapier or Make.",
   },
   {
     q: "Is my buyers' data secure?",

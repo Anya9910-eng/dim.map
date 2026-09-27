@@ -11,6 +11,9 @@ import {
   unsendableReason,
   sendApprovedReply,
   sendWhatsAppText,
+  parseGooglePayload,
+  isGoogleTestLead,
+  channelLabel,
 } from "./leadChannels";
 import { sendReply } from "./lemlist";
 import { parseQualification } from "./claude";
@@ -69,6 +72,56 @@ describe("parseMetaPayload", () => {
   it("ignores a body with nothing that identifies a person", () => {
     expect(parseMetaPayload({ hello: "world" }).leads).toEqual([]);
     expect(parseMetaPayload(null).leads).toEqual([]);
+  });
+});
+
+describe("parseGooglePayload", () => {
+  const googleLead = {
+    lead_id: "TeSter-123",
+    api_version: "1.0",
+    form_id: 40000000,
+    campaign_id: 12345,
+    adgroup_id: 777,
+    google_key: "secret",
+    is_test: false,
+    user_column_data: [
+      { column_name: "Full Name", string_value: "Lina Park", column_id: "FULL_NAME" },
+      { column_name: "User Email", string_value: "lina@example.com", column_id: "EMAIL" },
+      { column_name: "User Phone", string_value: "+44 7700 900123", column_id: "PHONE_NUMBER" },
+      { column_name: "What is your budget?", string_value: "AED 2M", column_id: "what_is_your_budget?" },
+    ],
+  };
+
+  it("reads a Google Ads lead-form webhook", () => {
+    expect(parseGooglePayload(googleLead, "google")).toEqual([expect.objectContaining({
+      channel: "google",
+      externalLeadId: "TeSter-123",
+      firstName: "Lina",
+      lastName: "Park",
+      email: "lina@example.com",
+      phone: "447700900123",
+      campaignRefs: ["40000000", "12345", "777"],
+    })]);
+    expect(parseGooglePayload(googleLead, "google")[0].message).toContain("What is your budget?: AED 2M");
+  });
+
+  it("records the same form as a YouTube lead when it arrives on the YouTube URL", () => {
+    const [lead] = parseGooglePayload(googleLead, "youtube");
+    expect(lead.channel).toBe("youtube");
+    expect(lead.message).toContain("YouTube ad");
+    expect(channelLabel("youtube")).toBe("YouTube");
+    expect(channelLabel("google")).toBe("Google Ads");
+  });
+
+  it("spots Google's test leads", () => {
+    expect(isGoogleTestLead({ ...googleLead, is_test: true })).toBe(true);
+    expect(isGoogleTestLead(googleLead)).toBe(false);
+  });
+
+  it("accepts a flat payload and ignores an empty one", () => {
+    expect(parseGooglePayload({ name: "Ana Ruiz", phone: "+34 600 000 000", campaignId: "g1" }, "google")[0])
+      .toMatchObject({ channel: "google", firstName: "Ana", phone: "34600000000", campaignRefs: ["g1"] });
+    expect(parseGooglePayload({ user_column_data: [] }, "google")).toEqual([]);
   });
 });
 
@@ -136,6 +189,12 @@ describe("unsendableReason", () => {
   it("refuses a WhatsApp draft without credentials", () => {
     expect(unsendableReason({ ...base, channel: "whatsapp" }, { whatsappPhoneNumberId: null, whatsappAccessToken: null }))
       .toMatch(/WhatsApp sending is not set up/);
+  });
+
+  it("sends a Google or YouTube lead with a number over WhatsApp", () => {
+    expect(unsendableReason({ ...base, channel: "youtube" }, WA_CLIENT)).toBeNull();
+    expect(unsendableReason({ ...base, channel: "google", prospectPhone: null, prospectEmail: "a@b.co" }, WA_CLIENT))
+      .toMatch(/no phone number/);
   });
 
   it("refuses a Meta lead with no phone number", () => {

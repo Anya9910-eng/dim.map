@@ -25,6 +25,8 @@ import {
   channelLabel,
   parseMetaPayload,
   parseWhatsAppPayload,
+  parseGooglePayload,
+  isGoogleTestLead,
   type IncomingLead,
   type LeadChannel,
 } from "../lib/leadChannels";
@@ -377,7 +379,7 @@ async function processLemlistReply(
 }
 
 /** Where a channel's events are filed in the client-visible log. */
-function logSourceFor(channel: LeadChannel): "lemlist" | "meta" | "whatsapp" {
+function logSourceFor(channel: LeadChannel): LeadChannel {
   return channel;
 }
 
@@ -606,7 +608,7 @@ async function processLead(params: {
     draftId: draft.id,
     leadId: leadRef,
     level: "info",
-    message: `${sourceLabel} ${lead.channel === "meta" ? "lead" : "reply"} from ${leadName} (${leadContact}) — draft generated (confidence: ${Math.round(draftResult.confidenceScore * 100)}%${qualificationNote})`,
+    message: `${sourceLabel} ${lead.channel === "lemlist" || lead.channel === "whatsapp" ? "reply" : "lead"} from ${leadName} (${leadContact}) — draft generated (confidence: ${Math.round(draftResult.confidenceScore * 100)}%${qualificationNote})`,
     source,
     generatedDraft: cleanDraft,
     metadata: JSON.stringify({
@@ -802,7 +804,7 @@ function verifyMetaSubscription(req: import("express").Request, res: import("exp
   res.status(403).json({ ok: false, error: "Verification failed" });
 }
 
-function receiveChannelWebhook(channel: "meta" | "whatsapp") {
+function receiveChannelWebhook(channel: "meta" | "whatsapp" | "google" | "youtube") {
   return (req: import("express").Request, res: import("express").Response): void => {
     const client = getWebhookClient(res);
     // Acknowledge first: Meta retries anything that is not a quick 200.
@@ -821,6 +823,19 @@ function receiveChannelWebhook(channel: "meta" | "whatsapp") {
           message: `Meta sent ${parsed.unresolvedLeadgenIds.length} lead notification(s) without the form answers (leadgen ids: ${parsed.unresolvedLeadgenIds.join(", ")}). Forward leads through n8n or Zapier with the lead's field_data included.`,
         });
       }
+    } else if (channel === "google" || channel === "youtube") {
+      // Google's "Send test data" button. Confirms the connection without
+      // spending a draft (or a slot of the monthly allowance) on a fake lead.
+      if (isGoogleTestLead(req.body)) {
+        void logEvent({
+          clientId: client.id,
+          level: "info",
+          source: channel,
+          message: `${channelLabel(channel)} test lead received — the lead form is connected. Test leads are not drafted.`,
+        });
+        return;
+      }
+      leads = parseGooglePayload(req.body, channel);
     } else {
       leads = parseWhatsAppPayload(req.body);
     }
@@ -838,5 +853,8 @@ router.get("/webhooks/meta/:clientId", requireClientWebhookSecret, verifyMetaSub
 router.post("/webhooks/meta/:clientId", requireClientWebhookSecret, receiveChannelWebhook("meta"));
 router.get("/webhooks/whatsapp/:clientId", requireClientWebhookSecret, verifyMetaSubscription);
 router.post("/webhooks/whatsapp/:clientId", requireClientWebhookSecret, receiveChannelWebhook("whatsapp"));
+// Google Ads lead forms, and the same forms on YouTube video campaigns.
+router.post("/webhooks/google/:clientId", requireClientWebhookSecret, receiveChannelWebhook("google"));
+router.post("/webhooks/youtube/:clientId", requireClientWebhookSecret, receiveChannelWebhook("youtube"));
 
 export default router;

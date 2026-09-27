@@ -59,7 +59,7 @@ function webhookUrl(
   req: import("express").Request,
   clientId: number,
   secret: string | null,
-  source: "lemlist" | "meta" | "whatsapp" = "lemlist",
+  source: "lemlist" | "meta" | "whatsapp" | "google" | "youtube" = "lemlist",
 ): string | null {
   if (!secret) return null;
   const configured = process.env["APP_BASE_URL"]?.trim().replace(/\/+$/, "");
@@ -110,6 +110,9 @@ async function buildSettings(req: import("express").Request, clientId: number) {
       // also asks for a verify token: it is this same secret.
       metaUrl: webhookUrl(req, client.id, client.lemlistWebhookSecret, "meta"),
       whatsappUrl: webhookUrl(req, client.id, client.lemlistWebhookSecret, "whatsapp"),
+      // Google Ads lead forms; YouTube video campaigns use the same forms.
+      googleUrl: webhookUrl(req, client.id, client.lemlistWebhookSecret, "google"),
+      youtubeUrl: webhookUrl(req, client.id, client.lemlistWebhookSecret, "youtube"),
     },
     whatsapp: {
       phoneNumberId: client.whatsappPhoneNumberId,

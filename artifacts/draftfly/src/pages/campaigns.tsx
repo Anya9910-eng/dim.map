@@ -36,7 +36,7 @@ export default function CampaignsPage() {
   const [formData, setFormData] = useState({
     clientId: ownClientId != null ? String(ownClientId) : "",
     name: "",
-    channel: "lemlist" as "lemlist" | "meta" | "whatsapp",
+    channel: "lemlist" as "lemlist" | "meta" | "whatsapp" | "google" | "youtube",
     lemlistCampaignId: "",
     personaId: "",
     tone: "",
@@ -133,7 +133,7 @@ export default function CampaignsPage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Campaigns</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Connect your cold email (Lemlist), Meta lead ads and WhatsApp to an AI sales persona. Switch one on to have it qualify leads and draft replies.
+            Connect your cold email (Lemlist), Meta, Google Ads and YouTube lead forms, and WhatsApp to an AI sales persona. Switch one on to have it qualify leads and draft replies.
           </p>
           {activeLimit != null && (
             <Badge variant={atCap ? "destructive" : "outline"} className="mt-2 font-normal">
@@ -176,6 +176,8 @@ export default function CampaignsPage() {
                   <SelectContent>
                     <SelectItem value="lemlist">Lemlist — cold email / LinkedIn replies</SelectItem>
                     <SelectItem value="meta">Meta — Facebook / Instagram lead ads</SelectItem>
+                    <SelectItem value="google">Google Ads — lead forms</SelectItem>
+                    <SelectItem value="youtube">YouTube — video ad lead forms</SelectItem>
                     <SelectItem value="whatsapp">WhatsApp — inbound chats</SelectItem>
                   </SelectContent>
                 </Select>
@@ -235,19 +237,21 @@ export default function CampaignsPage() {
               ) : (
               <div className="space-y-2">
                 <Label htmlFor="lemlistCampaignId">
-                  {formData.channel === "meta" ? "Meta lead form ID" : "WhatsApp label"}
+                  {formData.channel === "meta" ? "Meta lead form ID" : formData.channel === "whatsapp" ? "WhatsApp label" : "Google Ads lead form ID"}
                 </Label>
                 <Input
                   id="lemlistCampaignId"
                   required
-                  placeholder={formData.channel === "meta" ? "e.g. 1234567890123456" : "e.g. main-sales-line"}
+                  placeholder={formData.channel === "whatsapp" ? "e.g. main-sales-line" : "e.g. 1234567890123456"}
                   value={formData.lemlistCampaignId}
                   onChange={e => setFormData({ ...formData, lemlistCampaignId: e.target.value })}
                 />
                 <p className="text-[11px] text-muted-foreground">
                   {formData.channel === "meta"
                     ? "Find it in Meta Ads Manager → Instant Forms. The ad ID or campaign ID also works. If you run only one Meta campaign here, every Meta lead goes to it."
-                    : "Any name you like, or your WhatsApp phone number ID. If you run only one WhatsApp campaign here, every WhatsApp chat goes to it."}
+                    : formData.channel === "whatsapp"
+                      ? "Any name you like, or your WhatsApp phone number ID. If you run only one WhatsApp campaign here, every WhatsApp chat goes to it."
+                      : `Find it in Google Ads → Assets → Lead forms. The campaign ID also works. If you run only one ${formData.channel === "youtube" ? "YouTube" : "Google Ads"} campaign here, every such lead goes to it.`}
                   {" "}The webhook URL is in <Link href="/settings" className="underline">Settings</Link>.
                 </p>
               </div>

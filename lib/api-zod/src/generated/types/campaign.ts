@@ -15,7 +15,7 @@ export interface Campaign {
   name: string;
   /** Lead source the campaign listens on. Defaults to lemlist. */
   channel: CampaignChannel;
-  /** The campaign's id in its source system — the Lemlist campaign id, a Meta Lead Ads form id, or a label for a WhatsApp number. */
+  /** The campaign's id in its source system — the Lemlist campaign id, a Meta or Google Ads lead form id, or a label for a WhatsApp number. */
   lemlistCampaignId: string;
   /** @nullable */
   tone?: string | null;

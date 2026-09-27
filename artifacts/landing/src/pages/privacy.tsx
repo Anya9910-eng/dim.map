@@ -9,8 +9,8 @@ export default function Privacy() {
   return (
     <LegalLayout title="Privacy Policy" updated={UPDATED}>
       <p>
-        DIM Convert receives the leads your campaigns generate — replies to your outbound email, Meta
-        lead-form submissions and WhatsApp messages — qualifies them, and drafts replies for a person
+        DIM Convert receives the leads your campaigns generate — replies to your outbound email, lead-form
+        submissions from Meta, Google Ads and YouTube, and WhatsApp messages — qualifies them, and drafts replies for a person
         to approve. Doing that means handling two different kinds of personal data: information about
         you, our customer, and information about your leads. This policy covers both, and is explicit
         about which is which.
@@ -57,6 +57,7 @@ export default function Privacy() {
           rows={[
             ["Anthropic", "Qualifies leads and generates the drafts. Receives the lead's message and details. Does not train on it."],
             ["Meta (WhatsApp Business, Lead Ads)", "Your own accounts. Send us leads and messages, and deliver approved WhatsApp replies."],
+            ["Google (Google Ads, YouTube)", "Your own account. Sends us lead-form submissions from your Google Ads and YouTube campaigns."],
             ["Lemlist", "Your own account. Sends us replies and receives approved responses."],
             ["Slack", "Optional. Delivers approval cards. Receives the draft and lead details."],
             ["Contabo", "Hosting. Servers located in Germany."],

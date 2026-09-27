@@ -38,7 +38,7 @@ export interface DraftParams {
   leadCountry?: string;
   incomingReply: string;
   /** Where the lead wrote from. Shapes length and format; email when omitted. */
-  channel?: "lemlist" | "meta" | "whatsapp";
+  channel?: "lemlist" | "meta" | "whatsapp" | "google" | "youtube";
 
   personaName: string;
   productDescription: string;
@@ -187,6 +187,8 @@ export async function testConnection(): Promise<{ ok: boolean; tokens?: number; 
 const CHANNEL_GUIDANCE: Record<NonNullable<DraftParams["channel"]>, string> = {
   lemlist: "The lead replied to a cold email or LinkedIn campaign. Write an email-style reply.",
   meta: "The lead filled in a Meta (Facebook / Instagram) Lead Ads form, so they asked to be contacted but have not spoken to anyone yet. Write a short first message that thanks them, references what they asked about, and moves them to a viewing or a call. It will most likely be sent over WhatsApp.",
+  google: "The lead filled in a Google Ads lead form, so they asked to be contacted but have not spoken to anyone yet. Write a short first message that thanks them, references what they asked about, and moves them to a viewing or a call. It will be sent over WhatsApp if they left a number, otherwise by email.",
+  youtube: "The lead filled in a lead form on a YouTube video ad, so they have seen the project on video and asked to be contacted. Write a short, friendly first message that picks up from the video, references what they asked about, and moves them to a viewing or a call. It will be sent over WhatsApp if they left a number, otherwise by email.",
   whatsapp: "The lead is chatting on WhatsApp. Write like a person on WhatsApp: short, warm, plain text, no email sign-off, at most three short paragraphs.",
 };
 

@@ -16,4 +16,6 @@ export const CampaignChannel = {
   lemlist: 'lemlist',
   meta: 'meta',
   whatsapp: 'whatsapp',
+  google: 'google',
+  youtube: 'youtube',
 } as const;

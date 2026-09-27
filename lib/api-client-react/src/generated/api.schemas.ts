@@ -227,6 +227,8 @@ export const CampaignChannel = {
   lemlist: 'lemlist',
   meta: 'meta',
   whatsapp: 'whatsapp',
+  google: 'google',
+  youtube: 'youtube',
 } as const;
 
 export interface Campaign {
@@ -237,7 +239,7 @@ export interface Campaign {
   name: string;
   /** Lead source the campaign listens on. Defaults to lemlist. */
   channel: CampaignChannel;
-  /** The campaign's id in its source system — the Lemlist campaign id, a Meta Lead Ads form id, or a label for a WhatsApp number. */
+  /** The campaign's id in its source system — the Lemlist campaign id, a Meta or Google Ads lead form id, or a label for a WhatsApp number. */
   lemlistCampaignId: string;
   /** @nullable */
   tone?: string | null;
@@ -260,6 +262,8 @@ export const CampaignInputChannel = {
   lemlist: 'lemlist',
   meta: 'meta',
   whatsapp: 'whatsapp',
+  google: 'google',
+  youtube: 'youtube',
 } as const;
 
 export interface CampaignInput {
@@ -286,6 +290,8 @@ export const CampaignUpdateChannel = {
   lemlist: 'lemlist',
   meta: 'meta',
   whatsapp: 'whatsapp',
+  google: 'google',
+  youtube: 'youtube',
 } as const;
 
 export interface CampaignUpdate {
@@ -318,6 +324,8 @@ export const DraftChannel = {
   lemlist: 'lemlist',
   meta: 'meta',
   whatsapp: 'whatsapp',
+  google: 'google',
+  youtube: 'youtube',
 } as const;
 
 /**
@@ -412,6 +420,8 @@ export const LogEntrySource = {
   system: 'system',
   meta: 'meta',
   whatsapp: 'whatsapp',
+  google: 'google',
+  youtube: 'youtube',
 } as const;
 
 /**
@@ -581,6 +591,8 @@ export const ListLogsSource = {
   system: 'system',
   meta: 'meta',
   whatsapp: 'whatsapp',
+  google: 'google',
+  youtube: 'youtube',
 } as const;
 
 export type ListSetupItemsParams = {

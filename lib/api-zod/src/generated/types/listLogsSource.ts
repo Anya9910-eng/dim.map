@@ -17,4 +17,6 @@ export const ListLogsSource = {
   system: 'system',
   meta: 'meta',
   whatsapp: 'whatsapp',
+  google: 'google',
+  youtube: 'youtube',
 } as const;

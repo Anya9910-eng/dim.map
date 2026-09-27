@@ -10,7 +10,7 @@ import type { Client } from "@workspace/db";
 import { sendReply } from "./lemlist";
 import { logger } from "./logger";
 
-export type LeadChannel = "lemlist" | "meta" | "whatsapp";
+export type LeadChannel = "lemlist" | "meta" | "whatsapp" | "google" | "youtube";
 
 /** One lead, whatever it arrived through. Empty strings mean "not given". */
 export interface IncomingLead {
@@ -118,11 +118,11 @@ function metaLeadFromFieldData(lead: Json, ids: Json): IncomingLead {
 }
 
 /** A flat payload an automation built by hand: `{ firstName, phone, message, campaignId, … }`. */
-function metaLeadFromFlat(body: Json): IncomingLead {
+function metaLeadFromFlat(body: Json, channel: LeadChannel = "meta"): IncomingLead {
   const full = pick(body, "fullName", "full_name", "name");
   const names = full ? splitName(full) : { firstName: "", lastName: "" };
   return {
-    channel: "meta",
+    channel,
     externalLeadId: pick(body, "leadId", "leadgen_id", "id"),
     campaignRefs: [pick(body, "formId", "form_id"), pick(body, "campaignId", "campaign_id"), pick(body, "adId", "ad_id")].filter(Boolean),
     firstName: pick(body, "firstName", "first_name") || names.firstName,
@@ -175,6 +175,69 @@ export function parseMetaPayload(body: unknown): ParsedMetaPayload {
   const flat = metaLeadFromFlat(body);
   if (flat.email || flat.phone || flat.firstName) result.leads.push(flat);
   return result;
+}
+
+// ─── Google Ads & YouTube lead forms ────────────────────────────────────────
+
+/** Google's fixed column ids for standard lead-form questions. */
+const GOOGLE_STANDARD_COLUMNS: Record<string, keyof IncomingLead | "full_name"> = {
+  FULL_NAME: "full_name",
+  FIRST_NAME: "firstName",
+  LAST_NAME: "lastName",
+  EMAIL: "email",
+  WORK_EMAIL: "email",
+  PHONE_NUMBER: "phone",
+  WORK_PHONE: "phone",
+  COMPANY_NAME: "company",
+  JOB_TITLE: "jobTitle",
+  COUNTRY: "country",
+};
+
+/**
+ * A Google Ads lead-form webhook: `{ lead_id, form_id, campaign_id,
+ * adgroup_id, creative_id, user_column_data: [{ column_id, column_name,
+ * string_value }], is_test, google_key }`. YouTube video campaigns use the
+ * same lead forms and the same payload, so `channel` only records which of the
+ * two URLs the client pointed the form at. A flat payload from an automation
+ * is accepted too.
+ */
+export function parseGooglePayload(body: unknown, channel: "google" | "youtube"): IncomingLead[] {
+  if (!isObj(body)) return [];
+  if (!Array.isArray(body["user_column_data"])) {
+    const flat = metaLeadFromFlat(body, channel);
+    return flat.email || flat.phone || flat.firstName ? [flat] : [];
+  }
+
+  const out: IncomingLead = {
+    channel,
+    externalLeadId: pick(body, "lead_id"),
+    campaignRefs: [pick(body, "form_id"), pick(body, "campaign_id"), pick(body, "adgroup_id"), pick(body, "creative_id")].filter(Boolean),
+    firstName: "", lastName: "", email: "", phone: "", company: "", jobTitle: "", country: "", message: "",
+  };
+  const answers: string[] = [];
+  let fullName = "";
+  for (const col of arr(body["user_column_data"])) {
+    if (!isObj(col)) continue;
+    const id = str(col["column_id"]).toUpperCase();
+    const value = str(col["string_value"]);
+    if (!value) continue;
+    const target = GOOGLE_STANDARD_COLUMNS[id];
+    if (target === "full_name") fullName = value;
+    else if (target) (out[target] as string) = value;
+    else answers.push(`${str(col["column_name"]) || humanize(str(col["column_id"]))}: ${value}`);
+  }
+  if (fullName && !out.firstName) Object.assign(out, splitName(fullName));
+  out.phone = normalizePhone(out.phone);
+  const where = channel === "youtube" ? "a YouTube ad" : "a Google ad";
+  out.message = answers.length
+    ? `Submitted a lead form on ${where}:\n${answers.join("\n")}`
+    : `Submitted a lead form on ${where} asking to be contacted.`;
+  return out.email || out.phone || out.firstName ? [out] : [];
+}
+
+/** Google marks leads sent with the "Send test data" button. */
+export function isGoogleTestLead(body: unknown): boolean {
+  return isObj(body) && body["is_test"] === true;
 }
 
 // ─── WhatsApp ───────────────────────────────────────────────────────────────
@@ -377,5 +440,11 @@ export async function sendApprovedReply(params: {
 
 /** Human name of a channel, for log lines and messages. */
 export function channelLabel(channel: LeadChannel | null | undefined): string {
-  return channel === "meta" ? "Meta" : channel === "whatsapp" ? "WhatsApp" : "Lemlist";
+  switch (channel) {
+    case "meta": return "Meta";
+    case "whatsapp": return "WhatsApp";
+    case "google": return "Google Ads";
+    case "youtube": return "YouTube";
+    default: return "Lemlist";
+  }
 }

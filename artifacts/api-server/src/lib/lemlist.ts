@@ -89,9 +89,13 @@ function readProvidedSecret(req: ExpressRequest): {
 } {
   const header = req.headers["x-webhook-secret"];
   const query = req.query["secret"];
+  // Google Ads lead forms have their own "Key" field, delivered in the body
+  // as google_key. The client sets it to this same secret.
+  const googleKey = (req.body as Record<string, unknown> | undefined)?.["google_key"];
   const fromHeader = typeof header === "string" && header.length > 0;
   const fromQuery = typeof query === "string" && query.length > 0;
-  const value = fromHeader ? (header as string) : fromQuery ? (query as string) : null;
+  const fromBody = typeof googleKey === "string" && googleKey.length > 0;
+  const value = fromHeader ? (header as string) : fromQuery ? (query as string) : fromBody ? (googleKey as string) : null;
   return { value, fromHeader, fromQuery };
 }
 

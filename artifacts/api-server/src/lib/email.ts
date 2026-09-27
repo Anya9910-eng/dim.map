@@ -136,7 +136,7 @@ export function welcomeHtml(name: string): string {
     `<h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;">Welcome to DIM Convert, ${esc(name)}</h1>
      <p style="margin:0 0 8px;color:#4b5563;">Your 3-day free trial is live — no card needed. Here's how to get your first lead qualified and answered in a few minutes:</p>
      <table role="presentation" cellpadding="0" cellspacing="0" style="margin:16px 0 8px;">
-       ${step(1, "Connect Lemlist, Meta or WhatsApp", "Link your cold-email account, your Meta lead forms or your WhatsApp Business number so every new lead flows into DIM Convert.")}
+       ${step(1, "Connect your lead sources", "Link your cold-email account, your Meta, Google Ads or YouTube lead forms, or your WhatsApp Business number so every new lead flows into DIM Convert.")}
        ${step(2, "Add a sales persona", "Tell the AI about your project — units, price range, payment plans, tone — so every reply sounds like your best agent.")}
        ${step(3, "Turn a campaign on", "The next lead is qualified hot, warm or cold, with a reply drafted for your one-click approval.")}
      </table>
@@ -210,7 +210,7 @@ export async function sendWelcomeEmail(email: string, name: string): Promise<Sen
       "",
       "Your 3-day free trial is live — no card needed. Three steps to your first qualified lead:",
       "",
-      "1. Connect Lemlist, Meta lead ads or WhatsApp so new leads flow in.",
+      "1. Connect Lemlist, your Meta, Google Ads or YouTube lead forms, or WhatsApp so new leads flow in.",
       "2. Add a sales persona — your project, pricing rules and tone.",
       "3. Turn a campaign on. The next lead is qualified and gets a reply drafted for your one-click approval.",
       "",

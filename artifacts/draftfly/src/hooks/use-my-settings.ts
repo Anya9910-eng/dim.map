@@ -11,6 +11,8 @@ export interface MySettings {
     /** Same secret, per lead source. Absent from servers older than Meta/WhatsApp support. */
     metaUrl?: string | null;
     whatsappUrl?: string | null;
+    googleUrl?: string | null;
+    youtubeUrl?: string | null;
   };
   whatsapp?: { phoneNumberId: string | null; hasAccessToken: boolean; tokenHint: string | null };
   slack: { channel: string | null };
