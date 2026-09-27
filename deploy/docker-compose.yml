@@ -1,0 +1,86 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: draftfly
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/.env}
+      POSTGRES_DB: draftfly
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U draftfly -d draftfly"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    # Bound to the bridge gateway, not a public address — a host reverse proxy
+    # (nginx/Caddy) terminates TLS. Unlike a 127.0.0.1 binding, this one is
+    # served by iptables DNAT, so it survives the docker-proxy process dying.
+    # The subnet is pinned below so this address stays valid across recreates.
+    ports:
+      - "172.18.0.1:8080:8080"
+    environment:
+      DATABASE_URL: postgres://draftfly:${POSTGRES_PASSWORD}@db:5432/draftfly
+      PORT: "8080"
+      NODE_ENV: production
+      STATIC_APP_DIR: /srv/static/app
+      STATIC_LANDING_DIR: /srv/static/landing
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # One-off schema sync: docker compose --profile setup run --rm migrate
+  migrate:
+    profiles: ["setup"]
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      target: build
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://draftfly:${POSTGRES_PASSWORD}@db:5432/draftfly
+    command: ["pnpm", "--filter", "@workspace/db", "run", "migrate"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Optional TLS proxy for servers with free 80/443 ports:
+  #   docker compose --profile caddy up -d
+  # Skip it when the host already runs nginx — use deploy/nginx-draftfly.conf instead.
+  caddy:
+    profiles: ["caddy"]
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:
+
+# Pinned so the gateway address used in the app's port binding (and in the
+# nginx proxy_pass upstream) cannot shift to another subnet after a
+# `docker compose down` or a host reboot.
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1

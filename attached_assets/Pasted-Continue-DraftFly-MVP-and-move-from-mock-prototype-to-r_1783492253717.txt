@@ -1,0 +1,172 @@
+Continue DraftFly MVP and move from mock prototype to real integration-ready product.
+
+Important:
+Do not hardcode any secrets.
+Do not show secrets in UI.
+Do not store real API keys in frontend code.
+Use environment variables only via Replit Secrets.
+
+Goal:
+Prepare DraftFly for real working integrations with:
+- Slack App
+- Lemlist API
+- Anthropic Claude API
+- n8n webhook or internal webhook routes
+- database/config layer
+
+Required environment variables:
+SLACK_BOT_TOKEN
+SLACK_SIGNING_SECRET
+SLACK_APP_ID
+SLACK_CLIENT_ID
+SLACK_CLIENT_SECRET
+LEMLIST_API_KEY
+ANTHROPIC_API_KEY
+DATABASE_URL
+APP_BASE_URL
+
+Build real backend integration structure:
+
+1. Slack Integration
+Create backend routes for:
+- POST /api/slack/actions
+- POST /api/slack/commands
+- POST /api/slack/test-message
+
+Requirements:
+- Verify Slack signing secret.
+- Read SLACK_BOT_TOKEN from environment variables.
+- Send test approval message to configured Slack channel.
+- Handle Send / Edit / Discard button payloads.
+- Log all button actions.
+
+2. Lemlist Integration
+Create backend routes/services for:
+- POST /api/webhooks/lemlist/reply
+- GET /api/lemlist/campaigns
+- POST /api/lemlist/send-reply
+
+Requirements:
+- Read LEMLIST_API_KEY from environment variables.
+- Receive lead reply webhook.
+- Extract leadId, campaignId, email/linkedin source, reply text, lead profile fields.
+- Fetch or mock conversation history if API is not connected yet.
+- Send approved reply back through Lemlist API when Send is confirmed.
+
+3. Claude Integration
+Create backend service:
+- generateDraftReply()
+
+Requirements:
+- Read ANTHROPIC_API_KEY from environment variables.
+- Generate reply based on:
+  - campaign persona
+  - reply rules
+  - lead profile
+  - region/nationality rules
+  - conversation history
+  - incoming reply
+- Return draft, confidence score, detected intent and suggested next action.
+
+4. Database / Config Layer
+Add database-ready schema for:
+
+Clients:
+- id
+- companyName
+- lemlistApiKeyEncrypted or lemlistApiKeyRef
+- slackWorkspaceId
+- slackBotTokenEncrypted or slackBotTokenRef
+- approvalChannelId
+- defaultMode
+
+Campaigns:
+- id
+- clientId
+- lemlistCampaignId
+- campaignName
+- personaId
+- mode
+
+Personas:
+- id
+- clientId
+- name
+- productDescription
+- targetAudience
+- toneOfVoice
+- commonObjections
+- CTA
+- qualificationRules
+- regionRules
+
+Drafts:
+- id
+- clientId
+- campaignId
+- leadId
+- incomingMessage
+- generatedDraft
+- finalReply
+- status: pending / sent / edited / discarded
+- confidenceScore
+- createdAt
+- updatedAt
+
+Logs:
+- id
+- clientId
+- eventType
+- payloadSummary
+- status
+- timestamp
+
+If full database setup is not available yet, create a clean abstraction layer so we can switch from mock storage to PostgreSQL later.
+
+5. Operator Dashboard
+Keep internal dashboard for our team only.
+
+Show:
+- integration status
+- connected Slack workspace
+- approval channel
+- Lemlist campaign mapping
+- personas
+- draft queue
+- action logs
+- test flow
+
+6. Client Experience
+Do not create a full client dashboard.
+Client works through Slack only.
+
+Client flow:
+- Install Slack app.
+- Add bot to approval channel.
+- Provide Lemlist access.
+- Confirm campaign/persona rules.
+- Receive drafts in Slack.
+- Click Send / Edit / Discard.
+
+7. Safety
+- Draft Mode default.
+- Auto Mode disabled by default.
+- No direct LinkedIn integration.
+- Lemlist handles LinkedIn/email layer.
+- All real sending actions must be triggered only after Send confirmation.
+- Log every real action.
+- Never expose API keys in frontend.
+
+8. Testing
+Add test buttons in operator dashboard:
+- Test Slack connection
+- Send test Slack approval card
+- Test Claude draft generation
+- Test Lemlist API connection
+- Simulate Lemlist webhook
+- Full test flow
+
+Important:
+Use real backend routes and real environment variable structure.
+Use mock fallback only when secrets are missing.
+Make the app ready to become a real working beta after we add secrets in Replit Secrets.

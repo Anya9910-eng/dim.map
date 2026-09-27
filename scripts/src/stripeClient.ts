@@ -1,0 +1,71 @@
+import Stripe from "stripe";
+import { StripeSync } from "stripe-replit-sync";
+
+async function getStripeCredentials(): Promise<{ secretKey: string; webhookSecret?: string }> {
+  // 1. Try Replit Connectors API (OAuth-based connector)
+  const hostname = process.env.REPLIT_CONNECTORS_HOSTNAME;
+  const xReplitToken = process.env.REPL_IDENTITY
+    ? "repl " + process.env.REPL_IDENTITY
+    : process.env.WEB_REPL_RENEWAL
+      ? "depl " + process.env.WEB_REPL_RENEWAL
+      : null;
+
+  if (hostname && xReplitToken) {
+    try {
+      const resp = await fetch(
+        `https://${hostname}/api/v2/connection?include_secrets=true&connector_names=stripe`,
+        {
+          headers: { Accept: "application/json", "X-Replit-Token": xReplitToken },
+          signal: AbortSignal.timeout(5_000),
+        },
+      );
+
+      if (resp.ok) {
+        const data = (await resp.json()) as {
+          items?: Array<{ settings?: { secret_key?: string; webhook_secret?: string } }>;
+        };
+        const settings = data.items?.[0]?.settings;
+        if (settings?.secret_key) {
+          return {
+            secretKey: settings.secret_key,
+            webhookSecret: settings.webhook_secret,
+          };
+        }
+      }
+    } catch {
+      // fall through to env var check
+    }
+  }
+
+  // 2. Fall back to env vars (Replit marketplace integration injects these)
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  if (secretKey) {
+    return {
+      secretKey,
+      webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+    };
+  }
+
+  throw new Error(
+    "Stripe not connected. Set STRIPE_SECRET_KEY or connect Stripe via the Integrations tab.",
+  );
+}
+
+export async function getUncachableStripeClient(): Promise<Stripe> {
+  const { secretKey } = await getStripeCredentials();
+  return new Stripe(secretKey);
+}
+
+export async function getStripeSync(): Promise<StripeSync> {
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    throw new Error("DATABASE_URL environment variable is required");
+  }
+
+  const { secretKey, webhookSecret } = await getStripeCredentials();
+  return new StripeSync({
+    poolConfig: { connectionString: databaseUrl },
+    stripeSecretKey: secretKey,
+    stripeWebhookSecret: webhookSecret ?? "",
+  });
+}

@@ -1,0 +1,24 @@
+{
+  "name": "@workspace/scripts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "hello": "tsx ./src/hello.ts",
+    "fix-raw-json-drafts": "tsx ./src/fix-raw-json-drafts.ts",
+    "bind-epicgram-slack": "tsx ./src/bind-epicgram-slack-channel.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test:post-merge": "bash ./test-post-merge.sh"
+  },
+  "dependencies": {
+    "@workspace/db": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "stripe": "^22.3.2",
+    "stripe-replit-sync": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "playwright": "^1.61.1",
+    "tsx": "catalog:"
+  }
+}

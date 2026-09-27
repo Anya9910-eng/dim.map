@@ -1,0 +1,64 @@
+# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# compiled output
+dist
+build
+tmp
+out-tsc
+*.tsbuildinfo
+.expo
+.expo-shared
+
+# dependencies
+node_modules
+
+# environment / secrets — never commit these
+.env
+.env.local
+.env.*.local
+.replit-secrets
+
+# logs
+logs
+*.log
+npm-debug.log*
+yarn-error.log
+pnpm-debug.log*
+testem.log
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Replit internal
+.cache/
+.local/
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
+
+# Backup files with timestamps (contain secrets)
+.env.bak*
+*.bak.[0-9]*

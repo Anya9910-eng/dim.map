@@ -1,0 +1,78 @@
+Continue improving DraftFly MVP.
+
+Clean up fake dashboard metrics and make the app honest for real MVP use.
+
+Problem:
+The dashboard currently shows mock/fake production-looking numbers like:
+
+* Total Clients: 3
+* Active Campaigns: 4
+* Pending Drafts: 3
+* Total Sent: 1
+* Recent Activity with fake clients and events
+
+This is confusing because the product is not connected to real clients yet.
+
+Requirements:
+
+1. Replace fake dashboard KPI numbers with real empty-state values by default:
+
+* Total Clients: 0
+* Active Campaigns: 0
+* Pending Drafts: 0
+* Total Sent: 0
+
+2. Add clear empty-state messages:
+
+* No clients connected yet
+* No campaigns configured yet
+* No pending drafts yet
+* No real replies sent yet
+
+3. Move all mock/example data into Test Flow only.
+
+4. Dashboard should show real system state:
+
+* connected integrations
+* configured clients count
+* configured campaigns count
+* pending drafts from actual app state/config
+* logs from actual app state/config
+
+5. If the app uses mock fallback because secrets are missing, show a visible banner:
+   Demo Mode Active — no real integrations connected yet.
+
+6. Add separate labels:
+
+* Demo data only
+* Real data
+* Not connected
+* Connected
+
+7. Recent Activity should not show fake production activity by default.
+   Instead show:
+   No real activity yet. Run a Test Flow or connect integrations to start seeing events.
+
+8. Workflow Status should show actual connection state:
+
+* Lemlist: Not connected until LEMLIST_API_KEY exists
+* Slack: Not connected until SLACK_BOT_TOKEN and SLACK_SIGNING_SECRET exist
+* Claude: Not connected until ANTHROPIC_API_KEY exists
+* Database: Mock config layer until DATABASE_URL exists
+
+9. Keep sample data available only in:
+
+* Test Flow
+* Demo Preview
+* Example Slack Approval Card
+
+10. Make Light Theme the default.
+11. Add Dark Mode toggle only in Settings → Appearance.
+12. Do not remove pages.
+13. Do not add real secrets.
+14. Do not hardcode API keys.
+15. Keep Draft Mode default and Auto Mode disabled by default.
+
+Goal:
+Make the dashboard look like a real MVP control panel, not a fake analytics demo.
+The app should be honest: empty when nothing is connected, and only show mock data inside explicit demo/test areas.

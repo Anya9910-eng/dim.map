@@ -1,0 +1,80 @@
+Да, начинать стоит. И ответить ему можно примерно так:
+
+Да, начинаем.
+
+**EPIC GRAM AI** — это мой кастомный Telegram-клиент и AI-операторская рабочая область, не просто бот.
+
+Он состоит из:
+
+- **Telegram client** поверх официального TDLib;
+- **Telegram Bot / Mini App** как входная оболочка;
+- **AI Operator EPIC💀CLAW** внутри клиента;
+- **approval gate** — оператор подтверждает или отклоняет действия;
+- **memory / audit / CRM layer**;
+- мультиаккаунтов Telegram.
+
+Что он уже делает сейчас:
+
+- авторизация Telegram-аккаунтов через TDLib;
+- отображение реальных чатов/каналов/групп;
+- AI-оператор может предложить ответ;
+- есть approve/dismiss перед отправкой;
+- есть audit/security контур;
+- есть заготовка под CRM и workspace.
+
+Как связать с DraftFly:
+
+**DraftFly должен быть draft engine.**
+
+То есть EPIC GRAM отправляет в DraftFly контекст:
+
+```json
+{
+  "workspace_id": "epicgram-owner",
+  "audit_id": "audit-123",
+  "telegram_account_slot": "account-1",
+  "chat_id": "123456",
+  "chat_title": "Client Chat",
+  "messages": [
+    {
+      "from": "user",
+      "text": "Привет, расскажи о ценах"
+    }
+  ],
+  "task": "Подготовь ответ клиенту"
+}
+```
+
+DraftFly возвращает:
+
+```json
+{
+  "draft_id": "draft-123",
+  "text": "Здравствуйте! Сейчас расскажу по ценам...",
+  "confidence": 0.86,
+  "status": "pending"
+}
+```
+
+Дальше EPIC GRAM показывает этот черновик прямо в Telegram-клиенте.
+
+Оператор нажимает:
+
+- **Approve** — EPIC GRAM отправляет сообщение через TDLib;
+- **Dismiss** — черновик отклоняется;
+- **Edit** — оператор редактирует и потом отправляет.
+
+Важно:
+
+DraftFly **не должен получать Telegram-сессии, TDLib database, cookies, пароли или API credentials**. Только разрешенный payload: chat id, title, последние сообщения, task, workspace id, audit id.
+
+Минимальные endpoints для DraftFly:
+
+```text
+POST /api/v1/drafts
+GET  /api/v1/drafts/:id
+POST /api/v1/drafts/:id/approve
+POST /api/v1/drafts/:id/reject
+```
+
+И да, можно начинать с этого. После этого мы подключим EPIC GRAM к этим endpoints.

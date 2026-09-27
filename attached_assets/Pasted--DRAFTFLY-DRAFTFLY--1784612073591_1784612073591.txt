@@ -1,0 +1,105 @@
+# DRAFTFLY — аудит и мануал по сервису
+
+## Что это за сервис
+DRAFTFLY — это внутренняя операционная панель для полуавтоматической обработки входящих ответов на аутрич-кампании: сервис получает вебхуки, генерирует черновики ответов с помощью Claude, отправляет их на согласование в Slack и ведет историю действий по каждому контакту. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+На главной панели видно, что система построена как связка Lemlist → n8n → Claude → Slack, где Lemlist выступает источником входящих ответов, n8n — слоем оркестрации, Claude — генератором черновиков, а Slack — интерфейсом операторского апрува. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+## Как работает сервис
+Базовый поток выглядит так:
+- Клиент или команда запускает outbound-кампанию в Lemlist, а ответы лидов приходят в DRAFTFLY через webhook. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- DRAFTFLY обрабатывает событие и создает черновик ответа, включая текст, confidence score, detected intent и suggested next action. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- Черновик попадает в очередь Draft Replies, где оператор может проверить формулировку перед отправкой. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- После проверки ответ либо отправляется, либо отклоняется, а все действия фиксируются в Recent Activity и Reply History. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+Это делает сервис не просто AI-автоответчиком, а контролируемой reply-ops системой для sales outreach и re-engagement сценариев. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+## Основные сущности интерфейса
+По навигации видно, что продукт разделен на несколько функциональных блоков: Overview, Clients, Personas, Campaigns, Draft Replies, Reply History, Slack Approval, Slack App Setup, Test Flow, Client Onboarding, Internal Setup, Logs и Settings. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+Из этой структуры можно восстановить продуктовую модель:
+- *Clients* — карточки клиентов или аккаунтов, для которых ведутся reply-операции. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- *Personas* — шаблоны ICP/ролей и тональности, которые помогают адаптировать ответы под тип получателя. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- *Campaigns* — кампании аутрича, к которым привязаны входящие ответы и generated drafts. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- *Draft Replies / Reply History* — очередь на проверку и архив отправленных/отклоненных ответов. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- *Slack Approval / Slack App Setup* — настройка процесса согласования и интеграции со Slack. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- *Client Onboarding / Internal Setup / Test Flow* — сценарии внедрения, внутренней настройки и тестирования пайплайна. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- *Logs / Settings* — операционный контроль, диагностика и конфигурация системы. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+## Что нужно для работы
+Для запуска сервиса по текущей архитектуре нужны четыре обязательных компонента: [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- аккаунт и активные кампании в Lemlist как источник reply-событий; [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- n8n или аналогичный workflow-оркестратор для приема вебхуков и маршрутизации шагов; [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- доступ к Claude для AI-генерации черновиков; [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- Slack workspace и настроенный approval flow для ручного контроля перед отправкой. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+Дополнительно по самой навигации видно, что для полноценного внедрения нужны настройки клиентов, персон, кампаний и onboarding-процесса, иначе система не сможет персонализировать ответы и нормально пройти рабочий цикл. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+## Что получает клиент
+Для клиента ценность DRAFTFLY выражается в нескольких результатах: [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- быстрый разбор входящих ответов без ручного чтения каждого письма с нуля; [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- AI-черновик ответа с определением намерения лида, оценкой уверенности и подсказкой следующего действия; [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- единый approval-процесс вместо хаотичных ручных ответов менеджеров; [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- прозрачная история отправок, discard-сценариев и генераций по каждой кампании; [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- снижение времени реакции на reply и более стабильный контроль качества коммуникации. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+По примерам на дашборде видно, что сервис умеет обрабатывать как позитивный интерес с предложением созвона, так и отписку/negative intent с рекомендацией discard. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+## Немного статистики
+На текущем дашборде отображаются такие метрики: [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+| Метрика | Значение |
+|---|---|
+| Total Clients | 3  [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/) |
+| Active Campaigns | 4  [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/) |
+| Pending Drafts | 4  [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/) |
+| Total Sent | 3  [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/) |
+| Webhooks Today | 4  [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/) |
+| Success Rate | 40%  [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/) |
+| Discarded | 2  [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/) |
+
+Эти цифры пока выглядят как ранний demo или pilot-stage контур, а не production на больших объемах: в системе мало клиентов и кампаний, а success rate 40% указывает, что процесс либо еще калибруется, либо требует доработки правил, промптов и операторского SLA. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+## Примеры того, что делает AI
+В одном из черновиков система формирует консультационный ответ по теме automation chain, указывает detected intent = interest, confidence score = 0.72 и рекомендует next action = schedule_call. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+В другом примере сервис определяет not_interested, ставит confidence score = 0.95 и предлагает действие discard, что показывает наличие intent-classification логики, а не только генерации текста. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+## Сильные стороны
+У сервиса уже есть несколько сильных сторон: [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- хорошо читаемая операционная воронка от webhook до approval;
+- понятное разделение по клиентам, персонам и кампаниям;
+- human-in-the-loop архитектура, которая снижает риск неудачных автоответов;
+- наличие логов, тестового контура и onboarding-секций;
+- фокус на реальной продаже и reply operations, а не просто на генерации текста.
+
+## Слабые места и риски
+По текущему состоянию заметны и ограничения: [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- часть страниц из навигации снаружи не раскрывает содержимое, поэтому продукт может быть еще в стадии сборки или иметь client-side рендеринг без серверной отдачи данных;
+- на главной странице есть demo-данные и тестовые компании, поэтому доверять статистике как реальному KPI пока нельзя без доступа к backend и логам;
+- success rate 40% для такой системы выглядит низко, если это production-метрика;
+- value proposition на landing-уровне пока не сформулирован явно, интерфейс больше похож на internal ops console, чем на клиентский SaaS.
+
+## Рекомендации по упаковке сервиса
+Чтобы сервис было проще продавать, его лучше описывать так: [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+> DRAFTFLY — AI reply operations platform для outbound-команд. Сервис автоматически получает ответы из Lemlist, определяет намерение лида, генерирует персонализированный черновик, отправляет его на согласование в Slack и сохраняет полную историю действий по кампании.
+
+Для клиента стоит акцентировать четыре тезиса: [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+- меньше ручной рутины у sales/team;
+- быстрее ответ на входящий interest;
+- меньше потерянных лидов между reply и follow-up;
+- контролируемая автоматизация без риска полностью автономной отправки.
+
+## Короткий мануал для пользователя
+1. Подключить источник reply-событий через Lemlist и webhook-поток. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+2. Настроить orchestration в n8n и убедиться, что события попадают в DRAFTFLY. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+3. Подключить Claude для генерации ответов и Slack для согласования. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+4. Создать клиента, персоны и кампании, чтобы ответы генерировались в нужном контексте. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+5. Проверять новые Draft Replies, подтверждать или отклонять ответы. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+6. Отслеживать результат через Reply History, Recent Activity и Logs. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+## Итоговая оценка
+На основе доступного интерфейса DRAFTFLY выглядит как B2B-сервис или internal SaaS для AI-assisted sales reply management с human approval loop, ориентированный на outbound-команды и агентства. [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)
+
+Текущий продукт уже демонстрирует рабочую логику пайплайна и понятную ценность, но для сильной коммерческой упаковки ему не хватает более явного positioning, раскрытия client outcomes и подтвержденной операционной статистики на большем объеме данных [013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit](https://013e4a43-724d-4717-b6aa-2268d8e76322-00-2yqz3dwqfn8ec.worf.replit.dev/)

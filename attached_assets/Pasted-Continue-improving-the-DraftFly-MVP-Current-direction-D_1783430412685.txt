@@ -1,0 +1,179 @@
+Continue improving the DraftFly MVP.
+
+Current direction:
+DraftFly should work as a simple Slack-first AI reply automation service for B2B sales agencies.
+
+Important product decision:
+Do NOT create a separate full client dashboard for each client in the MVP.
+
+Client experience:
+The client should interact only through Slack.
+
+Client should only need to:
+
+1. Install the DraftFly Slack app.
+2. Provide Lemlist access / API key.
+3. Select the Slack approval channel.
+4. Provide campaign IDs or campaign names.
+5. Provide persona / tone of voice / reply rules for each campaign.
+6. Run one test reply.
+7. Confirm that Send / Edit / Discard approval flow works correctly.
+
+Everything else should be managed internally by us.
+
+Internal operator dashboard:
+Create or improve an internal operator dashboard where our team can manage:
+
+* Clients
+* Lemlist API keys
+* Slack workspace IDs
+* Slack bot tokens
+* Slack approval channels
+* Campaign mappings
+* Personas
+* Tone of voice rules
+* Region / nationality adaptation rules
+* Reply scripts
+* Draft mode / auto mode settings
+* Logs
+* Test replies
+* Status of sent / edited / discarded replies
+
+Database / config layer:
+Add a clear database/config structure to the MVP.
+
+For beta it can be simple, but the app should clearly show that we store:
+
+Client:
+
+* clientId
+* companyName
+* lemlistApiKey placeholder
+* slackWorkspaceId
+* slackBotToken placeholder
+* defaultMode: draft / auto
+
+Campaign:
+
+* campaignId
+* clientId
+* personaId
+* campaignName
+* replyRules
+* tone
+* regionRules
+
+Persona:
+
+* personaId
+* clientId
+* productDescription
+* targetAudience
+* toneOfVoice
+* commonObjections
+* CTA
+* qualificationRules
+
+Logs:
+
+* logId
+* clientId
+* campaignId
+* leadId
+* generatedDraft
+* finalStatus: draft / sent / edited / discarded
+* timestamp
+
+Campaign persona logic:
+Each Lemlist campaign should map to a specific persona and script.
+
+Example:
+Campaign A → Persona A
+Campaign B → Persona B
+Campaign C → Persona C
+
+When Lemlist webhook receives a reply, the system should use the campaign ID to select the correct persona, tone, rules and Claude prompt.
+
+Lead adaptation:
+Add support for tailoring replies based on lead profile fields:
+
+* country / region
+* nationality if available
+* company
+* role
+* conversation history
+
+Example regional tone rules:
+
+* UK leads: concise and formal
+* US leads: direct and outcome-focused
+* Middle East leads: warmer and relationship-based
+* German/DACH leads: structured and detail-oriented
+
+Dashboard pages:
+Keep the UI simple and demo-ready.
+
+Pages:
+
+* Overview
+* Client Onboarding
+* Internal Setup
+* Clients
+* Campaigns
+* Personas
+* Draft Replies
+* Slack Approval Flow
+* Logs
+* Settings
+
+Separate checklists:
+Create two separate checklists:
+
+1. Client Onboarding Checklist:
+
+* Install Slack app
+* Add Lemlist API key
+* Choose approval channel
+* Provide campaign IDs
+* Provide persona and reply rules
+* Run test reply
+* Confirm Send / Edit / Discard flow
+
+2. Internal Setup Checklist:
+
+* Configure n8n webhook
+* Configure Claude API credential placeholder
+* Configure Lemlist workflow
+* Configure Slack workflow
+* Configure campaign-persona mapping
+* Configure logging
+* Test full reply flow
+
+Important:
+The client-facing side must stay simple.
+Do not show VPS, n8n, Caddy, Claude API, database internals or credentials to the client.
+
+The operator dashboard can show technical/internal configuration.
+
+Design:
+Dark premium SaaS dashboard.
+Clean B2B sales automation product.
+Professional UI.
+Suitable for showing to first beta clients.
+
+Use mock data only.
+Do not add real secrets.
+Do not hardcode API keys.
+Do not implement direct LinkedIn integration.
+Do not make Auto Mode default.
+Draft Mode should be the default MVP mode.
+
+Goal:
+Make the MVP clearly show this product logic:
+
+Client works only in Slack.
+We manage everything internally.
+Lemlist campaign ID selects persona and reply rules.
+Claude generates the reply.
+Slack approval flow controls Send / Edit / Discard.
+Database/config layer stores clients, campaigns, personas and logs.

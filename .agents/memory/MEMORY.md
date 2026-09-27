@@ -1,0 +1,4 @@
+- [Stripe billing setup](stripe-setup.md) — plans seeded; migration must run standalone before first server start (bundled __dirname2 path issue)
+- [Claude code-block stripping](claude-code-block.md) — Claude wraps JSON in ```json blocks; extractDraftText and generateDraftReply both strip this before storing/sending
+- [EPIC STAR AI pilot setup](epicstar-pilot.md) — real client id=4, Slack channel C0BK6NPBHKJ, campaign cam_B7CgkT3FhoELhBepy; Lemlist campaign status "ended"
+- [Express 5 return pattern](express5-return.md) — res.json()/res.status().json() returns void in Express 5; use `res.json(...); return;` not `return res.json(...)`

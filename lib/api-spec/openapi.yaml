@@ -1,0 +1,1198 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.2.0
+  description: DraftFly API — AI-powered reply automation for B2B sales agencies
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+  - name: clients
+  - name: personas
+  - name: campaigns
+  - name: drafts
+  - name: logs
+  - name: setup
+  - name: dashboard
+  - name: slack
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # ---------- CLIENTS ----------
+  /clients:
+    get:
+      operationId: listClients
+      tags: [clients]
+      summary: List all client accounts
+      responses:
+        "200":
+          description: List of clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Client"
+    post:
+      operationId: createClient
+      tags: [clients]
+      summary: Create a client account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+
+  /clients/{id}:
+    get:
+      operationId: getClient
+      tags: [clients]
+      summary: Get a single client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Client detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateClient
+      tags: [clients]
+      summary: Update a client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+    delete:
+      operationId: deleteClient
+      tags: [clients]
+      summary: Delete a client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ---------- PERSONAS ----------
+  /personas:
+    get:
+      operationId: listPersonas
+      tags: [personas]
+      summary: List all personas
+      parameters:
+        - name: clientId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of personas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Persona"
+    post:
+      operationId: createPersona
+      tags: [personas]
+      summary: Create a persona
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PersonaInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Persona"
+
+  /personas/{id}:
+    get:
+      operationId: getPersona
+      tags: [personas]
+      summary: Get a persona
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Persona detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Persona"
+        "404":
+          description: Not found
+    patch:
+      operationId: updatePersona
+      tags: [personas]
+      summary: Update a persona
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PersonaUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Persona"
+    delete:
+      operationId: deletePersona
+      tags: [personas]
+      summary: Delete a persona
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ---------- CAMPAIGNS ----------
+  /campaigns:
+    get:
+      operationId: listCampaigns
+      tags: [campaigns]
+      summary: List all campaigns
+      parameters:
+        - name: clientId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of campaigns
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Campaign"
+    post:
+      operationId: createCampaign
+      tags: [campaigns]
+      summary: Create a campaign mapping
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CampaignInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Campaign"
+
+  /campaigns/{id}:
+    get:
+      operationId: getCampaign
+      tags: [campaigns]
+      summary: Get a campaign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Campaign detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Campaign"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateCampaign
+      tags: [campaigns]
+      summary: Update a campaign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CampaignUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Campaign"
+    delete:
+      operationId: deleteCampaign
+      tags: [campaigns]
+      summary: Delete a campaign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /campaigns/{id}/stats:
+    get:
+      operationId: getCampaignStats
+      tags: [campaigns]
+      summary: Per-campaign reply and draft statistics
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Campaign stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CampaignStats"
+
+  # ---------- DRAFTS ----------
+  /drafts:
+    get:
+      operationId: listDrafts
+      tags: [drafts]
+      summary: List reply drafts
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, sent, edited, discarded, send_failed]
+        - name: clientId
+          in: query
+          schema:
+            type: integer
+        - name: campaignId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of drafts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Draft"
+
+  /drafts/pending:
+    get:
+      operationId: listPendingDrafts
+      tags: [drafts]
+      summary: List drafts awaiting Slack approval
+      responses:
+        "200":
+          description: Pending drafts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Draft"
+
+  /drafts/{id}:
+    get:
+      operationId: getDraft
+      tags: [drafts]
+      summary: Get a draft
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Draft detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Draft"
+        "404":
+          description: Not found
+
+  /drafts/{id}/action:
+    patch:
+      operationId: applyDraftAction
+      tags: [drafts]
+      summary: Apply Send / Edit / Discard action to a draft
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DraftAction"
+      responses:
+        "200":
+          description: Updated draft
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Draft"
+
+  # ---------- LOGS ----------
+  /logs:
+    get:
+      operationId: listLogs
+      tags: [logs]
+      summary: List activity logs
+      parameters:
+        - name: clientId
+          in: query
+          schema:
+            type: integer
+        - name: level
+          in: query
+          schema:
+            type: string
+            enum: [info, warning, error]
+        - name: source
+          in: query
+          schema:
+            type: string
+            enum: [lemlist, n8n, claude, slack, system]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LogEntry"
+
+  /logs/{id}:
+    get:
+      operationId: getLog
+      tags: [logs]
+      summary: Get a log entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Log entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogEntry"
+
+  # ---------- SETUP CHECKLIST ----------
+  /setup:
+    get:
+      operationId: listSetupItems
+      tags: [setup]
+      summary: Get setup checklist items
+      parameters:
+        - name: checklistType
+          in: query
+          schema:
+            type: string
+            enum: [client_onboarding, internal_setup]
+      responses:
+        "200":
+          description: Setup items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SetupItem"
+
+  /setup/{id}:
+    patch:
+      operationId: updateSetupItem
+      tags: [setup]
+      summary: Mark a setup item complete or incomplete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetupItemUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SetupItem"
+
+  # ---------- DASHBOARD ----------
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Overall usage metrics
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/activity:
+    get:
+      operationId: listActivity
+      tags: [dashboard]
+      summary: Recent activity feed, scoped to the caller's client
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        # The route has always supported this — the draft detail page sends it
+        # to show one draft's timeline — but it was missing here, so the
+        # generated client dropped it and that page received every draft's
+        # activity instead of the one it asked for.
+        - name: draftId
+          in: query
+          description: Limit the feed to a single draft's timeline.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Activity feed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  /dashboard/reply-trends:
+    get:
+      operationId: getReplyTrends
+      tags: [dashboard]
+      summary: Reply volume per day broken down by status (last 30 days)
+      parameters:
+        - name: clientId
+          in: query
+          schema:
+            type: integer
+        - name: campaignId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Reply trends
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReplyTrendPoint"
+
+  # ---------- SLACK CHANNEL BINDING ----------
+  /slack/workspace:
+    get:
+      operationId: getSlackWorkspace
+      tags: [slack]
+      summary: Slack OAuth/connection status and workspace name (server-side token)
+      responses:
+        "200":
+          description: Slack workspace status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SlackWorkspaceStatus"
+
+  /slack/channels:
+    get:
+      operationId: listSlackChannels
+      tags: [slack]
+      summary: List channels the bot can see (name + Channel ID), for binding
+      responses:
+        "200":
+          description: Available Slack channels
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SlackChannel"
+        "503":
+          description: Slack not configured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SlackErrorResponse"
+
+  /slack/verify-access:
+    get:
+      operationId: verifySlackBotAccess
+      tags: [slack]
+      summary: Verify the bot can post to a channel (membership + workspace) before saving
+      parameters:
+        - name: channelId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Access check result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SlackAccessCheck"
+
+  /slack/test-approval-card:
+    post:
+      operationId: sendSlackTestCard
+      tags: [slack]
+      summary: Send a TEST-marked approval card (Send/Edit/Discard) to a channel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SlackTestCardInput"
+      responses:
+        "200":
+          description: Test card result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SlackTestCardResult"
+
+components:
+  schemas:
+    # ---- Slack channel binding ----
+    SlackWorkspaceStatus:
+      type: object
+      required: [connected]
+      properties:
+        connected:
+          type: boolean
+          description: True when a server-side bot token + signing secret are configured and auth.test succeeds
+        teamName:
+          type: ["string", "null"]
+        teamId:
+          type: ["string", "null"]
+        url:
+          type: ["string", "null"]
+        botUserId:
+          type: ["string", "null"]
+        error:
+          type: ["string", "null"]
+
+    SlackChannel:
+      type: object
+      required: [id, name, isPrivate, isMember, isArchived]
+      properties:
+        id:
+          type: string
+          description: Slack Channel ID, e.g. C0BK6NPBHKJ
+        name:
+          type: string
+        isPrivate:
+          type: boolean
+        isMember:
+          type: boolean
+          description: Whether the bot is a member of the channel
+        isArchived:
+          type: boolean
+
+    SlackAccessCheck:
+      type: object
+      required: [ok, isMember]
+      properties:
+        ok:
+          type: boolean
+          description: True when the channel exists in the bot's workspace and the bot can post
+        isMember:
+          type: boolean
+        name:
+          type: ["string", "null"]
+        error:
+          type: ["string", "null"]
+
+    SlackTestCardInput:
+      type: object
+      required: [channelId]
+      properties:
+        channelId:
+          type: string
+          pattern: "^[CG][A-Z0-9]{9,}$"
+          description: Slack Channel ID to send the test card to
+
+    SlackTestCardResult:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+        ts:
+          type: ["string", "null"]
+        error:
+          type: ["string", "null"]
+
+    SlackErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    # ---- Client ----
+    Client:
+      type: object
+      required: [id, name, mode, isActive, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        company:
+          type: ["string", "null"]
+        # Optional: a client approving in the dashboard needs no Slack channel.
+        slackChannel:
+          type: ["string", "null"]
+        slackWorkspaceId:
+          type: ["string", "null"]
+        slackBotToken:
+          type: ["string", "null"]
+        mode:
+          type: string
+          enum: [draft, auto]
+        # Agency is absent on purpose: it means several Lemlist accounts under
+        # one customer, which this model cannot express.
+        plan:
+          type: string
+          enum: [starter, growth]
+        lemlistApiKey:
+          type: ["string", "null"]
+        n8nWebhookUrl:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        # Computed, display-ready billing state (see api-server lib/billing
+        # accessStateFor). "managed" = operator-billed, never expires.
+        billingStatus:
+          type: string
+          enum: [managed, trial, active, past_due, locked]
+        # Days remaining when billingStatus is "trial", else null.
+        trialDaysLeft:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    ClientInput:
+      type: object
+      required: [name, mode]
+      properties:
+        name:
+          type: string
+        company:
+          type: string
+        slackChannel:
+          type: string
+          pattern: "^[CG][A-Z0-9]{9,}$"
+          description: >-
+            Optional Slack channel ID starting with C or G, e.g. C012AB3CD45.
+            Omit it for a client who approves drafts in the dashboard; they
+            simply get no Slack approval card.
+        slackWorkspaceId:
+          type: string
+        slackBotToken:
+          type: string
+        mode:
+          type: string
+          enum: [draft, auto]
+        plan:
+          type: string
+          enum: [starter, growth]
+        lemlistApiKey:
+          type: string
+        n8nWebhookUrl:
+          type: string
+
+    ClientUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        company:
+          type: string
+        # Nullable so a channel can be removed. Without null there is no way to
+        # express "this client no longer posts to Slack": omitting the field
+        # leaves the old channel in place, and "" fails the pattern.
+        slackChannel:
+          type: ["string", "null"]
+          pattern: "^[CG][A-Z0-9]{9,}$"
+          description: "Slack channel ID starting with C or G, e.g. C012AB3CD45. Null removes it."
+        slackWorkspaceId:
+          type: string
+        slackBotToken:
+          type: string
+        mode:
+          type: string
+          enum: [draft, auto]
+        plan:
+          type: string
+          enum: [starter, growth]
+        lemlistApiKey:
+          type: string
+        n8nWebhookUrl:
+          type: string
+        isActive:
+          type: boolean
+
+    # ---- Persona ----
+    Persona:
+      type: object
+      required: [id, clientId, name, productDescription, targetAudience, toneOfVoice, cta, createdAt]
+      properties:
+        id:
+          type: integer
+        clientId:
+          type: integer
+        name:
+          type: string
+        productDescription:
+          type: string
+        targetAudience:
+          type: string
+        toneOfVoice:
+          type: string
+        commonObjections:
+          type: ["string", "null"]
+        cta:
+          type: string
+        qualificationRules:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    PersonaInput:
+      type: object
+      required: [clientId, name, productDescription, targetAudience, toneOfVoice, cta]
+      properties:
+        clientId:
+          type: integer
+        name:
+          type: string
+        productDescription:
+          type: string
+        targetAudience:
+          type: string
+        toneOfVoice:
+          type: string
+        commonObjections:
+          type: string
+        cta:
+          type: string
+        qualificationRules:
+          type: string
+
+    PersonaUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        productDescription:
+          type: string
+        targetAudience:
+          type: string
+        toneOfVoice:
+          type: string
+        commonObjections:
+          type: string
+        cta:
+          type: string
+        qualificationRules:
+          type: string
+
+    # ---- Campaign ----
+    Campaign:
+      type: object
+      required: [id, clientId, name, lemlistCampaignId, isActive, replyCount, createdAt]
+      properties:
+        id:
+          type: integer
+        clientId:
+          type: integer
+        personaId:
+          type: ["integer", "null"]
+        name:
+          type: string
+        lemlistCampaignId:
+          type: string
+        tone:
+          type: ["string", "null"]
+        replyRules:
+          type: ["string", "null"]
+        regionRules:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        replyCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    CampaignInput:
+      type: object
+      required: [clientId, name, lemlistCampaignId]
+      properties:
+        clientId:
+          type: integer
+        personaId:
+          type: integer
+        name:
+          type: string
+        lemlistCampaignId:
+          type: string
+        tone:
+          type: string
+        replyRules:
+          type: string
+        regionRules:
+          type: string
+        isActive:
+          type: boolean
+          description: >-
+            Whether the campaign drafts replies. Omit to have it decided by the
+            plan's remaining allowance — active when a slot is free, inactive
+            when the client is already at their limit. Passing true while at the
+            limit is refused with 422 rather than silently downgraded.
+
+    CampaignUpdate:
+      type: object
+      properties:
+        personaId:
+          type: integer
+        name:
+          type: string
+        lemlistCampaignId:
+          type: string
+        tone:
+          type: string
+        replyRules:
+          type: string
+        regionRules:
+          type: string
+        isActive:
+          type: boolean
+
+    CampaignStats:
+      type: object
+      required: [campaignId, totalReplies, sent, edited, discarded, pending]
+      properties:
+        campaignId:
+          type: integer
+        totalReplies:
+          type: integer
+        sent:
+          type: integer
+        edited:
+          type: integer
+        discarded:
+          type: integer
+        pending:
+          type: integer
+        avgResponseTimeMs:
+          type: ["integer", "null"]
+
+    # ---- Draft ----
+    Draft:
+      type: object
+      required: [id, clientId, campaignId, prospectEmail, prospectName, replyText, status, createdAt]
+      properties:
+        id:
+          type: integer
+        clientId:
+          type: integer
+        campaignId:
+          type: integer
+        prospectEmail:
+          type: string
+        prospectName:
+          type: string
+        prospectCompany:
+          type: ["string", "null"]
+        prospectCountry:
+          type: ["string", "null"]
+        prospectRole:
+          type: ["string", "null"]
+        conversationSnippet:
+          type: ["string", "null"]
+        replyText:
+          type: string
+        editedReplyText:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, sent, edited, discarded, send_failed]
+        slackMessageTs:
+          type: ["string", "null"]
+        actionedAt:
+          type: ["string", "null"]
+          format: date-time
+        # Set when the stale-draft sweeper gave up on a draft. The dashboard
+        # uses it to mark a failure as automatic rather than operator-caused.
+        # It was missing here while the column and the UI both existed, so the
+        # response validator stripped it and that marker never appeared.
+        sweeperAlertedAt:
+          type: ["string", "null"]
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+
+    DraftAction:
+      type: object
+      required: [action]
+      properties:
+        action:
+          type: string
+          enum: [send, edit, discard]
+        editedText:
+          type: string
+
+    # ---- Log ----
+    LogEntry:
+      type: object
+      required: [id, level, message, source, createdAt]
+      properties:
+        id:
+          type: integer
+        clientId:
+          type: ["integer", "null"]
+        campaignId:
+          type: ["integer", "null"]
+        draftId:
+          type: ["integer", "null"]
+        leadId:
+          type: ["string", "null"]
+        level:
+          type: string
+          enum: [info, warning, error]
+        message:
+          type: string
+        source:
+          type: string
+          enum: [lemlist, n8n, claude, slack, system]
+        generatedDraft:
+          type: ["string", "null"]
+        finalStatus:
+          type: ["string", "null"]
+          enum: [draft, sent, edited, discarded, null]
+        metadata:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    # ---- Setup ----
+    SetupItem:
+      type: object
+      required: [id, title, description, category, checklistType, isCompleted]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum: [infrastructure, integrations, configuration, testing]
+        checklistType:
+          type: string
+          enum: [client_onboarding, internal_setup]
+        isCompleted:
+          type: boolean
+        completedAt:
+          type: ["string", "null"]
+          format: date-time
+
+    SetupItemUpdate:
+      type: object
+      required: [isCompleted]
+      properties:
+        isCompleted:
+          type: boolean
+
+    # ---- Dashboard ----
+    DashboardStats:
+      type: object
+      required: [totalClients, activeCampaigns, totalPersonas, pendingDrafts, sendFailedDrafts, totalDraftsSent, totalDraftsDiscarded, totalDraftsEdited, webhooksToday, successRate]
+      properties:
+        totalClients:
+          type: integer
+        activeCampaigns:
+          type: integer
+        totalPersonas:
+          type: integer
+        pendingDrafts:
+          type: integer
+        sendFailedDrafts:
+          type: integer
+        totalDraftsSent:
+          type: integer
+        totalDraftsDiscarded:
+          type: integer
+        totalDraftsEdited:
+          type: integer
+        webhooksToday:
+          type: integer
+        successRate:
+          type: number
+
+    ActivityItem:
+      type: object
+      required: [id, type, description, createdAt]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [draft_created, draft_sent, draft_edited, draft_discarded, draft_send_failed, webhook_received, error]
+        description:
+          type: string
+        clientName:
+          type: ["string", "null"]
+        campaignName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    ReplyTrendPoint:
+      type: object
+      required: [date, pending, sent, edited, discarded, send_failed]
+      properties:
+        date:
+          type: string
+          description: ISO date string (YYYY-MM-DD)
+        pending:
+          type: integer
+        sent:
+          type: integer
+        edited:
+          type: integer
+        discarded:
+          type: integer
+        send_failed:
+          type: integer

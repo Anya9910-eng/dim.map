@@ -1,0 +1,64 @@
+Можно ответить так:
+
+EPIC GRAM AI — это не просто бот. Это наш будущий **AI Telegram client / operator workspace**.
+
+Сейчас логика такая:
+
+**EPIC☠️GRAM AI**
+- кастомный Telegram-клиент поверх TDLib;
+- авторизация владельца через официальный Telegram API/TDLib;
+- отображение чатов, каналов, групп, ботов;
+- мультиаккаунты;
+- AI-оператор EPIC💀CLAW;
+- память по чатам;
+- approval/dismiss перед действиями;
+- аудит действий;
+- будущая CRM/операторская панель.
+
+**Telegram Bot / Mini App**
+Это входная оболочка:
+- бот `EPICGRAM_AI_BOT`;
+- Mini App открывает `https://epic-gram.com/client`;
+- сам бот не должен хранить Telegram-сессии пользователя;
+- реальные Telegram-аккаунты подключаются внутри EPIC☠️GRAM через TDLib.
+
+**DraftFly**
+Я вижу как отдельный сервис черновиков и workflow:
+- принимает входящие события;
+- создаёт AI-черновики;
+- хранит статусы: draft / approved / rejected / sent;
+- может быть connected с Metricool, n8n, Slack, CRM.
+
+Связка, которую я хочу:
+
+```text
+Telegram / EPIC☠️GRAM
+        ↓
+AI анализирует чат
+        ↓
+DraftFly создаёт черновик
+        ↓
+EPIC☠️GRAM показывает черновик в клиенте
+        ↓
+Оператор нажимает Approve / Dismiss
+        ↓
+После approve сообщение уходит через EPIC☠️GRAM TDLib
+```
+
+То есть DraftFly — это **draft engine / approval workflow**, а EPIC☠️GRAM — это **место, где оператор видит Telegram-контекст и принимает решение**.
+
+Нужная интеграция:
+
+1. EPIC☠️GRAM → DraftFly  
+   Отправлять событие: выбран чат, последние сообщения, задача оператора, вложения/скрин.
+
+2. DraftFly → EPIC☠️GRAM  
+   Возвращать черновик, статус, confidence, suggested action.
+
+3. EPIC☠️GRAM approval gate  
+   Только после ручного approve отправлять в Telegram.
+
+4. Audit  
+   Писать кто создал черновик, кто подтвердил, куда ушло, когда и через какой аккаунт.
+
+Главное требование: DraftFly не должен получать Telegram-сессию или TDLib database. Он получает только разрешённый payload: chat id, title, последние сообщения, draft id, workspace id, audit id.
