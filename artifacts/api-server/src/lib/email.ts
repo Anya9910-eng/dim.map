@@ -1,10 +1,11 @@
 import { logger } from "./logger";
 
 /**
- * Outbound email, used only by the sign-in flow.
+ * Outbound email: sign-in codes, welcomes, dashboard invites and operator
+ * notices.
  *
  * Deliberately a single function over `fetch` rather than a mail library: the
- * one message this product sends is a six-digit code, and a dependency that
+ * messages this product sends are short transactional notes, and a dependency that
  * needs SMTP credentials, connection pooling and TLS negotiation buys nothing
  * for that.
  *
@@ -221,6 +222,40 @@ export async function sendWelcomeEmail(email: string, name: string): Promise<Sen
       `Questions, or want a hand? Reach us at ${SUPPORT_EMAIL}.`,
     ].join("\n"),
     welcomeHtml(name),
+  );
+}
+
+export function inviteHtml(clientName: string, email: string): string {
+  return layout(
+    `<h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;">You've been invited to DIM Convert</h1>
+     <p style="margin:0 0 8px;color:#4b5563;">You now have access to the <strong style="color:#111827;">${esc(clientName)}</strong> dashboard, where your leads are qualified hot, warm or cold and each one has a reply drafted, ready for your approval.</p>
+     <p style="margin:16px 0 8px;color:#4b5563;">To sign in, open the dashboard and enter <strong style="color:#111827;">${esc(email)}</strong>. We'll email you a one-time code — there's no password to remember.</p>
+     <div style="margin:24px 0 8px;">
+       <a href="${APP_URL}/app" style="display:inline-block;background:${BRAND};color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;padding:12px 22px;border-radius:10px;">Sign in to DIM Convert</a>
+     </div>
+     <p style="margin:20px 0 0;color:#9ca3af;font-size:13px;">Weren't expecting this? You can ignore this email. Questions: <a href="mailto:${SUPPORT_EMAIL}" style="color:${BRAND};">${SUPPORT_EMAIL}</a>.</p>`,
+  );
+}
+
+/**
+ * Tells someone an operator gave them access to a client's dashboard. Like the
+ * welcome, it is best-effort: access is already granted, so a failed send only
+ * means the operator has to pass the link on themselves — the caller reports it.
+ */
+export async function sendInviteEmail(email: string, clientName: string): Promise<SendResult> {
+  return send(
+    email,
+    `You've been invited to ${clientName} on DIM Convert`,
+    [
+      `You now have access to the ${clientName} dashboard on DIM Convert.`,
+      "Your leads are qualified hot, warm or cold, each with a reply drafted for your approval.",
+      "",
+      `To sign in, open ${APP_URL}/app and enter ${email}.`,
+      "We'll email you a one-time code — there's no password.",
+      "",
+      `Weren't expecting this? You can ignore this email. Questions: ${SUPPORT_EMAIL}.`,
+    ].join("\n"),
+    inviteHtml(clientName, email),
   );
 }
 

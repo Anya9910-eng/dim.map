@@ -25,6 +25,8 @@ import { requireOperator } from "../middleware/requireOperator";
 import { canAccessClient, denyNotFound, scopedClientId, isOperator } from "../middleware/scope";
 import { generateWebhookSecret } from "../lib/lemlist";
 import { accessStateFor } from "../lib/billing";
+import { sendInviteEmail } from "../lib/email";
+import { logger } from "../lib/logger";
 
 
 /**
@@ -275,8 +277,8 @@ router.post("/clients/:id/users", requireOperator, async (req, res): Promise<voi
     return;
   }
   const email = String((req.body as { email?: unknown }).email ?? "").trim().toLowerCase();
-  // Deliberately permissive: the address only matters if Slack later vouches
-  // for it, so the check is against typos, not an attempt at validation.
+  // Deliberately permissive: the address only matters once its owner proves it
+  // with an emailed code, so the check is against typos, not full validation.
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     res.status(422).json({ error: "A valid email address is required" });
     return;
@@ -303,7 +305,14 @@ router.post("/clients/:id/users", requireOperator, async (req, res): Promise<voi
     .insert(clientUsersTable)
     .values({ clientId: id, email, invitedBy: req.session.user?.email ?? null })
     .returning();
-  res.status(201).json(created);
+
+  // Access is granted either way; the flag tells the operator whether they
+  // still need to pass the sign-in link on themselves.
+  const invite = await sendInviteEmail(email, client.company?.trim() || client.name);
+  if (!invite.delivered) {
+    logger.warn({ clientId: id, email, reason: invite.reason }, "Invite email not sent");
+  }
+  res.status(201).json({ ...created, inviteEmailSent: invite.delivered });
 });
 
 router.delete("/clients/:id/users/:userId", requireOperator, async (req, res): Promise<void> => {

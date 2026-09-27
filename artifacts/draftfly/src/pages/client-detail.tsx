@@ -58,9 +58,17 @@ function ClientAccessCard({ clientId }: { clientId: number }) {
         body: JSON.stringify({ email: value }),
       });
       if (res.ok) {
+        const created = (await res.json().catch(() => ({}))) as { inviteEmailSent?: boolean };
         setEmail("");
         await load();
-        toast({ title: "Access granted", description: `${value} can now sign in and see this client.` });
+        toast(
+          created.inviteEmailSent
+            ? { title: "Invite sent", description: `${value} was emailed a link to sign in.` }
+            : {
+                title: "Access granted — invite email not sent",
+                description: `Let ${value} know to sign in at ${window.location.origin}/app with this email.`,
+              },
+        );
       } else {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
         toast({ title: "Could not grant access", description: body.error ?? "Please try again.", variant: "destructive" });
@@ -110,7 +118,7 @@ function ClientAccessCard({ clientId }: { clientId: number }) {
           </Button>
         </div>
         <p className="text-[11px] text-muted-foreground">
-          They sign in at /app with this email; a one-time code is emailed to it.
+          They get an invite email, then sign in at /app with this address using a one-time code.
         </p>
 
         {users === null ? (
