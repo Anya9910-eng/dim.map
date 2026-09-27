@@ -71,14 +71,14 @@ export default function Login({ mode = "signin" }: { mode?: "signin" | "signup" 
   }
 
   return (
-    <div className="min-h-screen bg-[#050805] flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-[#121714] flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm flex flex-col items-center gap-8">
         <div className="flex items-center gap-2">
           <img src={logoIconUrl} alt="" className="h-16 w-auto" />
-          <span className="text-3xl font-bold text-white tracking-tight">DIM <span className="text-lime-400">map</span></span>
+          <span className="text-3xl font-bold text-white tracking-tight">DIM <span className="text-sage">map</span></span>
         </div>
 
-        <div className="w-full bg-[#0B2A20] border border-lime-400/15 rounded-2xl p-8 flex flex-col gap-6">
+        <div className="w-full bg-[#1A211D] border border-white/10 rounded-2xl p-8 flex flex-col gap-6">
           <div className="text-center">
             <h1 className="text-xl font-semibold text-white">{isSignup ? "Create your DIM map account" : "Sign in to DIM map"}</h1>
             {/* The server answers the same way for an address with no access
@@ -118,7 +118,7 @@ export default function Login({ mode = "signin" }: { mode?: "signin" | "signup" 
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Your name"
                     data-testid="input-name"
-                    className="w-full rounded-xl bg-[#050805] border border-white/10 px-4 py-3 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-lime-400"
+                    className="w-full rounded-xl bg-[#121714] border border-white/10 px-4 py-3 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-sage"
                   />
                   <input
                     type="text"
@@ -129,7 +129,7 @@ export default function Login({ mode = "signin" }: { mode?: "signin" | "signup" 
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="Company or team"
                     data-testid="input-company"
-                    className="w-full rounded-xl bg-[#050805] border border-white/10 px-4 py-3 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-lime-400"
+                    className="w-full rounded-xl bg-[#121714] border border-white/10 px-4 py-3 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-sage"
                   />
                 </>
               )}
@@ -142,13 +142,13 @@ export default function Login({ mode = "signin" }: { mode?: "signin" | "signup" 
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 data-testid="input-email"
-                className="w-full rounded-xl bg-[#050805] border border-white/10 px-4 py-3 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-lime-400"
+                className="w-full rounded-xl bg-[#121714] border border-white/10 px-4 py-3 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-sage"
               />
               <button
                 type="submit"
                 disabled={busy}
                 data-testid="button-send-code"
-                className="w-full rounded-xl bg-lime-400 hover:bg-lime-300 disabled:opacity-50 transition-colors px-5 py-3 text-black font-medium text-sm"
+                className="w-full rounded-xl bg-sage hover:bg-sage/90 disabled:opacity-50 transition-colors px-5 py-3 text-forest font-medium text-sm"
               >
                 {busy ? (isSignup ? "Creating account..." : "Sending...") : isSignup ? "Start free trial" : "Send code"}
               </button>
@@ -167,13 +167,13 @@ export default function Login({ mode = "signin" }: { mode?: "signin" | "signup" 
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
                 placeholder="000000"
                 data-testid="input-code"
-                className="w-full rounded-xl bg-[#050805] border border-white/10 px-4 py-3 text-white text-center text-2xl tracking-[0.4em] font-mono placeholder:text-white/20 focus:outline-none focus:border-lime-400"
+                className="w-full rounded-xl bg-[#121714] border border-white/10 px-4 py-3 text-white text-center text-2xl tracking-[0.4em] font-mono placeholder:text-white/20 focus:outline-none focus:border-sage"
               />
               <button
                 type="submit"
                 disabled={busy || code.length !== 6}
                 data-testid="button-verify-code"
-                className="w-full rounded-xl bg-lime-400 hover:bg-lime-300 disabled:opacity-50 transition-colors px-5 py-3 text-black font-medium text-sm"
+                className="w-full rounded-xl bg-sage hover:bg-sage/90 disabled:opacity-50 transition-colors px-5 py-3 text-forest font-medium text-sm"
               >
                 {busy ? "Verifying..." : "Sign in"}
               </button>
@@ -199,12 +199,12 @@ export default function Login({ mode = "signin" }: { mode?: "signin" | "signup" 
           {isSignup ? (
             <p className="text-center text-xs text-white/40">
               Already have an account?{" "}
-              <Link href="/login" className="text-lime-400 hover:text-lime-300">Sign in</Link>
+              <Link href="/login" className="text-sage hover:text-sage/80">Sign in</Link>
             </p>
           ) : (
             <p className="text-center text-xs text-white/40">
               New to DIM map?{" "}
-              <Link href="/signup" className="text-lime-400 hover:text-lime-300">Create an account</Link>
+              <Link href="/signup" className="text-sage hover:text-sage/80">Create an account</Link>
               {" "}— free for 3 days.
             </p>
           )}

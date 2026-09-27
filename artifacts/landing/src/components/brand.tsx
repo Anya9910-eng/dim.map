@@ -5,8 +5,8 @@ export function Wordmark({ size = "md" }: { size?: "sm" | "md" }) {
   return (
     <span className="flex items-center gap-2">
       <img src="/logo-mark.svg" alt="" className={`${img} w-auto`} />
-      <span className={`${text} font-extrabold tracking-tight text-foreground`}>
-        DIM <span className="text-emerald-800 dark:text-lime-400">map</span>
+      <span className={`${text} font-bold tracking-tight text-foreground`}>
+        DIM <span className="text-forest dark:text-sage">map</span>
       </span>
     </span>
   );

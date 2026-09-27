@@ -342,10 +342,10 @@ export default function Dashboard() {
         return (
           <Link
             href="/drafts?status=pending"
-            className="flex items-center gap-3 rounded-lg border border-lime-400 bg-lime-100 px-4 py-3 text-sm text-black hover:bg-lime-200 dark:bg-lime-400/10 dark:text-foreground dark:hover:bg-lime-400/15 transition-colors"
+            className="flex items-center gap-3 rounded-lg border border-sage/60 bg-mist px-4 py-3 text-sm text-forest hover:bg-mist/70 dark:bg-sage/10 dark:text-foreground dark:hover:bg-sage/15 transition-colors"
             data-testid="hot-leads-banner"
           >
-            <Flame className="h-4 w-4 text-green-800 dark:text-lime-400 shrink-0" />
+            <Flame className="h-4 w-4 text-forest dark:text-sage shrink-0" />
             <span>
               <span className="font-semibold">{hot} hot {hot === 1 ? "lead is" : "leads are"} waiting for a reply</span>
               <span className="opacity-70"> — budget and timeline confirmed. Reply while they're warm.</span>

@@ -64,13 +64,13 @@ async function send(to: string, subject: string, text: string, html?: string): P
 //
 // Email HTML is its own dialect: no external CSS, no flexbox, tables for
 // layout, styles inlined, and everything degrading to the plain-text version
-// its `send` call always carries. The palette is DIM map's dark green (#0B3D2E)
-// with a lime accent (#A3E635), on a
+// its `send` call always carries. The palette is DIM map's forest green (#1F4A3A)
+// with a salad-green accent (#A9C97D), on a
 // light card so it reads the same in every client's light and dark chrome. The
 // logo is the hosted mark — inlining an image would bloat every message.
 
-const BRAND = "#0B3D2E";
-const LIME = "#A3E635";
+const BRAND = "#1F4A3A";
+const LIME = "#A9C97D";
 const APP_URL = "https://draftfly.app";
 const SUPPORT_EMAIL = "outreach@draftfly.app";
 
@@ -92,7 +92,7 @@ function layout(inner: string): string {
         <tr><td style="padding:28px 32px 8px;">
           <table role="presentation" cellpadding="0" cellspacing="0"><tr>
             <td style="vertical-align:middle;"><img src="${APP_URL}/logo-mark.png" width="28" height="28" alt="DIM map" style="display:block;border:0;"></td>
-            <td style="vertical-align:middle;padding-left:10px;font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.01em;">DIM <span style="color:#4D7C0F;">map</span></td>
+            <td style="vertical-align:middle;padding-left:10px;font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.01em;">DIM <span style="color:#1F4A3A;">map</span></td>
           </tr></table>
         </td></tr>
         <tr><td style="padding:12px 32px 32px;color:#111827;font-size:15px;line-height:1.6;">
@@ -114,7 +114,7 @@ export function loginCodeHtml(code: string): string {
   return layout(
     `<h1 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#111827;">Your sign-in code</h1>
      <p style="margin:0 0 20px;color:#4b5563;">Enter this code to sign in to DIM map.</p>
-     <div style="margin:0 0 20px;padding:18px;text-align:center;background:#f4fbe6;border:1px solid #d9f99d;border-radius:12px;">
+     <div style="margin:0 0 20px;padding:18px;text-align:center;background:#EEF4E6;border:1px solid #d6e5c2;border-radius:12px;">
        <span style="font-family:'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;font-size:32px;font-weight:700;letter-spacing:10px;color:${BRAND};">${esc(code)}</span>
      </div>
      <p style="margin:0 0 6px;color:#4b5563;">It expires in 10 minutes and can be used once.</p>

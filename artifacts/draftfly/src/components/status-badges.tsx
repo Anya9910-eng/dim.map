@@ -74,7 +74,7 @@ export function ClientBillingBadge({
       return <Badge variant="secondary" className="bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700">Managed</Badge>;
     case "trial": {
       const label = trialDaysLeft != null ? `Trial — ${trialDaysLeft}d left` : "Trial";
-      return <Badge variant="secondary" className="bg-lime-100 text-green-900 border-lime-300 hover:bg-lime-100 dark:bg-lime-400/15 dark:text-lime-300 dark:border-lime-400/30">{label}</Badge>;
+      return <Badge variant="secondary" className="bg-mist text-forest border-sage/60 hover:bg-mist dark:bg-sage/10 dark:text-sage dark:border-sage/30">{label}</Badge>;
     }
     case "active":
       return <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-50 dark:bg-green-900/30 dark:text-green-400 dark:border-green-900/50">Subscribed</Badge>;
@@ -112,7 +112,7 @@ export function LeadQualificationBadge({
 }) {
   if (!qualification) return null;
   const styles = {
-    hot: "bg-lime-300 text-black border-lime-400 dark:bg-lime-400 dark:text-black dark:border-lime-300",
+    hot: "bg-forest text-white border-forest dark:bg-sage dark:text-forest dark:border-sage",
     warm: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-900/50",
     cold: "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700",
     unqualified: "bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-900/50",

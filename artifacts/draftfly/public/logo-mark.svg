@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="DIM map">
-  <rect width="512" height="512" rx="112" fill="#0B3D2E"/>
-  <g stroke="#A3E635" stroke-opacity="0.22" stroke-width="10" fill="none">
+  <rect width="512" height="512" rx="112" fill="#1F4A3A"/>
+  <g stroke="#A9C97D" stroke-opacity="0.16" stroke-width="10" fill="none">
     <path d="M64 176h384M64 336h384M176 64v384M336 64v384"/>
   </g>
-  <path fill="#A3E635" d="M256 92c-68.5 0-124 55.5-124 124 0 92 124 204 124 204s124-112 124-204c0-68.5-55.5-124-124-124z"/>
-  <circle cx="256" cy="216" r="50" fill="#0B3D2E"/>
+  <path fill="#A9C97D" d="M256 92c-68.5 0-124 55.5-124 124 0 92 124 204 124 204s124-112 124-204c0-68.5-55.5-124-124-124z"/>
+  <circle cx="256" cy="216" r="50" fill="#1F4A3A"/>
   <circle cx="256" cy="216" r="20" fill="#FFFFFF"/>
 </svg>

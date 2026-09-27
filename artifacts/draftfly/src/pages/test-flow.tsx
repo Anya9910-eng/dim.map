@@ -604,7 +604,7 @@ export default function TestFlow() {
                   </div>
 
                   <p className="text-[#D1D2D3] font-semibold">
-                    New reply from <span className="text-[#A3E635]">{fields.leadName}</span> — {fields.leadCompany}
+                    New reply from <span className="text-[#A9C97D]">{fields.leadName}</span> — {fields.leadCompany}
                   </p>
 
                   <div className="border-l-[3px] border-[#3F4147] pl-3">
@@ -613,7 +613,7 @@ export default function TestFlow() {
 
                   <div className="bg-[#222529] border border-[#35373B] rounded-md p-3">
                     <div className="flex items-center gap-1.5 mb-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#A3E635]" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#A9C97D]" />
                       <span className="text-[9px] font-bold uppercase tracking-wider text-[#ABABAD]">Claude Draft</span>
                     </div>
                     <pre className="text-[#D1D2D3] text-[12px] leading-relaxed font-sans whitespace-pre-wrap">{draft}</pre>

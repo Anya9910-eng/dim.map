@@ -48,8 +48,8 @@ const stagger = {
   visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
 };
 
-/** The brand's highlight: dark green on white, lime on black. */
-const HIGHLIGHT = "text-emerald-800 dark:text-lime-400";
+/** The brand's highlight: forest green on light, salad green on dark. */
+const HIGHLIGHT = "text-forest dark:text-sage";
 
 const DEMO_STEPS = [
   {
@@ -58,22 +58,22 @@ const DEMO_STEPS = [
     icon: MessageCircle,
     content: (
       <div className="space-y-3">
-        <div className="text-xs text-muted-foreground font-mono mb-4">New WhatsApp message — +971 50 111 2222</div>
+        <div className="text-xs text-muted-foreground mb-4">New WhatsApp message — +971 50 111 2222</div>
         <div className="bg-background/60 border border-foreground/10 rounded-lg p-4 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">From</span>
-            <span className="text-xs font-mono text-foreground/80">Sara Khan</span>
+            <span className="text-xs text-foreground/80">Sara Khan</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">Campaign</span>
-            <span className={`text-xs font-mono ${HIGHLIGHT}`}>Marina Tower launch — Meta ad</span>
+            <span className={`text-xs ${HIGHLIGHT}`}>Marina Tower launch — Meta ad</span>
           </div>
           <div className="border-t border-foreground/10 mt-3 pt-3">
             <p className="text-sm text-foreground/80 leading-relaxed">"Hi, is the 3-bed with sea view still available? Budget around 2.5M, looking to buy in the next 3 months."</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-xs text-emerald-700 dark:text-lime-400 font-mono mt-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-lime-400 animate-pulse" />
+        <div className="flex items-center gap-2 text-xs text-forest dark:text-sage mt-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-sage" />
           Buying intent detected — qualifying
         </div>
       </div>
@@ -85,7 +85,7 @@ const DEMO_STEPS = [
     icon: Filter,
     content: (
       <div className="space-y-3">
-        <div className="text-xs text-muted-foreground font-mono mb-4">Qualification — reading buying signals</div>
+        <div className="text-xs text-muted-foreground mb-4">Qualification — reading buying signals</div>
         <div className="space-y-2">
           {[
             { label: "Budget", value: "AED 2.5M — matches 3-bed range", done: true },
@@ -96,11 +96,11 @@ const DEMO_STEPS = [
             <div key={i} className="flex items-center justify-between bg-background/60 border border-foreground/10 rounded-lg px-4 py-2.5">
               <span className="text-xs text-muted-foreground">{row.label}</span>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono text-foreground/70">{row.value}</span>
+                <span className="text-xs text-foreground/70">{row.value}</span>
                 {row.done ? (
-                  <CheckCircle className="w-3 h-3 text-emerald-600 dark:text-lime-400 shrink-0" />
+                  <CheckCircle className="w-3 h-3 text-forest dark:text-sage shrink-0" />
                 ) : (
-                  <Flame className="w-3.5 h-3.5 text-lime-500 shrink-0" />
+                  <Flame className="w-3.5 h-3.5 text-forest dark:text-sage shrink-0" />
                 )}
               </div>
             </div>
@@ -115,7 +115,7 @@ const DEMO_STEPS = [
     icon: Bot,
     content: (
       <div className="space-y-3">
-        <div className="text-xs text-muted-foreground font-mono mb-4">Draft ready — waiting for your approval</div>
+        <div className="text-xs text-muted-foreground mb-4">Draft ready — waiting for your approval</div>
         <div className="bg-background/60 border border-foreground/10 rounded-lg p-4">
           <div className="flex items-start gap-3 mb-3">
             <img src="/logo-mark.svg" alt="" className="w-8 h-8 rounded-md shrink-0" />
@@ -123,17 +123,17 @@ const DEMO_STEPS = [
               <span className="text-sm font-semibold text-foreground">DIM map</span>
               <span className="text-xs text-muted-foreground ml-2">2:04 PM</span>
             </div>
-            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-lime-400 text-black">Hot lead</span>
+            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-mist text-forest dark:bg-sage/15 dark:text-sage">Hot lead</span>
           </div>
           <p className="text-xs text-muted-foreground mb-3">Reply to <strong className="text-foreground/80">Sara Khan</strong> on WhatsApp</p>
           <div className="bg-foreground/5 border border-foreground/10 rounded p-3 text-xs text-foreground/70 leading-relaxed mb-3">
             "Hi Sara! Yes — we still have two 3-beds with full sea view on the upper floors, both within your budget. Would Thursday or Saturday suit you for a private viewing?"
           </div>
           <div className="flex gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-lime-400 hover:bg-lime-300 text-black text-xs font-semibold transition-colors">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-forest hover:bg-forest-soft text-white dark:bg-sage dark:text-forest dark:hover:bg-sage/90 text-xs font-medium transition-colors">
               <Send className="w-3 h-3" /> Approve & Send
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-foreground/10 hover:bg-foreground/15 text-foreground/80 text-xs font-medium transition-colors">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-foreground/10 hover:bg-foreground/15 text-foreground/80 text-xs font-medium transition-colors">
               Edit Reply
             </button>
           </div>
@@ -162,8 +162,7 @@ function DemoSection() {
 
   return (
     <section className="py-24 px-6 relative">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent pointer-events-none" />
-      <div className="container mx-auto max-w-6xl relative z-10">
+            <div className="container mx-auto max-w-6xl relative z-10">
         <motion.div
           className="text-center mb-14"
           initial={{ opacity: 0, y: 20 }}
@@ -174,7 +173,7 @@ function DemoSection() {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-xs font-medium text-muted-foreground mb-6">
             Live demo
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Watch a buyer get qualified</h2>
+          <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight [text-wrap:balance] mb-4">Watch a buyer get qualified</h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">From a WhatsApp message to a graded lead and a ready reply in seconds. No copy-pasting between apps.</p>
         </motion.div>
 
@@ -199,7 +198,7 @@ function DemoSection() {
                       : "border-foreground/5 text-muted-foreground hover:border-foreground/10 hover:text-foreground/70"
                   }`}
                 >
-                  <div className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 transition-all ${isActive ? "bg-lime-400/15 border-lime-500/40" : "bg-foreground/5 border-foreground/10"}`}>
+                  <div className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 transition-all ${isActive ? "bg-mist border-sage/60 dark:bg-sage/10" : "bg-foreground/5 border-foreground/10"}`}>
                     <Icon className={`w-4 h-4 ${isActive ? HIGHLIGHT : "text-muted-foreground"}`} />
                   </div>
                   <div>
@@ -216,7 +215,7 @@ function DemoSection() {
                 onClick={() => setAuto((a) => !a)}
                 className={`flex items-center gap-2 text-xs transition-colors ${auto ? HIGHLIGHT : "text-muted-foreground"}`}
               >
-                <span className={`w-1.5 h-1.5 rounded-full ${auto ? "bg-lime-500 animate-pulse" : "bg-muted-foreground"}`} />
+                <span className={`w-1.5 h-1.5 rounded-full ${auto ? "bg-sage" : "bg-muted-foreground"}`} />
                 {auto ? "Auto-playing" : "Paused — click steps"}
               </button>
             </div>
@@ -227,15 +226,15 @@ function DemoSection() {
               <div className="flex gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-foreground/15" />
                 <div className="w-2.5 h-2.5 rounded-full bg-foreground/15" />
-                <div className="w-2.5 h-2.5 rounded-full bg-lime-500/60" />
+                <div className="w-2.5 h-2.5 rounded-full bg-foreground/15" />
               </div>
-              <div className="mx-auto text-xs text-muted-foreground font-mono">
-                dim map — {DEMO_STEPS[activeStep].label.toLowerCase()}
+              <div className="mx-auto text-xs text-muted-foreground">
+                DIM map · {DEMO_STEPS[activeStep].label}
               </div>
               <div className="w-20 h-0.5 bg-foreground/10 rounded-full overflow-hidden ml-auto">
                 <motion.div
                   key={activeStep}
-                  className="h-full bg-lime-500 rounded-full"
+                  className="h-full bg-sage rounded-full"
                   initial={{ width: "0%" }}
                   animate={{ width: "100%" }}
                   transition={{ duration: auto ? 3.2 : 0 }}
@@ -311,7 +310,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-lime-300/60 font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground selection:bg-sage/40 font-sans overflow-x-hidden">
 
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-foreground/5 bg-background/80 backdrop-blur-md">
@@ -358,21 +357,20 @@ export default function Home() {
       <main>
         {/* Hero */}
         <section className="pt-40 pb-20 md:pt-52 md:pb-32 px-6 relative">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-lime-400/15 via-background to-background pointer-events-none" />
-          <div className="container mx-auto text-center max-w-4xl relative z-10">
+                    <div className="container mx-auto text-center max-w-4xl relative z-10">
             <motion.div initial="hidden" animate="visible" variants={stagger}>
               <motion.div
                 variants={fadeIn}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-lime-400/15 border border-lime-500/30 text-xs font-semibold text-emerald-900 dark:text-lime-300 mb-8"
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-mist border border-sage/50 text-xs font-medium text-forest dark:bg-sage/10 dark:text-sage mb-8"
               >
                 <MapPin className="w-3.5 h-3.5" /> For property developers &amp; brokers
               </motion.div>
               <motion.h1
                 variants={fadeIn}
-                className="text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.1] mb-6"
+                className="font-display text-5xl md:text-7xl font-medium tracking-tight text-foreground leading-[1.08] mb-6 [text-wrap:balance]"
               >
                 Every lead. Every channel. <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-800 to-lime-600 dark:from-lime-400 dark:to-lime-200">
+                <span className="text-forest dark:text-sage italic">
                   One map to close them.
                 </span>
               </motion.h1>
@@ -409,52 +407,50 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Lead feed visual — always dark: it is a window into the product. */}
+        {/* Lead feed visual — a calm glimpse of the Lead Inbox. */}
         <section className="py-10 px-6 relative z-10">
           <div className="container mx-auto max-w-5xl">
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8 }}
-              className="rounded-xl border border-lime-400/15 bg-[#0A0A0A] overflow-hidden shadow-2xl shadow-emerald-950/30"
+              className="rounded-2xl border border-foreground/10 bg-card overflow-hidden shadow-[0_20px_60px_-30px_rgba(31,74,58,0.35)]"
             >
-              <div className="flex items-center px-4 py-3 border-b border-white/10 bg-[#0B3D2E]/40">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-white/15" />
-                  <div className="w-3 h-3 rounded-full bg-white/15" />
-                  <div className="w-3 h-3 rounded-full bg-lime-400/70" />
-                </div>
-                <div className="mx-auto text-xs text-white/50 font-mono">dim-map — live lead feed</div>
+              <div className="flex items-center justify-between px-6 py-4 border-b border-foreground/10">
+                <span className="text-sm font-semibold">Lead Inbox</span>
+                <span className="text-xs text-muted-foreground">3 new today</span>
               </div>
-              <div className="p-6 md:p-8 font-mono text-sm md:text-base leading-relaxed">
+              <div className="divide-y divide-foreground/5">
                 {[
-                  { time: "09:12:04", src: "META", text: <>Lead form: <span className="text-lime-300">"2-bed, off-plan, payment plan?"</span> — Omar H.</>, grade: "WARM" },
-                  { time: "09:14:37", src: "LEMLIST", text: <>Reply to investor sequence: <span className="text-lime-300">"What yields on the Q4 units?"</span> — P. Nair</>, grade: "WARM" },
-                  { time: "09:15:02", src: "WHATSAPP", text: <>Message: <span className="text-lime-300">"3-bed sea view, budget 2.5M, buying in 3 months"</span> — Sara K.</>, grade: "HOT" },
+                  { name: "Sara K.", src: "WhatsApp", text: "3-bed with sea view, budget 2.5M, buying in 3 months", grade: "Hot", time: "9:15" },
+                  { name: "Priya N.", src: "Cold email", text: "What yields are you seeing on the Q4 units?", grade: "Warm", time: "9:14" },
+                  { name: "Omar H.", src: "Meta ad", text: "2-bed off-plan, is there a payment plan?", grade: "Warm", time: "9:12" },
                 ].map((row, i) => (
-                  <div key={i} className="flex items-start gap-4 mb-4">
-                    <span className="text-white/40 shrink-0">{row.time}</span>
-                    <span className="text-emerald-400 shrink-0 w-20">{row.src}</span>
-                    <span className="text-white/80 flex-1">{row.text}</span>
-                    <span className={`shrink-0 text-[11px] font-bold px-2 py-0.5 rounded ${row.grade === "HOT" ? "bg-lime-400 text-black" : "bg-white/10 text-white/70"}`}>{row.grade}</span>
+                  <div key={i} className="flex items-center gap-4 px-6 py-4">
+                    <div className="w-9 h-9 rounded-full bg-mist dark:bg-sage/10 text-forest dark:text-sage flex items-center justify-center text-sm font-semibold shrink-0">
+                      {row.name[0]}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="font-medium">{row.name}</span>
+                        <span className="text-xs text-muted-foreground">via {row.src}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground truncate">"{row.text}"</p>
+                    </div>
+                    <span className={`shrink-0 text-xs font-medium px-2.5 py-1 rounded-full ${row.grade === "Hot" ? "bg-forest text-white dark:bg-sage dark:text-forest" : "bg-mist text-forest dark:bg-sage/10 dark:text-sage"}`}>{row.grade}</span>
+                    <span className="hidden sm:block shrink-0 text-xs text-muted-foreground w-10 text-right">{row.time}</span>
                   </div>
                 ))}
-                <div className="mt-8 pt-6 border-t border-white/10 relative">
-                  <div className="absolute top-[-10px] left-8 bg-[#0A0A0A] px-2 text-xs text-white/50">Ready for approval</div>
-                  <div className="flex items-start gap-4">
-                    <img src="/logo-mark.svg" alt="" className="w-10 h-10 rounded shrink-0" />
-                    <div>
-                      <p className="text-white font-sans font-medium mb-1">Reply to Sara Khan <span className="text-xs font-normal text-white/50 ml-2">WhatsApp · Hot lead</span></p>
-                      <div className="bg-white/5 border border-white/10 rounded-md p-4 font-sans text-sm text-white/75 mb-3">
-                        "Hi Sara! Yes — two 3-beds with full sea view are still available, both within your budget. Would Thursday or Saturday suit you for a private viewing?"
-                      </div>
-                      <div className="flex gap-2 font-sans">
-                        <Button size="sm" className="h-8 bg-lime-400 hover:bg-lime-300 text-black border-0 font-semibold">Approve &amp; Send</Button>
-                        <Button size="sm" variant="outline" className="h-8 bg-transparent border-white/15 text-white hover:bg-white/5 hover:text-white">Edit Reply</Button>
-                      </div>
-                    </div>
-                  </div>
+              </div>
+              <div className="bg-mist/60 dark:bg-sage/5 border-t border-foreground/10 px-6 py-5">
+                <div className="text-xs font-medium text-muted-foreground mb-3">Suggested reply to Sara · WhatsApp</div>
+                <p className="text-sm leading-relaxed text-foreground/85 mb-4 max-w-3xl">
+                  "Hi Sara! Yes, two 3-beds with full sea view are still available, both within your budget. Would Thursday or Saturday suit you for a private viewing?"
+                </p>
+                <div className="flex gap-2">
+                  <Button size="sm" className="h-8">Approve &amp; send</Button>
+                  <Button size="sm" variant="outline" className="h-8 bg-transparent">Edit</Button>
                 </div>
               </div>
             </motion.div>
@@ -465,7 +461,7 @@ export default function Home() {
         <section className="py-24 px-6 relative">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">From ad spend to site visit</h2>
+              <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight [text-wrap:balance] mb-4">From ad spend to site visit</h2>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto">You pay for every lead. DIM map makes sure none of them go cold waiting for a reply.</p>
             </div>
             <div className="grid md:grid-cols-4 gap-8">
@@ -483,10 +479,10 @@ export default function Home() {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   className="relative"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-lime-400/10 border border-lime-500/25 flex items-center justify-center mb-6 relative z-10">
+                  <div className="w-12 h-12 rounded-full bg-mist dark:bg-sage/10 flex items-center justify-center mb-6 relative z-10">
                     <step.icon className={`w-5 h-5 ${HIGHLIGHT}`} />
                   </div>
-                  {i < 3 && <div className="hidden md:block absolute top-6 left-12 right-0 h-[1px] bg-gradient-to-r from-lime-500/30 to-transparent" />}
+                  {i < 3 && <div className="hidden md:block absolute top-6 left-12 right-0 h-[1px] bg-sage/40" />}
                   <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">{step.desc}</p>
                 </motion.div>
@@ -510,10 +506,10 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-lime-400/15 text-emerald-900 dark:text-lime-300 text-xs font-semibold mb-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-mist text-forest dark:bg-sage/10 dark:text-sage text-xs font-medium mb-6">
                   <Megaphone className="w-3.5 h-3.5" /> Meta campaigns
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">Your Meta leads, answered in minutes.</h2>
+                <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight [text-wrap:balance] mb-6">Your Meta leads, answered in minutes.</h2>
                 <p className="text-lg text-muted-foreground mb-6">A Facebook or Instagram lead that waits a day is a lead your competitor already called. DIM map picks up every lead-form submission the moment it lands, reads the answers, and has a first message ready before your agent has finished their coffee.</p>
                 <ul className="space-y-3">
                   {["Every Meta lead form, mapped to its launch", "Form answers read as buying signals", "First reply sent over WhatsApp from your own number"].map((item, i) => (
@@ -531,19 +527,18 @@ export default function Home() {
                 transition={{ duration: 0.6 }}
                 className="relative aspect-square md:aspect-auto md:h-[400px] rounded-xl bg-card border border-foreground/10 overflow-hidden p-6"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-lime-400/10 to-transparent pointer-events-none" />
-                <div className="space-y-4 relative">
+                                <div className="space-y-4 relative">
                   <div className="bg-background border border-foreground/5 p-4 rounded-lg">
                     <div className="text-xs text-muted-foreground mb-2">Persona: Marina Tower sales team</div>
-                    <div className="font-mono text-sm text-foreground/80">"1–3 bed apartments from AED 1.4M. 60/40 payment plan. Never quote a unit price — offer a viewing."</div>
+                    <div className="text-sm text-foreground/80">"1–3 bed apartments from AED 1.4M. 60/40 payment plan. Never quote a unit price — offer a viewing."</div>
                   </div>
                   <div className="bg-background border border-foreground/5 p-4 rounded-lg">
                     <div className="text-xs text-muted-foreground mb-2">Qualification rule</div>
-                    <div className="font-mono text-sm text-foreground/80">"Hot = budget over 1.4M and buying within 6 months. Investors asking for yield go to the investment desk."</div>
+                    <div className="text-sm text-foreground/80">"Hot = budget over 1.4M and buying within 6 months. Investors asking for yield go to the investment desk."</div>
                   </div>
                   <div className="flex gap-2">
                     {["Hot", "Warm", "Cold"].map((g) => (
-                      <span key={g} className={`text-xs font-bold px-3 py-1 rounded-full ${g === "Hot" ? "bg-lime-400 text-black" : "bg-foreground/5 text-muted-foreground border border-foreground/10"}`}>{g}</span>
+                      <span key={g} className={`text-xs font-medium px-3 py-1 rounded-full ${g === "Hot" ? "bg-forest text-white dark:bg-sage dark:text-forest" : "bg-foreground/5 text-muted-foreground border border-foreground/10"}`}>{g}</span>
                     ))}
                   </div>
                 </div>
@@ -562,7 +557,7 @@ export default function Home() {
               transition={{ duration: 0.6 }}
             >
               <GitMerge className={`w-10 h-10 mx-auto mb-6 ${HIGHLIGHT}`} />
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">Where your buyers already are.</h2>
+              <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight [text-wrap:balance] mb-6">Where your buyers already are.</h2>
               <p className="text-lg text-muted-foreground mb-12">Keep your ad accounts, your sequences and your WhatsApp number. DIM map sits on top as the layer that qualifies and answers. Lemlist, Meta and WhatsApp are live today; CRM sync is on the way.</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
@@ -579,7 +574,7 @@ export default function Home() {
                     key={i}
                     className={`relative flex flex-col items-center justify-center h-20 rounded-xl border text-sm font-medium ${
                       tool.status === "live"
-                        ? "bg-lime-400/10 border-lime-500/30 text-foreground/90"
+                        ? "bg-mist/60 border-sage/50 text-foreground/90 dark:bg-sage/5"
                         : "bg-foreground/[0.02] border-dashed border-foreground/10 text-foreground/40"
                     }`}
                   >
@@ -595,7 +590,7 @@ export default function Home() {
         </section>
 
         {/* ROI */}
-        <section className="py-24 px-6 bg-[#0B3D2E] text-white">
+        <section className="py-24 px-6 bg-mist/70 dark:bg-card border-y border-foreground/5">
           <div className="container mx-auto max-w-6xl">
             <div className="grid md:grid-cols-3 gap-8">
               {[
@@ -609,12 +604,12 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
-                  className="bg-black/25 border border-lime-400/20 rounded-2xl p-8"
+                  className="bg-background border border-foreground/10 rounded-2xl p-8"
                 >
-                  <BarChart className="w-6 h-6 text-lime-400 mb-6" />
-                  <div className="text-5xl font-bold text-lime-400 mb-4">{stat.metric}</div>
-                  <div className="text-lg font-semibold text-white mb-2">{stat.label}</div>
-                  <p className="text-white/70 text-sm leading-relaxed">{stat.desc}</p>
+                  <BarChart className="w-6 h-6 text-forest dark:text-sage mb-6" />
+                  <div className="font-display text-5xl font-medium text-forest dark:text-sage mb-4">{stat.metric}</div>
+                  <div className="text-lg font-semibold text-foreground mb-2">{stat.label}</div>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{stat.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -634,9 +629,9 @@ export default function Home() {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-xs font-medium text-muted-foreground mb-6">
                 Pricing
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Simple, transparent pricing</h2>
+              <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight [text-wrap:balance] mb-4">Simple, transparent pricing</h2>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Every plan starts with a 3-day free trial — no card needed. Pay monthly, cancel anytime. A brokerage running campaigns for several developers?{" "}
-                <a href={`mailto:${CONTACT_EMAIL}?subject=DIM%20map%20for%20brokerages`} className="text-foreground underline underline-offset-4 hover:text-emerald-700 dark:hover:text-lime-400 transition-colors">Talk to us.</a>
+                <a href={`mailto:${CONTACT_EMAIL}?subject=DIM%20map%20for%20brokerages`} className="text-foreground underline underline-offset-4 hover:text-forest dark:hover:text-sage transition-colors">Talk to us.</a>
               </p>
             </motion.div>
 
@@ -665,10 +660,10 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
-                  className={`relative rounded-2xl border p-8 flex flex-col ${plan.highlight ? "border-lime-500 bg-lime-400/5" : "border-foreground/10 bg-card"}`}
+                  className={`relative rounded-2xl border p-8 flex flex-col ${plan.highlight ? "border-forest/40 bg-mist/50 dark:border-sage/40 dark:bg-sage/5" : "border-foreground/10 bg-card"}`}
                 >
                   {plan.highlight && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-lime-400 text-black text-xs font-bold">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-forest text-white dark:bg-sage dark:text-forest text-xs font-medium">
                       Most popular
                     </div>
                   )}
@@ -715,7 +710,7 @@ export default function Home() {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-xs font-medium text-muted-foreground mb-6">
                 FAQ
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Common questions</h2>
+              <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight [text-wrap:balance] mb-4">Common questions</h2>
               <p className="text-muted-foreground text-lg max-w-xl mx-auto">Everything you need to know before you start.</p>
             </motion.div>
 
@@ -730,7 +725,7 @@ export default function Home() {
                   <AccordionItem
                     key={i}
                     value={`item-${i}`}
-                    className="bg-card border border-foreground/10 rounded-xl px-6 data-[state=open]:border-lime-500/40 transition-colors"
+                    className="bg-card border border-foreground/10 rounded-xl px-6 data-[state=open]:border-sage/60 transition-colors"
                   >
                     <AccordionTrigger className="text-left text-sm font-medium text-foreground/90 hover:no-underline py-5">
                       {item.q}
@@ -747,9 +742,8 @@ export default function Home() {
 
         {/* Early access form */}
         <section id="early-access" className="py-32 px-6 relative overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-lime-400/10 rounded-full blur-[120px] pointer-events-none" />
-          <div className="container mx-auto max-w-2xl text-center relative z-10">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Stop letting leads go cold.</h2>
+                    <div className="container mx-auto max-w-2xl text-center relative z-10">
+            <h2 className="font-display text-4xl md:text-5xl font-medium tracking-tight mb-6">Stop letting leads go cold.</h2>
             <p className="text-lg text-muted-foreground mb-8">Three days free, no card, nothing to install. Your first qualified lead is about ten minutes away.</p>
             <Button size="lg" className="h-12 px-8 text-base group mb-14" onClick={startTrial}>
               Start free trial
@@ -763,7 +757,7 @@ export default function Home() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-lime-400/10 border border-lime-500/30 text-emerald-800 dark:text-lime-400 p-6 rounded-xl flex flex-col items-center gap-4"
+                className="bg-mist border border-sage/50 text-forest dark:bg-sage/10 dark:text-sage p-6 rounded-xl flex flex-col items-center gap-4"
               >
                 <CheckCircle className="w-8 h-8" />
                 <div>
@@ -783,7 +777,7 @@ export default function Home() {
                       autoComplete="name"
                       required
                       placeholder="Jane Doe"
-                      className="bg-background border-foreground/10 focus-visible:ring-lime-500 h-12"
+                      className="bg-background border-foreground/10 focus-visible:ring-sage h-12"
                     />
                   </div>
                   <div>
@@ -796,7 +790,7 @@ export default function Home() {
                       required
                       type="email"
                       placeholder="jane@yourdevelopment.com"
-                      className="bg-background border-foreground/10 focus-visible:ring-lime-500 h-12"
+                      className="bg-background border-foreground/10 focus-visible:ring-sage h-12"
                     />
                   </div>
                 </div>
