@@ -62,8 +62,9 @@ docker compose logs app | grep "Sign-in code"
 shell на сервере, а это и так полный доступ. Значит, проблема с почтовым
 провайдером не запрёт оператора снаружи от собственного дашборда.
 
-Для настоящих писем: ключ Resend в `RESEND_API_KEY`, домен `draftfly.app`
-подтверждён в Resend (SPF/DKIM записи в GoDaddy), и `EMAIL_FROM` на этом домене.
+Для настоящих писем: ключ Resend в `RESEND_API_KEY`, домен `dim.capital`
+подтверждён в Resend (SPF/DKIM записи у регистратора), и `EMAIL_FROM` на этом домене,
+например `DIM Convert <noreply@dim.capital>`.
 
 ## 3a. Настройка Slack-приложения (только карточки одобрения)
 
@@ -134,7 +135,7 @@ cp deploy/nginx-draftfly.conf /etc/nginx/sites-available/draftfly.conf
 ln -s /etc/nginx/sites-available/draftfly.conf /etc/nginx/sites-enabled/
 nginx -t && systemctl reload nginx
 # TLS-сертификат Let's Encrypt (добавит https и редирект сам):
-certbot --nginx -d draftfly.app -d www.draftfly.app
+certbot --nginx -d convert.dim.capital -d draftfly.app -d www.draftfly.app
 ```
 
 ### 4b. Если порты 80/443 свободны — Caddy вместо nginx

@@ -3,7 +3,7 @@ import { LegalLayout, Section, Table } from "./legal-layout";
 const UPDATED = "27 September 2026";
 // See terms.tsx — privacy@ was never a real mailbox. A published contact
 // address that bounces is worse here than anywhere else on the site.
-const CONTACT = "outreach@draftfly.app";
+const CONTACT = "outreach@dim.capital";
 
 export default function Privacy() {
   return (

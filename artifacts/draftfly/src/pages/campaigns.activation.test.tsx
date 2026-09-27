@@ -22,7 +22,7 @@ let mockCampaigns = [
 let mockSettings: Record<string, unknown> | undefined = {
   client: { id: 3, name: "Up2Clean", company: null, plan: "starter" },
   lemlist: { hasApiKey: true, keyHint: "••••9999", usingGlobalFallback: false },
-  webhook: { url: "https://draftfly.app/api/webhooks/lemlist/3?secret=x", hasSecret: true, headerName: "X-Webhook-Secret" },
+  webhook: { url: "https://convert.dim.capital/api/webhooks/lemlist/3?secret=x", hasSecret: true, headerName: "X-Webhook-Secret" },
   slack: { channel: null },
   usage: { activeCampaigns: 2, activeCampaignLimit: 2, totalCampaigns: 3, repliesThisMonth: 15, replyLimit: 100 },
 };

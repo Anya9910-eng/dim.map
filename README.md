@@ -1,5 +1,7 @@
 # DIM Convert — AI lead qualification for property developers & brokers
 
+A product of [DIM](https://dim.capital) — Development Intelligence & Marketing — alongside DIM Map and DIM Invest. Served at **https://convert.dim.capital**.
+
 DIM Convert pulls in leads from cold email campaigns (Lemlist), Meta (Facebook / Instagram), Google Ads and YouTube lead forms, and WhatsApp Business, qualifies each buyer as **hot, warm, cold or unqualified**, and drafts the reply for one-click approval in the dashboard or Slack.
 
 ## Features

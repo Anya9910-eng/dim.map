@@ -23,14 +23,14 @@ vi.mock("@workspace/db", () => ({
 // app.ts builds its CORS allowlist at module load, and `import` is hoisted
 // above ordinary top-level code — so this has to run in a hoisted block or the
 // allowlist is computed before the variable exists.
-vi.hoisted(() => { process.env["APP_BASE_URL"] = "https://draftfly.app"; });
+vi.hoisted(() => { process.env["APP_BASE_URL"] = "https://convert.dim.capital"; });
 
 import app from "./app";
 
 describe("CORS", () => {
   it("allows the app's own origin", async () => {
-    const res = await request(app).get("/api/healthz").set("Origin", "https://draftfly.app");
-    expect(res.headers["access-control-allow-origin"]).toBe("https://draftfly.app");
+    const res = await request(app).get("/api/healthz").set("Origin", "https://convert.dim.capital");
+    expect(res.headers["access-control-allow-origin"]).toBe("https://convert.dim.capital");
   });
 
   it("does not grant an arbitrary origin", async () => {
@@ -40,7 +40,7 @@ describe("CORS", () => {
 
   // A near-miss hostname must not slip through a substring check.
   it("does not grant a lookalike origin", async () => {
-    const res = await request(app).get("/api/healthz").set("Origin", "https://draftfly.app.evil.example");
+    const res = await request(app).get("/api/healthz").set("Origin", "https://convert.dim.capital.evil.example");
     expect(res.headers["access-control-allow-origin"]).toBeUndefined();
   });
 

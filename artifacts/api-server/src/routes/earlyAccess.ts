@@ -43,7 +43,7 @@ router.post("/early-access", async (req, res): Promise<void> => {
     res.status(202).json({ ok: true });
   } catch (err) {
     logger.error({ err }, "Failed to store early-access request");
-    res.status(500).json({ error: "Could not save your request. Please email outreach@draftfly.app instead." });
+    res.status(500).json({ error: "Could not save your request. Please email outreach@dim.capital instead." });
   }
 });
 

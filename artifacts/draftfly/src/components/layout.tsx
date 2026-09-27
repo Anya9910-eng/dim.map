@@ -160,7 +160,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   <>
                     <div className="flex-1" />
                     <a
-                      href="mailto:outreach@draftfly.app?subject=DIM%20map%20support"
+                      href="mailto:outreach@dim.capital?subject=DIM%20Convert%20support"
                       data-testid="support-link"
                       className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all"
                     >

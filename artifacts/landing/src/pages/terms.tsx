@@ -3,7 +3,7 @@ import { LegalLayout, Section, Table } from "./legal-layout";
 const UPDATED = "27 September 2026";
 // The only mailbox that exists on this domain — hello@ and privacy@ were
 // never provisioned and bounced with 550 Recipient not found.
-const CONTACT = "outreach@draftfly.app";
+const CONTACT = "outreach@dim.capital";
 
 export default function Terms() {
   return (

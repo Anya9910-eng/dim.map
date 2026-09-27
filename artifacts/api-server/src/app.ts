@@ -222,7 +222,7 @@ const earlyAccessLimiter = rateLimit({
   limit: 10,
   standardHeaders: "draft-8",
   legacyHeaders: false,
-  message: { error: "Too many requests from this address. Try again later, or email outreach@draftfly.app." },
+  message: { error: "Too many requests from this address. Try again later, or email outreach@dim.capital." },
 });
 
 app.use("/api/auth", authLimiter);

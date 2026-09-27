@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/accordion";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
-import { Wordmark, CONTACT_EMAIL } from "@/components/brand";
+import { Wordmark, CONTACT_EMAIL, PARENT_URL, PARENT_TAGLINE } from "@/components/brand";
 
 const DASHBOARD_URL = "/app";
 const SIGNUP_URL = "/app/signup";
@@ -633,7 +633,7 @@ export default function Home() {
               </div>
               <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight [text-wrap:balance] mb-4">Simple, transparent pricing</h2>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Every plan starts with a 3-day free trial — no card needed. Pay monthly, cancel anytime. A brokerage running campaigns for several developers?{" "}
-                <a href={`mailto:${CONTACT_EMAIL}?subject=DIM%20map%20for%20brokerages`} className="text-foreground underline underline-offset-4 hover:text-forest dark:hover:text-sage transition-colors">Talk to us.</a>
+                <a href={`mailto:${CONTACT_EMAIL}?subject=DIM%20Convert%20for%20brokerages`} className="text-foreground underline underline-offset-4 hover:text-forest dark:hover:text-sage transition-colors">Talk to us.</a>
               </p>
             </motion.div>
 
@@ -808,8 +808,15 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-foreground/10 py-12 px-6 bg-background">
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="opacity-80">
-            <Wordmark size="sm" />
+          <div className="flex flex-col items-center md:items-start gap-1.5">
+            <div className="opacity-80">
+              <Wordmark size="sm" />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              A{" "}
+              <a href={PARENT_URL} className="font-medium text-foreground/80 hover:text-forest dark:hover:text-sage transition-colors">DIM</a>
+              {" "}product · {PARENT_TAGLINE}
+            </p>
           </div>
           <div className="flex gap-6 text-sm text-muted-foreground">
             <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-foreground transition-colors">{CONTACT_EMAIL}</a>

@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /app
 
-Sitemap: https://draftfly.app/sitemap.xml
+Sitemap: https://convert.dim.capital/sitemap.xml

@@ -70,6 +70,6 @@ describe("POST /api/early-access", () => {
       .post("/api/early-access")
       .send({ name: "Jane Doe", email: "jane@agency.example" });
     expect(res.status).toBe(500);
-    expect(res.body.error).toContain("outreach@draftfly.app");
+    expect(res.body.error).toContain("outreach@dim.capital");
   });
 });

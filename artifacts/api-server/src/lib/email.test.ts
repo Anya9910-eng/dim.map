@@ -13,7 +13,7 @@ describe("email templates", () => {
   it("greets the person and links the dashboard in the welcome email", () => {
     const html = welcomeHtml("Jane Doe");
     expect(html).toContain("Welcome to DIM Convert, Jane Doe");
-    expect(html).toContain("https://draftfly.app/app");
+    expect(html).toContain("https://convert.dim.capital/app");
     expect(html).toContain("Connect your lead sources");
   });
 

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Check } from "lucide-react";
 import { useBilling, useStartCheckout, PLAN_COPY, type PlanKey } from "@/hooks/use-billing";
 
-const CONTACT_EMAIL = "outreach@draftfly.app";
+const CONTACT_EMAIL = "outreach@dim.capital";
 
 /**
  * The two plans, with a button each. Used on the paywall and in Settings.

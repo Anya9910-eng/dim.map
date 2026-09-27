@@ -135,6 +135,6 @@ describe("PlanPicker", () => {
     state.billing = { ...base, state: { kind: "trial", endsAt: "x", daysLeft: 3 }, plans: plans.map((p) => ({ ...p, available: false })) };
     wrap(<PlanPicker />);
     expect(screen.getByTestId("choose-starter")).toBeDisabled();
-    expect(screen.getByTestId("payments-unavailable")).toHaveTextContent("outreach@draftfly.app");
+    expect(screen.getByTestId("payments-unavailable")).toHaveTextContent("outreach@dim.capital");
   });
 });

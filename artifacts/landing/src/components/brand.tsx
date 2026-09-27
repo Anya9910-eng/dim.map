@@ -12,5 +12,9 @@ export function Wordmark({ size = "md" }: { size?: "sm" | "md" }) {
   );
 }
 
+/** The parent brand. DIM Convert is one of its products, alongside DIM Map and DIM Invest. */
+export const PARENT_URL = "https://dim.capital";
+export const PARENT_TAGLINE = "Development Intelligence & Marketing";
+
 /** The mailbox published on the site — the one place people can reach a person. */
-export const CONTACT_EMAIL = "outreach@draftfly.app";
+export const CONTACT_EMAIL = "outreach@dim.capital";

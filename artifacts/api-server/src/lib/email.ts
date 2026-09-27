@@ -71,8 +71,10 @@ async function send(to: string, subject: string, text: string, html?: string): P
 
 const BRAND = "#1F4A3A";
 const LIME = "#A9C97D";
-const APP_URL = "https://draftfly.app";
-const SUPPORT_EMAIL = "outreach@draftfly.app";
+// Links in emails follow the deployment's own address, so a staging server
+// does not send people to production.
+const APP_URL = process.env["APP_BASE_URL"]?.trim().replace(/\/+$/, "") || "https://convert.dim.capital";
+const SUPPORT_EMAIL = "outreach@dim.capital";
 
 /** Escapes text interpolated into HTML — names come from the sign-up form. */
 function esc(s: string): string {
@@ -102,7 +104,7 @@ function layout(inner: string): string {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;">
         <tr><td style="padding:16px 32px;text-align:center;color:#9ca3af;font-size:12px;line-height:1.5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
           DIM Convert — AI lead qualification and replies for property developers.<br>
-          <a href="${APP_URL}" style="color:#9ca3af;">draftfly.app</a>
+          A <a href="https://dim.capital" style="color:#9ca3af;">DIM</a> product · Development Intelligence &amp; Marketing
         </td></tr>
       </table>
     </td></tr>
