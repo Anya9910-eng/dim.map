@@ -135,7 +135,7 @@ cp deploy/nginx-draftfly.conf /etc/nginx/sites-available/draftfly.conf
 ln -s /etc/nginx/sites-available/draftfly.conf /etc/nginx/sites-enabled/
 nginx -t && systemctl reload nginx
 # TLS-сертификат Let's Encrypt (добавит https и редирект сам):
-certbot --nginx -d convert.dim.capital -d draftfly.app -d www.draftfly.app
+certbot --nginx -d draftfly.app -d www.draftfly.app
 ```
 
 ### 4b. Если порты 80/443 свободны — Caddy вместо nginx

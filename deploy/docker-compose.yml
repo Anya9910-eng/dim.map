@@ -24,8 +24,10 @@ services:
     # (nginx/Caddy) terminates TLS. Unlike a 127.0.0.1 binding, this one is
     # served by iptables DNAT, so it survives the docker-proxy process dying.
     # The subnet is pinned below so this address stays valid across recreates.
+    # APP_BIND lets a second install (DIM Convert next to DraftFly) use its own
+    # gateway and port; unset, it keeps DraftFly's original binding.
     ports:
-      - "172.18.0.1:8080:8080"
+      - "${APP_BIND:-172.18.0.1:8080}:8080"
     environment:
       DATABASE_URL: postgres://draftfly:${POSTGRES_PASSWORD}@db:5432/draftfly
       PORT: "8080"
@@ -53,7 +55,7 @@ services:
 
   # Optional TLS proxy for servers with free 80/443 ports:
   #   docker compose --profile caddy up -d
-  # Skip it when the host already runs nginx — use deploy/nginx-draftfly.conf instead.
+  # Skip it when the host already runs nginx — use deploy/nginx-dimconvert.conf instead.
   caddy:
     profiles: ["caddy"]
     image: caddy:2-alpine
@@ -82,5 +84,6 @@ networks:
   default:
     ipam:
       config:
-        - subnet: 172.18.0.0/16
-          gateway: 172.18.0.1
+        # Override both (and APP_BIND) for a second install on the same host.
+        - subnet: ${DOCKER_SUBNET:-172.18.0.0/16}
+          gateway: ${DOCKER_GATEWAY:-172.18.0.1}
