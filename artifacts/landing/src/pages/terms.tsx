@@ -9,13 +9,13 @@ export default function Terms() {
   return (
     <LegalLayout title="Terms of Service" updated={UPDATED}>
       <p>
-        These terms govern your use of DIM map. By creating an account or connecting a lead source
+        These terms govern your use of DIM Convert. By creating an account or connecting a lead source
         you agree to them.
       </p>
 
       <Section heading="What the service does">
         <p>
-          DIM map receives the leads your campaigns generate — replies to your outbound email, Meta
+          DIM Convert receives the leads your campaigns generate — replies to your outbound email, Meta
           lead-form submissions and WhatsApp messages — grades each lead using Claude, and drafts a
           suggested response for approval in the dashboard or Slack. In draft mode nothing is sent to
           a lead until a person approves it. If you switch a client to auto mode, replies are sent
@@ -37,7 +37,7 @@ export default function Terms() {
           with the law that applies to that outreach and advertising — including anti-spam rules such
           as CAN-SPAM, data protection law such as the GDPR, Meta's advertising and WhatsApp Business
           policies, and any rules on marketing property — and for having a lawful basis for
-          processing the personal data of the people you contact. DIM map is a tool for replying to
+          processing the personal data of the people you contact. DIM Convert is a tool for replying to
           people who already wrote to you; it is not a way to bypass those obligations.
         </p>
       </Section>
@@ -57,7 +57,7 @@ export default function Terms() {
       </Section>
 
       <Section heading="Acceptable use">
-        <p>You may not use DIM map to:</p>
+        <p>You may not use DIM Convert to:</p>
         <Table
           rows={[
             ["Deceive", "Impersonate someone else, or misrepresent who is writing."],
@@ -72,9 +72,9 @@ export default function Terms() {
 
       <Section heading="Third-party services">
         <p>
-          DIM map connects to Lemlist, Meta (Lead Ads and WhatsApp Business), Slack and Anthropic.
+          DIM Convert connects to Lemlist, Meta (Lead Ads and WhatsApp Business), Slack and Anthropic.
           Your use of those services is governed by their own terms, and their availability is
-          outside our control. If one of them changes or withdraws access, parts of DIM map may stop
+          outside our control. If one of them changes or withdraws access, parts of DIM Convert may stop
           working.
         </p>
       </Section>
@@ -97,13 +97,13 @@ export default function Terms() {
       <Section heading="Ownership">
         <p>
           You keep all rights to your data, your configuration and the content you send. We keep all
-          rights to the DIM map software itself. Nothing here transfers ownership either way.
+          rights to the DIM Convert software itself. Nothing here transfers ownership either way.
         </p>
       </Section>
 
       <Section heading="Liability">
         <p>
-          To the extent the law allows, DIM map is provided as is, and we are not liable for
+          To the extent the law allows, DIM Convert is provided as is, and we are not liable for
           indirect or consequential loss, including lost profits, lost business or lost data. Our
           total liability in any twelve-month period is limited to what you paid us during that
           period. Nothing here limits liability that cannot legally be limited.
@@ -112,7 +112,7 @@ export default function Terms() {
 
       <Section heading="Ending the agreement">
         <p>
-          You may stop using DIM map and close your account at any time. We may end this agreement
+          You may stop using DIM Convert and close your account at any time. We may end this agreement
           if you materially breach these terms and do not fix it within a reasonable time after we
           tell you. On termination your access stops and your data is deleted as described in the{" "}
           <a href="/privacy" className="text-foreground underline underline-offset-4">Privacy Policy</a>.

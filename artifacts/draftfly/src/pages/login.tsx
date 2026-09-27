@@ -75,12 +75,12 @@ export default function Login({ mode = "signin" }: { mode?: "signin" | "signup" 
       <div className="w-full max-w-sm flex flex-col items-center gap-8">
         <div className="flex items-center gap-2">
           <img src={logoIconUrl} alt="" className="h-16 w-auto" />
-          <span className="text-3xl font-bold text-white tracking-tight">DIM <span className="text-sage">map</span></span>
+          <span className="text-3xl font-bold text-white tracking-tight">DIM <span className="text-sage">Convert</span></span>
         </div>
 
         <div className="w-full bg-[#1A211D] border border-white/10 rounded-2xl p-8 flex flex-col gap-6">
           <div className="text-center">
-            <h1 className="text-xl font-semibold text-white">{isSignup ? "Create your DIM map account" : "Sign in to DIM map"}</h1>
+            <h1 className="text-xl font-semibold text-white">{isSignup ? "Create your DIM Convert account" : "Sign in to DIM Convert"}</h1>
             {/* The server answers the same way for an address with no access
                 as for one with it, so this must not promise that a code was
                 actually sent — only that it would have been. */}
@@ -203,7 +203,7 @@ export default function Login({ mode = "signin" }: { mode?: "signin" | "signup" 
             </p>
           ) : (
             <p className="text-center text-xs text-white/40">
-              New to DIM map?{" "}
+              New to DIM Convert?{" "}
               <Link href="/signup" className="text-sage hover:text-sage/80">Create an account</Link>
               {" "}— free for 3 days.
             </p>

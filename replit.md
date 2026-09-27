@@ -1,4 +1,4 @@
-# DIM map
+# DIM Convert
 
 AI lead qualification and reply drafting for property developers and brokers — leads from Lemlist, Meta lead ads and WhatsApp in one inbox.
 

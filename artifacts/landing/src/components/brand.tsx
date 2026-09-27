@@ -1,4 +1,4 @@
-/** The DIM map mark and wordmark: "DIM" in the text colour, "map" in the brand green. */
+/** The DIM Convert mark and wordmark: "DIM" in the text colour, "Convert" in the brand green. */
 export function Wordmark({ size = "md" }: { size?: "sm" | "md" }) {
   const img = size === "sm" ? "h-5" : "h-9";
   const text = size === "sm" ? "text-sm" : "text-2xl";
@@ -6,7 +6,7 @@ export function Wordmark({ size = "md" }: { size?: "sm" | "md" }) {
     <span className="flex items-center gap-2">
       <img src="/logo-mark.svg" alt="" className={`${img} w-auto`} />
       <span className={`${text} font-bold tracking-tight text-foreground`}>
-        DIM <span className="text-forest dark:text-sage">map</span>
+        DIM <span className="text-forest dark:text-sage">Convert</span>
       </span>
     </span>
   );

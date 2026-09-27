@@ -332,7 +332,7 @@ async function processLemlistReply(
   if (!campaign) {
     logger.warn(
       { campaignId: payload.campaignId, clientId: authenticatedClient?.id ?? null },
-      "No DIM map campaign found for Lemlist campaign ID",
+      "No DIM Convert campaign found for Lemlist campaign ID",
     );
     await logEvent({
       level: "warning",

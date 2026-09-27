@@ -175,7 +175,7 @@ export async function sweepStaleDrafts(): Promise<void> {
                       `*Campaign:* ${campaign?.name ?? String(draft.campaignId)}`,
                       `*Age:* ${ageMinutes} minutes (threshold: ${thresholdMinutes} min)`,
                       ``,
-                      `Please review and retry in DIM map.`,
+                      `Please review and retry in DIM Convert.`,
                     ].join("\n"),
                   },
                 },

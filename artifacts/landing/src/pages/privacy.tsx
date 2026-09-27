@@ -9,7 +9,7 @@ export default function Privacy() {
   return (
     <LegalLayout title="Privacy Policy" updated={UPDATED}>
       <p>
-        DIM map receives the leads your campaigns generate — replies to your outbound email, Meta
+        DIM Convert receives the leads your campaigns generate — replies to your outbound email, Meta
         lead-form submissions and WhatsApp messages — qualifies them, and drafts replies for a person
         to approve. Doing that means handling two different kinds of personal data: information about
         you, our customer, and information about your leads. This policy covers both, and is explicit
@@ -19,7 +19,7 @@ export default function Privacy() {
       <Section heading="Who is responsible for what">
         <p>
           For your own account data we are the controller. For the prospect data that flows through
-          the service we are a processor: you decide whose details enter DIM map and why, and we
+          the service we are a processor: you decide whose details enter DIM Convert and why, and we
           act on your instructions. If you operate under the GDPR, you are the controller for that
           data and are responsible for having a lawful basis for the outreach and advertising that produced it.
         </p>
@@ -86,7 +86,7 @@ export default function Privacy() {
 
       <Section heading="Rights of your leads">
         <p>
-          The people whose details pass through DIM map have rights over that data — access,
+          The people whose details pass through DIM Convert have rights over that data — access,
           correction, deletion, objection, and portability, among others, depending on where they
           live. Because we hold that data on your behalf, requests are normally handled by you. If
           someone contacts us directly we will tell them to approach you, and we will help you

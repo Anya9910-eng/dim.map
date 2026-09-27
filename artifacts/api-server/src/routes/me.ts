@@ -1,7 +1,7 @@
 /**
  * Self-service settings for the signed-in client.
  *
- * Everything a client needs to connect DIM map to their own Lemlist account
+ * Everything a client needs to connect DIM Convert to their own Lemlist account
  * used to live on the operator's client card, behind `requireOperator` — so a
  * client could be handed a dashboard they had no way to configure. These
  * routes close that gap without loosening the operator ones: rather than
@@ -260,7 +260,7 @@ router.post("/me/settings/webhook/regenerate", async (req, res): Promise<void> =
 });
 
 /**
- * The client's real Lemlist campaigns, each marked with whether DIM map
+ * The client's real Lemlist campaigns, each marked with whether DIM Convert
  * already has a mapping for it — so the Campaigns page can offer the ones that
  * are missing instead of asking anyone to copy an ID by hand.
  */

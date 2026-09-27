@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { logger } from "../lib/logger";
 
 /**
- * Operator authorization for internal DIM map surfaces.
+ * Operator authorization for internal DIM Convert surfaces.
  *
  * Reuses the SAME session the email sign-in populates (`req.session.user`, set
  * in routes/auth.ts) — this is NOT a separate auth scheme. Two gates:

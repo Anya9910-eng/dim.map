@@ -63,7 +63,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <Sidebar className="dark border-r border-border bg-sidebar text-sidebar-foreground">
           <SidebarHeader className="p-4 border-b border-border flex flex-row items-center gap-2">
             <img src="/logo-mark.svg" alt="" className="h-7 w-auto" />
-            <span className="text-lg font-bold text-foreground tracking-tight">DIM <span className="text-primary">map</span></span>
+            <span className="text-lg font-bold text-foreground tracking-tight">DIM <span className="text-primary">Convert</span></span>
           </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>

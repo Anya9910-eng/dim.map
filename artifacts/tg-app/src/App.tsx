@@ -357,7 +357,7 @@ function AppInner() {
     <div className="app">
       <header className="app-header">
         <div className="logo">
-          <img src={theme === "dark" ? "/logo-dark.png" : "/logo.png"} alt="DIM map" className="logo-img" />
+          <img src={theme === "dark" ? "/logo-dark.png" : "/logo.png"} alt="DIM Convert" className="logo-img" />
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {userName && <span className="user-name">{tr.hiUser} {userName}</span>}
@@ -539,7 +539,7 @@ function TelegramAuthGate({ children }: { children: React.ReactNode }) {
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", background: "#121714", padding: 24, textAlign: "center" }}>
         <div style={{ fontSize: 40, marginBottom: 16 }}>🔒</div>
         <div style={{ color: "#fff", fontSize: 18, fontWeight: 600, marginBottom: 8 }}>Access denied</div>
-        <div style={{ color: "#888", fontSize: 14 }}>Your account is not authorized to use DIM map.</div>
+        <div style={{ color: "#888", fontSize: 14 }}>Your account is not authorized to use DIM Convert.</div>
       </div>
     );
   }

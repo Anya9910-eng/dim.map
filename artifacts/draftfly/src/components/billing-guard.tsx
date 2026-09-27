@@ -44,7 +44,7 @@ export function BillingGuard({ children }: { children: React.ReactNode }) {
       <div className="w-full max-w-2xl space-y-8">
         <div className="flex justify-center items-center gap-2">
           <img src="/logo-mark.svg" alt="" className="h-10 w-auto" />
-          <span className="text-2xl font-bold">DIM map</span>
+          <span className="text-2xl font-bold">DIM Convert</span>
         </div>
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-semibold">

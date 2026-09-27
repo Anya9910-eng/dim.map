@@ -47,7 +47,7 @@ export function LegalLayout({
 
       <footer className="border-t border-foreground/10 py-10 px-6">
         <div className="container mx-auto max-w-3xl flex flex-wrap gap-6 text-sm text-muted-foreground">
-          <Link href="/" className="hover:text-foreground transition-colors">DIM map</Link>
+          <Link href="/" className="hover:text-foreground transition-colors">DIM Convert</Link>
           <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
           <Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link>
         </div>

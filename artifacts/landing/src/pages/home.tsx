@@ -120,7 +120,7 @@ const DEMO_STEPS = [
           <div className="flex items-start gap-3 mb-3">
             <img src="/logo-mark.svg" alt="" className="w-8 h-8 rounded-md shrink-0" />
             <div>
-              <span className="text-sm font-semibold text-foreground">DIM map</span>
+              <span className="text-sm font-semibold text-foreground">DIM Convert</span>
               <span className="text-xs text-muted-foreground ml-2">2:04 PM</span>
             </div>
             <span className="ml-auto text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-mist text-forest dark:bg-sage/15 dark:text-sage">Hot lead</span>
@@ -229,7 +229,7 @@ function DemoSection() {
                 <div className="w-2.5 h-2.5 rounded-full bg-foreground/15" />
               </div>
               <div className="mx-auto text-xs text-muted-foreground">
-                DIM map · {DEMO_STEPS[activeStep].label}
+                DIM Convert · {DEMO_STEPS[activeStep].label}
               </div>
               <div className="w-20 h-0.5 bg-foreground/10 rounded-full overflow-hidden ml-auto">
                 <motion.div
@@ -371,7 +371,7 @@ export default function Home() {
               >
                 Every lead. Every channel. <br />
                 <span className="text-forest dark:text-sage italic">
-                  One map to close them.
+                  One place to convert them.
                 </span>
               </motion.h1>
 
@@ -379,7 +379,7 @@ export default function Home() {
                 variants={fadeIn}
                 className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
               >
-                DIM map pulls in the leads from your cold email, Meta ads and WhatsApp, qualifies each buyer as hot, warm or cold, and drafts the reply — so your agents spend their day on viewings, not inboxes.
+                DIM Convert pulls in the leads from your cold email, Meta ads and WhatsApp, qualifies each buyer as hot, warm or cold, and drafts the reply — so your agents spend their day on viewings, not inboxes.
               </motion.p>
 
               <motion.div
@@ -462,7 +462,7 @@ export default function Home() {
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-16">
               <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight [text-wrap:balance] mb-4">From ad spend to site visit</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">You pay for every lead. DIM map makes sure none of them go cold waiting for a reply.</p>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">You pay for every lead. DIM Convert makes sure none of them go cold waiting for a reply.</p>
             </div>
             <div className="grid md:grid-cols-4 gap-8">
               {[
@@ -510,7 +510,7 @@ export default function Home() {
                   <Megaphone className="w-3.5 h-3.5" /> Meta campaigns
                 </div>
                 <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight [text-wrap:balance] mb-6">Your Meta leads, answered in minutes.</h2>
-                <p className="text-lg text-muted-foreground mb-6">A Facebook or Instagram lead that waits a day is a lead your competitor already called. DIM map picks up every lead-form submission the moment it lands, reads the answers, and has a first message ready before your agent has finished their coffee.</p>
+                <p className="text-lg text-muted-foreground mb-6">A Facebook or Instagram lead that waits a day is a lead your competitor already called. DIM Convert picks up every lead-form submission the moment it lands, reads the answers, and has a first message ready before your agent has finished their coffee.</p>
                 <ul className="space-y-3">
                   {["Every Meta lead form, mapped to its launch", "Form answers read as buying signals", "First reply sent over WhatsApp from your own number"].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm text-foreground/80">
@@ -558,7 +558,7 @@ export default function Home() {
             >
               <GitMerge className={`w-10 h-10 mx-auto mb-6 ${HIGHLIGHT}`} />
               <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight [text-wrap:balance] mb-6">Where your buyers already are.</h2>
-              <p className="text-lg text-muted-foreground mb-12">Keep your ad accounts, your sequences and your WhatsApp number. DIM map sits on top as the layer that qualifies and answers. Lemlist, Meta and WhatsApp are live today; CRM sync is on the way.</p>
+              <p className="text-lg text-muted-foreground mb-12">Keep your ad accounts, your sequences and your WhatsApp number. DIM Convert sits on top as the layer that qualifies and answers. Lemlist, Meta and WhatsApp are live today; CRM sync is on the way.</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                   { name: "Lemlist", status: "live" },
@@ -826,7 +826,7 @@ const FAQ = [
     a: "Sign up with your email — no card — and you get three days on Starter's limits: two active campaigns and a hundred leads. Connect Lemlist, a Meta lead form or your WhatsApp number, describe your project in a persona, switch a campaign on, and the next lead is qualified with a reply drafted. When the three days are up, pick a plan to carry on; nothing you set up is lost.",
   },
   {
-    q: "Who is DIM map for?",
+    q: "Who is DIM Convert for?",
     a: "Property developers and real-estate brokers who generate leads from outbound email, Meta (Facebook and Instagram) lead ads and WhatsApp — and lose buyers because nobody answers fast enough, or because agents spend their day on tyre-kickers.",
   },
   {
@@ -839,14 +839,14 @@ const FAQ = [
   },
   {
     q: "Does it replace my sales agents?",
-    a: "No. DIM map does the first touch and the triage; your agents do the viewings and the closing. Every reply waits for a person to approve it before it is sent, and the AI never invents prices, availability, payment plans or handover dates — if it doesn't know, it offers a call.",
+    a: "No. DIM Convert does the first touch and the triage; your agents do the viewings and the closing. Every reply waits for a person to approve it before it is sent, and the AI never invents prices, availability, payment plans or handover dates — if it doesn't know, it offers a call.",
   },
   {
     q: "Can I run Meta campaigns through it?",
-    a: "Yes. Connect each Meta lead form to a campaign in DIM map, and every submission arrives with the form answers attached — ready to qualify and answer. Forward leads from Meta directly, or through n8n, Zapier or Make if you already use them.",
+    a: "Yes. Connect each Meta lead form to a campaign in DIM Convert, and every submission arrives with the form answers attached — ready to qualify and answer. Forward leads from Meta directly, or through n8n, Zapier or Make if you already use them.",
   },
   {
     q: "Is my buyers' data secure?",
-    a: "DIM map stores what it needs to qualify and reply and to keep an approval record: the lead's name, contact details and message, plus the draft and who approved it. That data is deleted automatically after 12 months. Everything travels over TLS, API keys and tokens are encrypted at rest, each account sees only its own leads, and deleting an account removes its leads and configuration with it.",
+    a: "DIM Convert stores what it needs to qualify and reply and to keep an approval record: the lead's name, contact details and message, plus the draft and who approved it. That data is deleted automatically after 12 months. Everything travels over TLS, API keys and tokens are encrypted at rest, each account sees only its own leads, and deleting an account removes its leads and configuration with it.",
   },
 ];

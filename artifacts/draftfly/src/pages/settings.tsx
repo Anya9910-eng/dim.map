@@ -585,7 +585,7 @@ export default function SettingsPage() {
         <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
         <div>
           <span className="font-medium text-foreground">LinkedIn integration not available. </span>
-          LinkedIn does not provide a public API for direct message automation. DIM map connects to Lemlist, which handles both email and LinkedIn outreach campaign delivery.
+          LinkedIn does not provide a public API for direct message automation. DIM Convert connects to Lemlist, which handles both email and LinkedIn outreach campaign delivery.
         </div>
       </div>
     </div>

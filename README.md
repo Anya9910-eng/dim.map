@@ -1,6 +1,6 @@
-# DIM map — AI lead qualification for property developers & brokers
+# DIM Convert — AI lead qualification for property developers & brokers
 
-DIM map pulls in leads from cold email campaigns (Lemlist), Meta (Facebook / Instagram) lead ads and WhatsApp Business, qualifies each buyer as **hot, warm, cold or unqualified**, and drafts the reply for one-click approval in the dashboard or Slack.
+DIM Convert pulls in leads from cold email campaigns (Lemlist), Meta (Facebook / Instagram) lead ads and WhatsApp Business, qualifies each buyer as **hot, warm, cold or unqualified**, and drafts the reply for one-click approval in the dashboard or Slack.
 
 ## Features
 

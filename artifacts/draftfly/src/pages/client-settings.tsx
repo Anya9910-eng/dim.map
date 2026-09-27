@@ -123,7 +123,7 @@ export default function ClientSettingsPage() {
       <div>
         <h1 className="text-3xl font-bold">Settings</h1>
         <p className="text-muted-foreground mt-1">
-          Connect DIM map to Lemlist, Meta lead ads and WhatsApp. Everything here is yours alone.
+          Connect DIM Convert to Lemlist, Meta lead ads and WhatsApp. Everything here is yours alone.
         </p>
       </div>
 
@@ -141,7 +141,7 @@ export default function ClientSettingsPage() {
             )}
           </CardTitle>
           <CardDescription>
-            In Lemlist: Settings → Integrations → API. This lets DIM map read your campaigns and send
+            In Lemlist: Settings → Integrations → API. This lets DIM Convert read your campaigns and send
             approved replies on your behalf.
           </CardDescription>
         </CardHeader>
@@ -195,7 +195,7 @@ export default function ClientSettingsPage() {
           </CardTitle>
           <CardDescription>
             Paste this into Lemlist under Settings → Integrations → Webhooks, subscribed to the
-            <span className="font-medium"> replied </span> event. This is how DIM map hears about a reply.
+            <span className="font-medium"> replied </span> event. This is how DIM Convert hears about a reply.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">

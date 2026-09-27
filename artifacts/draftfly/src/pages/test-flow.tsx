@@ -597,7 +597,7 @@ export default function TestFlow() {
                       <MessageSquare className="h-4 w-4 text-primary-foreground" />
                     </div>
                     <div className="flex items-baseline gap-2">
-                      <span className="font-bold text-[#D1D2D3]">DIM map</span>
+                      <span className="font-bold text-[#D1D2D3]">DIM Convert</span>
                       <span className="bg-[#2C3136] text-[#ABABAD] text-[9px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">App</span>
                       <span className="text-xs text-[#7E7E7E]">{new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}</span>
                     </div>

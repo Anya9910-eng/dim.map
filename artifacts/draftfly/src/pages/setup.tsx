@@ -41,7 +41,7 @@ export default function SetupPage() {
     <div className="space-y-8 max-w-4xl mx-auto">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Operator Setup</h1>
-        <p className="text-sm text-muted-foreground mt-1">Complete these steps to fully operationalize your DIM map instance.</p>
+        <p className="text-sm text-muted-foreground mt-1">Complete these steps to fully operationalize your DIM Convert instance.</p>
       </div>
 
       <Card className="bg-primary/5 border-primary/20">

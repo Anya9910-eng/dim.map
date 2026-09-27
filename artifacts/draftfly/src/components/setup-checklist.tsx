@@ -46,7 +46,7 @@ export function SetupChecklist() {
     {
       key: "reply",
       title: "Receive your first lead",
-      detail: "Point your Lemlist, Meta or WhatsApp webhook at DIM map (the URLs are in Settings). The next lead is qualified and gets a draft.",
+      detail: "Point your Lemlist, Meta or WhatsApp webhook at DIM Convert (the URLs are in Settings). The next lead is qualified and gets a draft.",
       done: settings.usage.repliesThisMonth > 0,
       href: "/settings",
     },
