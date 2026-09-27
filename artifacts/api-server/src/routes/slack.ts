@@ -18,7 +18,7 @@ import {
   updateTestCardAfterAction,
 } from "../lib/slack";
 import { SendSlackTestCardBody } from "@workspace/api-zod";
-import { sendReply } from "../lib/lemlist";
+import { sendApprovedReply } from "../lib/leadChannels";
 import { logger } from "../lib/logger";
 import { requireOperator } from "../middleware/requireOperator";
 
@@ -94,7 +94,7 @@ async function processSlackAction(params: {
     // against — POST /campaigns/:id/leads/:id/reply needs Lemlist's own id,
     // and an email address there returns a 404 rather than delivering
     // anything. Failing loudly here beats a silent no-op reply.
-    if (!draft.lemlistLeadId) {
+    if ((draft.channel ?? "lemlist") === "lemlist" && !draft.lemlistLeadId) {
       logger.error({ draftId }, "Draft has no Lemlist lead id — cannot send reply via Lemlist");
       if (draft.slackMessageTs) {
         const [channel, ts] = draft.slackMessageTs.split("|");
@@ -127,13 +127,13 @@ async function processSlackAction(params: {
 
     const replyText = draft.editedReplyText ?? draft.replyText;
     try {
-      const result = await sendReply({
-        leadId: draft.lemlistLeadId,
-        campaignId: campaign.lemlistCampaignId,
+      const result = await sendApprovedReply({
+        draft,
+        lemlistCampaignId: campaign.lemlistCampaignId,
         replyText,
-        // The reply goes out of the client's own Lemlist account, same as the
-        // per-client Slack bot token above.
-        apiKey: client?.lemlistApiKey,
+        // The reply goes out of the client's own Lemlist account (or WhatsApp
+        // number), same as the per-client Slack bot token above.
+        client,
       });
       if (!result.ok) {
         lemlistError = result.error;
@@ -305,7 +305,7 @@ async function processEditSubmission(params: {
     return;
   }
 
-  if (!draft.lemlistLeadId) {
+  if ((draft.channel ?? "lemlist") === "lemlist" && !draft.lemlistLeadId) {
     logger.error({ draftId }, "Draft has no Lemlist lead id — cannot send edited reply via Lemlist");
     if (draft.slackMessageTs) {
       const [channel, ts] = draft.slackMessageTs.split("|");
@@ -338,11 +338,11 @@ async function processEditSubmission(params: {
 
   let lemlistError: string | undefined;
   try {
-    const result = await sendReply({
-      leadId: draft.lemlistLeadId,
-      campaignId: campaign.lemlistCampaignId,
+    const result = await sendApprovedReply({
+      draft,
+      lemlistCampaignId: campaign.lemlistCampaignId,
       replyText: editedText,
-      apiKey: client?.lemlistApiKey,
+      client,
     });
     if (!result.ok) {
       lemlistError = result.error;

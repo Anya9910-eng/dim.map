@@ -442,7 +442,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: [lemlist, n8n, claude, slack, system]
+            enum: [lemlist, n8n, claude, slack, system, meta, whatsapp]
         - name: limit
           in: query
           schema:
@@ -925,7 +925,7 @@ components:
     # ---- Campaign ----
     Campaign:
       type: object
-      required: [id, clientId, name, lemlistCampaignId, isActive, replyCount, createdAt]
+      required: [id, clientId, name, channel, lemlistCampaignId, isActive, replyCount, createdAt]
       properties:
         id:
           type: integer
@@ -935,8 +935,15 @@ components:
           type: ["integer", "null"]
         name:
           type: string
+        channel:
+          type: string
+          enum: [lemlist, meta, whatsapp]
+          description: Lead source the campaign listens on. Defaults to lemlist.
         lemlistCampaignId:
           type: string
+          description: >-
+            The campaign's id in its source system — the Lemlist campaign id,
+            a Meta Lead Ads form id, or a label for a WhatsApp number.
         tone:
           type: ["string", "null"]
         replyRules:
@@ -961,6 +968,10 @@ components:
           type: integer
         name:
           type: string
+        channel:
+          type: string
+          enum: [lemlist, meta, whatsapp]
+          description: Lead source the campaign listens on. Defaults to lemlist.
         lemlistCampaignId:
           type: string
         tone:
@@ -984,6 +995,10 @@ components:
           type: integer
         name:
           type: string
+        channel:
+          type: string
+          enum: [lemlist, meta, whatsapp]
+          description: Lead source the campaign listens on. Defaults to lemlist.
         lemlistCampaignId:
           type: string
         tone:
@@ -1025,8 +1040,18 @@ components:
           type: integer
         campaignId:
           type: integer
+        channel:
+          type: string
+          enum: [lemlist, meta, whatsapp]
         prospectEmail:
           type: string
+        prospectPhone:
+          type: ["string", "null"]
+        qualification:
+          type: ["string", "null"]
+          enum: [hot, warm, cold, unqualified, null]
+        qualificationReason:
+          type: ["string", "null"]
         prospectName:
           type: string
         prospectCompany:
@@ -1092,7 +1117,7 @@ components:
           type: string
         source:
           type: string
-          enum: [lemlist, n8n, claude, slack, system]
+          enum: [lemlist, n8n, claude, slack, system, meta, whatsapp]
         generatedDraft:
           type: ["string", "null"]
         finalStatus:

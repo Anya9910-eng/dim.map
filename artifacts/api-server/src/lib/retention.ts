@@ -6,7 +6,7 @@ import { logger } from "./logger";
  * Data retention for prospect data.
  *
  * Every draft holds a lead's name, email address and the text of what they
- * wrote; activity and log rows repeat the name and address. DraftFly processes
+ * wrote; activity and log rows repeat the name and address. DIM map processes
  * that on the client's behalf, and the Privacy Policy says so. Nothing was
  * ever deleted, which meant every database dump carried every prospect who had
  * ever replied, for ever.

@@ -15,4 +15,6 @@ export const ListLogsSource = {
   claude: 'claude',
   slack: 'slack',
   system: 'system',
+  meta: 'meta',
+  whatsapp: 'whatsapp',
 } as const;

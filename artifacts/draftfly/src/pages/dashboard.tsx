@@ -30,6 +30,7 @@ import {
   X,
   RefreshCw,
   Clock,
+  Flame,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE } from "@/lib/api-base";
@@ -249,7 +250,7 @@ export default function Dashboard() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Live overview of your automated reply operations.
+          Live overview of your leads across Lemlist, Meta and WhatsApp.
         </p>
       </div>
 
@@ -312,7 +313,7 @@ export default function Dashboard() {
           loading={loading}
         />
         <KpiCard
-          title="Pending Drafts"
+          title="Leads Awaiting Reply"
           value={stats?.pendingDrafts}
           icon={Inbox}
           loading={loading}
@@ -334,11 +335,30 @@ export default function Dashboard() {
         />
       </div>
 
+      {/* Hot leads — what a sales team should look at first. */}
+      {(() => {
+        const hot = pendingDrafts?.filter((d) => d.qualification === "hot").length ?? 0;
+        if (hot === 0) return null;
+        return (
+          <Link
+            href="/drafts?status=pending"
+            className="flex items-center gap-3 rounded-lg border border-lime-400 bg-lime-100 px-4 py-3 text-sm text-black hover:bg-lime-200 dark:bg-lime-400/10 dark:text-foreground dark:hover:bg-lime-400/15 transition-colors"
+            data-testid="hot-leads-banner"
+          >
+            <Flame className="h-4 w-4 text-green-800 dark:text-lime-400 shrink-0" />
+            <span>
+              <span className="font-semibold">{hot} hot {hot === 1 ? "lead is" : "leads are"} waiting for a reply</span>
+              <span className="opacity-70"> — budget and timeline confirmed. Reply while they're warm.</span>
+            </span>
+          </Link>
+        );
+      })()}
+
       {/* Reply Trends Chart */}
       <Card>
         <CardHeader className="pb-2">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <CardTitle className="text-base font-semibold">Reply Volume — Last 30 Days</CardTitle>
+            <CardTitle className="text-base font-semibold">Lead Volume — Last 30 Days</CardTitle>
             <div className="flex items-center gap-2 flex-wrap">
               {/* Choosing between clients is only meaningful for an operator.
                   A client user has exactly one, so the control offers them a
@@ -520,9 +540,10 @@ export default function Dashboard() {
                       <div className="min-w-0">
                         <div className="font-medium text-sm truncate">
                           {draft.prospectName}{" "}
-                          <span className="text-muted-foreground font-normal">
-                            ({draft.prospectCompany})
-                          </span>
+                          {/* A WhatsApp lead rarely has a company — show nothing rather than "()". */}
+                          {draft.prospectCompany && (
+                            <span className="text-muted-foreground font-normal">({draft.prospectCompany})</span>
+                          )}
                         </div>
                         <div className="text-xs text-muted-foreground mt-0.5 truncate max-w-[300px]">
                           {draft.replyText}
@@ -574,9 +595,10 @@ export default function Dashboard() {
                           <div className="min-w-0 flex-1">
                             <div className="font-medium text-sm truncate">
                               {draft.prospectName}{" "}
-                              <span className="text-muted-foreground font-normal">
-                                ({draft.prospectCompany})
-                              </span>
+                              {/* A WhatsApp lead rarely has a company — show nothing rather than "()". */}
+                              {draft.prospectCompany && (
+                                <span className="text-muted-foreground font-normal">({draft.prospectCompany})</span>
+                              )}
                             </div>
                             <div className="text-xs text-orange-600 dark:text-orange-400 mt-0.5 flex items-center gap-1">
                               {isAutoFailed ? (

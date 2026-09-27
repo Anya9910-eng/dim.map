@@ -2,7 +2,7 @@ import { Router, type IRouter } from "express";
 import { eq, and } from "drizzle-orm";
 import { db, draftsTable, campaignsTable, clientsTable, personasTable, activityTable } from "@workspace/db";
 import { postApprovalCard, isSlackConfigured, updateMessageAfterAction, resolveClientApprovalChannel } from "../lib/slack";
-import { sendReply } from "../lib/lemlist";
+import { sendApprovedReply, unsendableReason, channelLabel } from "../lib/leadChannels";
 import { logger } from "../lib/logger";
 import {
   ListDraftsQueryParams,
@@ -122,10 +122,23 @@ router.patch("/drafts/:id/action", async (req, res): Promise<void> => {
       return;
     }
 
+    const channel = existingDraft.channel ?? "lemlist";
+
+    // A Meta or WhatsApp lead goes out over WhatsApp, which needs the lead's
+    // number and this client's WhatsApp credentials. Refused before anything
+    // is sent, and the draft stays pending so it can be sent once set up.
+    if (channel !== "lemlist") {
+      const reason = unsendableReason(existingDraft, client);
+      if (reason) {
+        res.status(422).json({ error: reason });
+        return;
+      }
+    }
+
     // Drafts created before lemlist_lead_id existed have nothing to send
     // against — the endpoint takes Lemlist's own lead id, not an email
     // address, and there is no way to recover it after the fact.
-    if (!existingDraft.lemlistLeadId) {
+    if (channel === "lemlist" && !existingDraft.lemlistLeadId) {
       await db.update(draftsTable)
         .set({ status: "send_failed", actionedAt: new Date() })
         .where(eq(draftsTable.id, existingDraft.id));
@@ -141,7 +154,7 @@ router.patch("/drafts/:id/action", async (req, res): Promise<void> => {
     // wrote on LinkedIn and never gave an address. The webhook subscribes to
     // linkedinReplied as well as emailsReplied, so these drafts do get created
     // — they simply cannot be answered through the email endpoint.
-    if (!existingDraft.prospectEmail.trim()) {
+    if (channel === "lemlist" && !existingDraft.prospectEmail.trim()) {
       res.status(422).json({
         error: "This reply came in without an email address — most likely over LinkedIn. Answer it in Lemlist, then discard this draft.",
       });
@@ -151,11 +164,11 @@ router.patch("/drafts/:id/action", async (req, res): Promise<void> => {
     const replyText = existingDraft.editedReplyText ?? existingDraft.replyText;
     let lemlistError: string | undefined;
     try {
-      const result = await sendReply({
-        leadId: existingDraft.lemlistLeadId,
-        campaignId: campaign.lemlistCampaignId,
+      const result = await sendApprovedReply({
+        draft: existingDraft,
+        lemlistCampaignId: campaign.lemlistCampaignId,
+        client,
         replyText,
-        apiKey: client?.lemlistApiKey,
       });
       if (!result.ok) lemlistError = result.error;
     } catch (err) {
@@ -163,7 +176,7 @@ router.patch("/drafts/:id/action", async (req, res): Promise<void> => {
     }
 
     if (lemlistError) {
-      logger.error({ draftId: existingDraft.id, lemlistError }, "Dashboard send: Lemlist sendReply failed");
+      logger.error({ draftId: existingDraft.id, lemlistError, channel }, "Dashboard send: sendApprovedReply failed");
       await db.update(draftsTable)
         .set({ status: "send_failed", actionedAt: new Date() })
         .where(eq(draftsTable.id, existingDraft.id));
@@ -181,7 +194,7 @@ router.patch("/drafts/:id/action", async (req, res): Promise<void> => {
           lemlistError,
         ).catch((err) => logger.warn({ err }, "Dashboard send: failed to update Slack card after Lemlist failure"));
       }
-      res.status(502).json({ error: `Lemlist send failed: ${lemlistError}` });
+      res.status(502).json({ error: `${channelLabel(channel)} send failed: ${lemlistError}` });
       return;
     }
   }
@@ -227,7 +240,7 @@ router.patch("/drafts/:id/action", async (req, res): Promise<void> => {
   const activityTypeMap = { sent: "draft_sent", edited: "draft_edited", discarded: "draft_discarded" } as const;
   await db.insert(activityTable).values({
     type: activityTypeMap[newStatus as keyof typeof activityTypeMap],
-    description: `Reply to ${draft.prospectName} (${draft.prospectEmail}) ${newStatus}`,
+    description: `Reply to ${draft.prospectName} (${draft.prospectEmail || (draft.prospectPhone ? `+${draft.prospectPhone}` : "no contact")}) ${newStatus}`,
     clientId: draft.clientId,
     campaignId: draft.campaignId,
     draftId: draft.id,

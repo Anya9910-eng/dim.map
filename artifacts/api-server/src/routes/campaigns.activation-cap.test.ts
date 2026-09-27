@@ -35,6 +35,8 @@ vi.mock("@workspace/db", () => {
     clientId: 1,
     personaId: null,
     name: "Q3 Outbound",
+    // NOT NULL DEFAULT 'lemlist' in the schema, so every real row carries it.
+    channel: "lemlist",
     lemlistCampaignId: "cam_abc",
     tone: null,
     replyRules: null,

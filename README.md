@@ -1,35 +1,42 @@
-# DRAFTFLY — Email Automation Platform
+# DIM map — AI lead qualification for property developers & brokers
 
-Платформа для автоматизации email кампаний с интеграцией Slack и Lemlist.
+DIM map pulls in leads from cold email campaigns (Lemlist), Meta (Facebook / Instagram) lead ads and WhatsApp Business, qualifies each buyer as **hot, warm, cold or unqualified**, and drafts the reply for one-click approval in the dashboard or Slack.
 
-## Фичи
+## Features
 
-- ✅ Slack OAuth интеграция
-- ✅ Lemlist webhook обработка
-- ✅ PostgreSQL база данных
-- ✅ Redis очередь
-- ✅ PM2 процесс менеджер
+- ✅ Lemlist webhook — replies to cold email / LinkedIn campaigns
+- ✅ Meta Lead Ads webhook — lead-form submissions (native `leadgen` or forwarded with `field_data`)
+- ✅ WhatsApp Business webhook — inbound chats (Cloud API format)
+- ✅ AI lead qualification (budget, timeline, financing, purpose, unit) with a one-line reason
+- ✅ Channel-aware reply drafting; approved replies go back through Lemlist or WhatsApp
+- ✅ Optional Slack approval cards
+- ✅ PostgreSQL database, email sign-in codes, Stripe billing
 
-## Требования
+## Requirements
 
 - Node.js 18+
+- pnpm
 - PostgreSQL 12+
-- Redis 6+
 
-## Установка
+## Setup
 
 ```bash
-npm install
+pnpm install
 cp .env.example .env
-npm run migrate
-npm start
+pnpm --filter @workspace/db run migrate
+pnpm --filter @workspace/api-server run dev
 ```
 
-## API Endpoints
+## Lead webhooks
 
-- `POST /api/webhooks/lemlist` — Lemlist webhook
-- `GET /api/health` — Health check
+Each client has one webhook secret, shown with ready-made URLs on the Settings page.
 
-## Лицензия
+- `POST /api/webhooks/lemlist/:clientId?secret=…` — Lemlist reply events
+- `POST /api/webhooks/meta/:clientId?secret=…` — Meta lead-form leads
+- `POST /api/webhooks/whatsapp/:clientId?secret=…` — WhatsApp messages
+- `GET  /api/webhooks/{meta,whatsapp}/:clientId?secret=…` — Meta subscription handshake (`hub.verify_token` = the same secret)
+- `GET  /api/healthz` — health check
+
+## License
 
 MIT

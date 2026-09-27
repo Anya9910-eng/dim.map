@@ -6,15 +6,11 @@
  * OpenAPI spec version: 0.2.0
  */
 
-export type LogEntrySource = typeof LogEntrySource[keyof typeof LogEntrySource];
+export type DraftChannel = typeof DraftChannel[keyof typeof DraftChannel];
 
 
-export const LogEntrySource = {
+export const DraftChannel = {
   lemlist: 'lemlist',
-  n8n: 'n8n',
-  claude: 'claude',
-  slack: 'slack',
-  system: 'system',
   meta: 'meta',
   whatsapp: 'whatsapp',
 } as const;

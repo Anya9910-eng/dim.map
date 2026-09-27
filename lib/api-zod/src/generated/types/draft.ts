@@ -5,13 +5,22 @@
  * DraftFly API — AI-powered reply automation for B2B sales agencies
  * OpenAPI spec version: 0.2.0
  */
+import type { DraftChannel } from './draftChannel';
+import type { DraftQualification } from './draftQualification';
 import type { DraftStatus } from './draftStatus';
 
 export interface Draft {
   id: number;
   clientId: number;
   campaignId: number;
+  channel?: DraftChannel;
   prospectEmail: string;
+  /** @nullable */
+  prospectPhone?: string | null;
+  /** @nullable */
+  qualification?: DraftQualification;
+  /** @nullable */
+  qualificationReason?: string | null;
   prospectName: string;
   /** @nullable */
   prospectCompany?: string | null;

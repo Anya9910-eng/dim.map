@@ -32,7 +32,7 @@ describe("SetupChecklist", () => {
     state.settings = settings();
     render(<SetupChecklist />);
     expect(screen.getByTestId("setup-checklist")).toHaveTextContent("0 of 4 done");
-    expect(screen.getByTestId("setup-checklist")).toHaveTextContent("next: connect your lemlist account");
+    expect(screen.getByTestId("setup-checklist")).toHaveTextContent("next: connect a lead source");
     for (const k of ["lemlist", "persona", "campaign", "reply"]) {
       expect(screen.getByTestId(`setup-step-${k}`)).toHaveAttribute("data-done", "false");
     }

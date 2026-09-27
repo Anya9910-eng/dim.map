@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { BillingCard } from "@/components/billing-card";
-import { CheckCircle2, AlertCircle, Copy, Check, RefreshCw, Loader2, KeyRound, Webhook, MessageSquare, Gauge } from "lucide-react";
+import { CheckCircle2, AlertCircle, Copy, Check, RefreshCw, Loader2, KeyRound, Webhook, MessageSquare, Gauge, MessageCircle } from "lucide-react";
 import {
   useMySettings,
   useUpdateMySettings,
@@ -63,6 +63,8 @@ export default function ClientSettingsPage() {
 
   const [apiKey, setApiKey] = useState("");
   const [channel, setChannel] = useState<string | null>(null);
+  const [waPhoneId, setWaPhoneId] = useState<string | null>(null);
+  const [waToken, setWaToken] = useState("");
 
   if (isLoading) {
     return <div className="space-y-4">{[1, 2, 3].map(i => <Card key={i} className="h-40 animate-pulse" />)}</div>;
@@ -79,6 +81,24 @@ export default function ClientSettingsPage() {
   }
 
   const channelValue = channel ?? data.slack.channel ?? "";
+  const waPhoneIdValue = waPhoneId ?? data.whatsapp?.phoneNumberId ?? "";
+
+  const saveWhatsApp = () => {
+    update.mutate(
+      {
+        whatsappPhoneNumberId: waPhoneIdValue.trim(),
+        // Blank leaves the saved token alone — it cannot be read back to prefill.
+        ...(waToken.trim() ? { whatsappAccessToken: waToken.trim() } : {}),
+      },
+      {
+        onSuccess: () => {
+          setWaToken("");
+          toast({ title: "WhatsApp settings saved" });
+        },
+        onError: (e) => toast({ title: "Could not save", description: String(e), variant: "destructive" }),
+      },
+    );
+  };
 
   const saveKey = () => {
     if (!apiKey.trim()) return;
@@ -103,7 +123,7 @@ export default function ClientSettingsPage() {
       <div>
         <h1 className="text-3xl font-bold">Settings</h1>
         <p className="text-muted-foreground mt-1">
-          Connect DraftFly to your Lemlist account. Everything here is yours alone.
+          Connect DIM map to Lemlist, Meta lead ads and WhatsApp. Everything here is yours alone.
         </p>
       </div>
 
@@ -121,7 +141,7 @@ export default function ClientSettingsPage() {
             )}
           </CardTitle>
           <CardDescription>
-            In Lemlist: Settings → Integrations → API. This lets DraftFly read your campaigns and send
+            In Lemlist: Settings → Integrations → API. This lets DIM map read your campaigns and send
             approved replies on your behalf.
           </CardDescription>
         </CardHeader>
@@ -171,11 +191,11 @@ export default function ClientSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Webhook className="h-4 w-4" /> Your webhook URL
+            <Webhook className="h-4 w-4" /> Lemlist webhook URL
           </CardTitle>
           <CardDescription>
             Paste this into Lemlist under Settings → Integrations → Webhooks, subscribed to the
-            <span className="font-medium"> replied </span> event. This is how DraftFly hears about a reply.
+            <span className="font-medium"> replied </span> event. This is how DIM map hears about a reply.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -204,14 +224,96 @@ export default function ClientSettingsPage() {
             </Button>
             {data.webhook.hasSecret && (
               <span className="text-xs text-muted-foreground">
-                Regenerating breaks the old URL until you paste the new one into Lemlist.
+                Regenerating breaks the old URLs (Lemlist, Meta and WhatsApp) until you paste the new ones in.
               </span>
             )}
           </div>
         </CardContent>
       </Card>
 
-      {/* ── 3. Slack (optional) ────────────────────────────────────────── */}
+      {/* ── 3. Meta lead ads & WhatsApp ────────────────────────────────── */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <MessageCircle className="h-4 w-4" /> Meta lead ads &amp; WhatsApp
+            {data.whatsapp?.hasAccessToken && data.whatsapp.phoneNumberId && (
+              <Badge variant="outline" className="ml-auto gap-1 text-green-600 border-green-600/30">
+                <CheckCircle2 className="h-3 w-3" /> Sending enabled
+              </Badge>
+            )}
+          </CardTitle>
+          <CardDescription>
+            Leads from your Facebook / Instagram lead forms and your WhatsApp Business number land in the
+            Lead Inbox, qualified and with a reply drafted. Add a Meta or WhatsApp campaign on the Campaigns page
+            so they have somewhere to go.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          {data.webhook.metaUrl || data.webhook.whatsappUrl ? (
+            <>
+              {data.webhook.metaUrl && (
+                <div className="space-y-1.5">
+                  <Label>Meta lead ads webhook</Label>
+                  <div className="flex gap-2">
+                    <Input readOnly value={data.webhook.metaUrl} className="font-mono text-xs" data-testid="meta-webhook-url" />
+                    <CopyButton value={data.webhook.metaUrl} />
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Send each new lead here from n8n, Zapier or Make — including the lead's <span className="font-mono">field_data</span> — or subscribe your Page's <span className="font-mono">leadgen</span> webhook.
+                  </p>
+                </div>
+              )}
+              {data.webhook.whatsappUrl && (
+                <div className="space-y-1.5">
+                  <Label>WhatsApp webhook</Label>
+                  <div className="flex gap-2">
+                    <Input readOnly value={data.webhook.whatsappUrl} className="font-mono text-xs" data-testid="whatsapp-webhook-url" />
+                    <CopyButton value={data.webhook.whatsappUrl} />
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    In Meta for Developers → WhatsApp → Configuration, paste this as the callback URL, use the
+                    <span className="font-mono"> secret </span> at the end of the URL as the verify token, and subscribe to <span className="font-mono">messages</span>.
+                  </p>
+                </div>
+              )}
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">Generate a webhook secret above to get your Meta and WhatsApp URLs.</p>
+          )}
+
+          <div className="space-y-3 border-t pt-4">
+            <div>
+              <Label className="text-sm">Reply from your WhatsApp Business number</Label>
+              <p className="text-[11px] text-muted-foreground mt-1">
+                Optional. With these, pressing Send on a WhatsApp or Meta lead delivers the reply on WhatsApp. Without them
+                you can still review and qualify leads, and copy the reply across yourself.
+                {data.whatsapp?.hasAccessToken && <> Saved token ends in <span className="font-mono">{data.whatsapp.tokenHint}</span>.</>}
+              </p>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-2">
+              <Input
+                placeholder="Phone number ID"
+                value={waPhoneIdValue}
+                onChange={e => setWaPhoneId(e.target.value)}
+                className="font-mono"
+                data-testid="whatsapp-phone-id"
+              />
+              <Input
+                type="password"
+                placeholder={data.whatsapp?.hasAccessToken ? "Replace the saved token…" : "Permanent access token"}
+                value={waToken}
+                onChange={e => setWaToken(e.target.value)}
+                data-testid="whatsapp-token"
+              />
+            </div>
+            <Button variant="outline" onClick={saveWhatsApp} disabled={update.isPending} data-testid="save-whatsapp">
+              Save WhatsApp settings
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ── 4. Slack (optional) ────────────────────────────────────────── */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
@@ -237,7 +339,7 @@ export default function ClientSettingsPage() {
         </CardContent>
       </Card>
 
-      {/* ── 4. Plan usage ──────────────────────────────────────────────── */}
+      {/* ── 5. Plan usage ──────────────────────────────────────────────── */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
@@ -255,7 +357,7 @@ export default function ClientSettingsPage() {
             limit={data.usage.activeCampaignLimit}
           />
           <UsageBar
-            label="Replies this month"
+            label="Leads handled this month"
             used={data.usage.repliesThisMonth}
             limit={data.usage.replyLimit}
           />

@@ -2,35 +2,35 @@
 @import "tw-animate-css";
 
 :root {
-  --bg: #0a0a0f;
-  --surface: #13131a;
-  --surface2: #1c1c27;
+  --bg: #0a0a0a;
+  --surface: #0f1f19;
+  --surface2: #153126;
   --border: rgba(255,255,255,0.08);
-  --text: #f0f0f8;
-  --text-muted: #7a7a9a;
-  --accent: #6366f1;
-  --accent-hover: #4f52d9;
+  --text: #ffffff;
+  --text-muted: #8fa89c;
+  --accent: #a3e635;
+  --accent-hover: #bef264;
   --green: #22c55e;
   --red: #ef4444;
   --amber: #f59e0b;
 
-  --background: 240 20% 5%;
+  --background: 0 0% 4%;
   --foreground: 240 20% 95%;
   --card: 240 12% 8%;
   --card-foreground: 240 20% 95%;
-  --primary: 236 82% 67%;
-  --primary-foreground: 0 0% 100%;
+  --primary: 83 78% 55%;
+  --primary-foreground: 0 0% 4%;
   --secondary: 240 12% 12%;
   --secondary-foreground: 240 20% 80%;
   --muted: 240 12% 12%;
   --muted-foreground: 240 10% 50%;
-  --accent: 236 82% 67%;
-  --accent-foreground: 0 0% 100%;
+  --accent: 83 78% 55%;
+  --accent-foreground: 0 0% 4%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
   --border: 240 10% 15%;
   --input: 240 10% 15%;
-  --ring: 236 82% 67%;
+  --ring: 83 78% 55%;
   --radius: 0.75rem;
 
   --app-font-sans: 'Inter', system-ui, sans-serif;
@@ -39,22 +39,22 @@
   --sidebar: 240 12% 6%;
   --sidebar-foreground: 240 20% 95%;
   --sidebar-border: 240 10% 12%;
-  --sidebar-primary: 236 82% 67%;
+  --sidebar-primary: 83 78% 55%;
   --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 240 12% 12%;
   --sidebar-accent-foreground: 240 20% 80%;
-  --sidebar-ring: 236 82% 67%;
-  --sidebar-primary-border: hsl(236 82% 67%);
+  --sidebar-ring: 83 78% 55%;
+  --sidebar-primary-border: hsl(83 78% 55%);
   --sidebar-accent-border: hsl(240 12% 12%);
-  --primary-border: hsl(236 82% 67%);
+  --primary-border: hsl(83 78% 55%);
   --secondary-border: hsl(240 12% 12%);
   --muted-border: hsl(240 12% 12%);
-  --accent-border: hsl(236 82% 67%);
+  --accent-border: hsl(83 78% 55%);
   --destructive-border: hsl(0 84% 60%);
   --popover: 240 12% 8%;
   --popover-foreground: 240 20% 95%;
   --popover-border: 240 10% 15%;
-  --chart-1: 236 82% 67%;
+  --chart-1: 83 78% 55%;
   --chart-2: 142 71% 45%;
   --chart-3: 38 92% 50%;
   --chart-4: 0 84% 60%;
@@ -63,23 +63,23 @@
 
 /* ─── Light theme ─────────────────────────────────────────────────────── */
 .light {
-  --bg: #fafafa;
-  --surface: #f0f0f5;
-  --surface2: #e8e8ef;
+  --bg: #ffffff;
+  --surface: #f1f6f3;
+  --surface2: #e3ede7;
   --border: rgba(0,0,0,0.10);
-  --text: #0f172a;
-  --text-muted: #64748b;
-  --accent: #6366f1;
-  --accent-hover: #4f52d9;
+  --text: #0a0a0a;
+  --text-muted: #5b6b63;
+  --accent: #0b3d2e;
+  --accent-hover: #14532d;
   --green: #16a34a;
   --red: #dc2626;
   --amber: #d97706;
 
-  --background: 0 0% 98%;
+  --background: 0 0% 100%;
   --foreground: 222 47% 11%;
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
-  --primary: 236 82% 67%;
+  --primary: 162 69% 14%;
   --primary-foreground: 0 0% 100%;
   --muted: 220 14% 96%;
   --muted-foreground: 215 16% 47%;

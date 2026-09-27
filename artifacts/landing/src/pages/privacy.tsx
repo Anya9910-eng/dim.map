@@ -1,6 +1,6 @@
 import { LegalLayout, Section, Table } from "./legal-layout";
 
-const UPDATED = "14 August 2026";
+const UPDATED = "27 September 2026";
 // See terms.tsx — privacy@ was never a real mailbox. A published contact
 // address that bounces is worse here than anywhere else on the site.
 const CONTACT = "outreach@draftfly.app";
@@ -9,28 +9,29 @@ export default function Privacy() {
   return (
     <LegalLayout title="Privacy Policy" updated={UPDATED}>
       <p>
-        DraftFly drafts replies to the responses your outbound campaigns receive, and sends those
-        drafts to Slack for a person to approve. Doing that means handling two different kinds of
-        personal data: information about you, our customer, and information about the people who
-        reply to your campaigns. This policy covers both, and is explicit about which is which.
+        DIM map receives the leads your campaigns generate — replies to your outbound email, Meta
+        lead-form submissions and WhatsApp messages — qualifies them, and drafts replies for a person
+        to approve. Doing that means handling two different kinds of personal data: information about
+        you, our customer, and information about your leads. This policy covers both, and is explicit
+        about which is which.
       </p>
 
       <Section heading="Who is responsible for what">
         <p>
           For your own account data we are the controller. For the prospect data that flows through
-          the service we are a processor: you decide whose replies enter DraftFly and why, and we
+          the service we are a processor: you decide whose details enter DIM map and why, and we
           act on your instructions. If you operate under the GDPR, you are the controller for that
-          data and are responsible for having a lawful basis for the outreach that produced it.
+          data and are responsible for having a lawful basis for the outreach and advertising that produced it.
         </p>
       </Section>
 
       <Section heading="What we collect">
         <Table
           rows={[
-            ["Account", "Your name, work email, company, and Slack workspace and user id from signing in with Slack."],
-            ["Credentials", "The API key for your Lemlist account, your Slack bot token, and the secret for your webhook."],
+            ["Account", "Your name, work email and company."],
+            ["Credentials", "Your Lemlist API key, your WhatsApp Business phone number ID and access token, your Slack bot token, and the secret for your webhooks."],
             ["Configuration", "Personas, campaigns, tone and reply rules, and the Slack channel that receives your drafts."],
-            ["Prospect data", "For each reply: the sender's name, email address, company, role, country, and the text of the reply itself."],
+            ["Lead data", "For each lead: their name, email address and/or phone number, company, role and country where given, the text of their message or lead-form answers, and the qualification grade we assign."],
             ["Generated content", "The drafts we produce, whether each was approved, edited or discarded, and by whom."],
             ["Operational logs", "Request metadata and errors, used to keep the service working and to investigate faults."],
           ]}
@@ -39,13 +40,14 @@ export default function Privacy() {
 
       <Section heading="How we use it">
         <p>
-          Reply text and the surrounding lead details are sent to Anthropic's Claude API to produce
-          a draft. The draft is stored and posted to your Slack channel. Nothing is used to train
+          The lead's message and details are sent to Anthropic's Claude API to qualify the lead and
+          produce a draft. The draft and grade are stored, shown in your dashboard, and — if you
+          connected Slack — posted to your Slack channel. Nothing is used to train
           any model: Anthropic does not train on data submitted through its API, and we do not use
           your data to build or improve models of our own.
         </p>
         <p>
-          We do not sell personal data, and we do not use prospect data for our own marketing.
+          We do not sell personal data, and we do not use lead data for our own marketing.
         </p>
       </Section>
 
@@ -53,9 +55,10 @@ export default function Privacy() {
         <p>We rely on a small number of sub-processors. Each receives only what its function requires.</p>
         <Table
           rows={[
-            ["Anthropic", "Generates the drafts. Receives reply text and lead details. Does not train on it."],
-            ["Slack", "Delivers approval cards. Receives the draft and lead details."],
+            ["Anthropic", "Qualifies leads and generates the drafts. Receives the lead's message and details. Does not train on it."],
+            ["Meta (WhatsApp Business, Lead Ads)", "Your own accounts. Send us leads and messages, and deliver approved WhatsApp replies."],
             ["Lemlist", "Your own account. Sends us replies and receives approved responses."],
+            ["Slack", "Optional. Delivers approval cards. Receives the draft and lead details."],
             ["Contabo", "Hosting. Servers located in Germany."],
           ]}
         />
@@ -64,7 +67,8 @@ export default function Privacy() {
       <Section heading="Where it is stored, and how">
         <p>
           Data is held in Germany, within the EU. Traffic to the service is encrypted with TLS.
-          Credentials — your Lemlist API key, Slack bot token and webhook secret — are encrypted
+          Credentials — your Lemlist API key, WhatsApp access token, Slack bot token and webhook
+          secret — are encrypted
           before they are written to the database using AES-256-GCM, so a copy of the database or a
           backup file does not expose them. Backups are taken daily and kept for fourteen days.
         </p>
@@ -80,9 +84,9 @@ export default function Privacy() {
         </p>
       </Section>
 
-      <Section heading="Rights of the people who reply to you">
+      <Section heading="Rights of your leads">
         <p>
-          The people whose replies pass through DraftFly have rights over that data — access,
+          The people whose details pass through DIM map have rights over that data — access,
           correction, deletion, objection, and portability, among others, depending on where they
           live. Because we hold that data on your behalf, requests are normally handled by you. If
           someone contacts us directly we will tell them to approach you, and we will help you

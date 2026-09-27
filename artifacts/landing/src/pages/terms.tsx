@@ -1,6 +1,6 @@
 import { LegalLayout, Section, Table } from "./legal-layout";
 
-const UPDATED = "14 August 2026";
+const UPDATED = "27 September 2026";
 // The only mailbox that exists on this domain — hello@ and privacy@ were
 // never provisioned and bounced with 550 Recipient not found.
 const CONTACT = "outreach@draftfly.app";
@@ -9,15 +9,16 @@ export default function Terms() {
   return (
     <LegalLayout title="Terms of Service" updated={UPDATED}>
       <p>
-        These terms govern your use of DraftFly. By creating an account or connecting a Slack
-        workspace you agree to them.
+        These terms govern your use of DIM map. By creating an account or connecting a lead source
+        you agree to them.
       </p>
 
       <Section heading="What the service does">
         <p>
-          DraftFly watches for replies to your outbound campaigns, generates a suggested response
-          using Claude, and posts it to Slack for approval. In draft mode nothing is sent to a
-          prospect until a person approves it. If you switch a client to auto mode, replies are sent
+          DIM map receives the leads your campaigns generate — replies to your outbound email, Meta
+          lead-form submissions and WhatsApp messages — grades each lead using Claude, and drafts a
+          suggested response for approval in the dashboard or Slack. In draft mode nothing is sent to
+          a lead until a person approves it. If you switch a client to auto mode, replies are sent
           without review — that is your decision and your responsibility.
         </p>
       </Section>
@@ -33,28 +34,30 @@ export default function Terms() {
       <Section heading="Your responsibilities for outreach">
         <p>
           You decide who you contact and what you say to them. You are responsible for complying
-          with the law that applies to that outreach — including anti-spam rules such as CAN-SPAM,
-          and data protection law such as the GDPR — and for having a lawful basis for processing
-          the personal data of the people you contact. DraftFly is a tool for replying to people who
-          already wrote to you; it is not a way to bypass those obligations.
+          with the law that applies to that outreach and advertising — including anti-spam rules such
+          as CAN-SPAM, data protection law such as the GDPR, Meta's advertising and WhatsApp Business
+          policies, and any rules on marketing property — and for having a lawful basis for
+          processing the personal data of the people you contact. DIM map is a tool for replying to
+          people who already wrote to you; it is not a way to bypass those obligations.
         </p>
       </Section>
 
       <Section heading="AI-generated content">
         <p>
-          Drafts are produced by a language model. They can be wrong, can misread intent, and can
-          state things about your product that are not accurate. Review before sending. You own what
+          Drafts and lead grades are produced by a language model. They can be wrong, can misread
+          intent, and can state things about your properties — prices, availability, payment plans,
+          handover dates — that are not accurate. Review before sending. You own what
           you send and are responsible for it, whether or not you edited the draft first.
         </p>
         <p>
           Because the model is probabilistic, the same reply will not always produce the same draft.
           We do not warrant that any particular draft is accurate, appropriate, or fit for a
-          particular prospect.
+          particular lead, and a grade is a suggestion, not a credit or suitability assessment.
         </p>
       </Section>
 
       <Section heading="Acceptable use">
-        <p>You may not use DraftFly to:</p>
+        <p>You may not use DIM map to:</p>
         <Table
           rows={[
             ["Deceive", "Impersonate someone else, or misrepresent who is writing."],
@@ -69,9 +72,10 @@ export default function Terms() {
 
       <Section heading="Third-party services">
         <p>
-          DraftFly connects to Slack, Lemlist and Anthropic. Your use of those services is governed
-          by their own terms, and their availability is outside our control. If one of them changes
-          or withdraws access, parts of DraftFly may stop working.
+          DIM map connects to Lemlist, Meta (Lead Ads and WhatsApp Business), Slack and Anthropic.
+          Your use of those services is governed by their own terms, and their availability is
+          outside our control. If one of them changes or withdraws access, parts of DIM map may stop
+          working.
         </p>
       </Section>
 
@@ -93,13 +97,13 @@ export default function Terms() {
       <Section heading="Ownership">
         <p>
           You keep all rights to your data, your configuration and the content you send. We keep all
-          rights to the DraftFly software itself. Nothing here transfers ownership either way.
+          rights to the DIM map software itself. Nothing here transfers ownership either way.
         </p>
       </Section>
 
       <Section heading="Liability">
         <p>
-          To the extent the law allows, DraftFly is provided as is, and we are not liable for
+          To the extent the law allows, DIM map is provided as is, and we are not liable for
           indirect or consequential loss, including lost profits, lost business or lost data. Our
           total liability in any twelve-month period is limited to what you paid us during that
           period. Nothing here limits liability that cannot legally be limited.
@@ -108,7 +112,7 @@ export default function Terms() {
 
       <Section heading="Ending the agreement">
         <p>
-          You may stop using DraftFly and close your account at any time. We may end this agreement
+          You may stop using DIM map and close your account at any time. We may end this agreement
           if you materially breach these terms and do not fix it within a reasonable time after we
           tell you. On termination your access stops and your data is deleted as described in the{" "}
           <a href="/privacy" className="text-foreground underline underline-offset-4">Privacy Policy</a>.

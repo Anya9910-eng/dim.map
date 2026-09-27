@@ -17,6 +17,7 @@ import { requireAuth } from "./scope";
  *   /webhooks/lemlist    global shared secret (requireWebhookSecret)
  *   /webhooks/lemlist/:id  that client's own secret (requireClientWebhookSecret);
  *                        digits only, so /webhooks/lemlist/simulate stays gated
+ *   /webhooks/meta/:id, /webhooks/whatsapp/:id  same per-client secret
  *   /v1/epicgram/*       API key (requireEpicgramApiKey)
  *
  * POST /api/stripe/webhook verifies its own Stripe signature and is mounted on
@@ -30,6 +31,7 @@ const PUBLIC_PATTERNS: readonly RegExp[] = [
   /^\/webhooks\/lemlist$/,
   /^\/webhooks\/lemlist\/reply$/,
   /^\/webhooks\/lemlist\/\d+$/,
+  /^\/webhooks\/(?:meta|whatsapp)\/\d+$/,
   /^\/v1\/epicgram(?:\/|$)/,
 ];
 

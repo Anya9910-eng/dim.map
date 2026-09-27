@@ -53,6 +53,11 @@ export const clientsTable = pgTable("clients", {
   // simply cannot use the per-client webhook path.
   lemlistWebhookSecret: encryptedText("lemlist_webhook_secret"),
   n8nWebhookUrl: text("n8n_webhook_url"),
+  // WhatsApp Cloud API credentials, used to send approved replies to WhatsApp
+  // and Meta leads. Both are needed; without them those drafts can still be
+  // reviewed and qualified, just not sent from the app.
+  whatsappPhoneNumberId: text("whatsapp_phone_number_id"),
+  whatsappAccessToken: encryptedText("whatsapp_access_token"),
   isActive: boolean("is_active").notNull().default(true),
   billingMode: billingModeEnum("billing_mode").notNull().default("managed"),
   // Self-serve only. Access without a subscription ends here; null means the

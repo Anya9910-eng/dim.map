@@ -92,7 +92,7 @@ export default function PersonaDetail() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="productDescription">Product Description</Label>
+              <Label htmlFor="productDescription">Project Description</Label>
               <Textarea 
                 id="productDescription" 
                 data-testid="input-product-description"
@@ -116,7 +116,7 @@ export default function PersonaDetail() {
                 className="min-h-[100px]" 
                 value={formData.commonObjections} 
                 onChange={e => setFormData({ ...formData, commonObjections: e.target.value })} 
-                placeholder="List objections and how to counter them..."
+                placeholder="e.g. “Prices will drop” — explain the payment plan and handover timeline…"
               />
             </div>
             
@@ -128,7 +128,7 @@ export default function PersonaDetail() {
                 className="min-h-[100px]" 
                 value={formData.qualificationRules} 
                 onChange={e => setFormData({ ...formData, qualificationRules: e.target.value })} 
-                placeholder="When should the AI push for a meeting vs disqualify?"
+                placeholder="e.g. Hot = budget over 1.4M and buying within 6 months. Renters and agents are unqualified."
               />
             </div>
 

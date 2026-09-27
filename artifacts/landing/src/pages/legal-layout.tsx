@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { ArrowLeft } from "lucide-react";
-import { useTheme } from "@/hooks/use-theme";
+import { Wordmark } from "@/components/brand";
 
 /**
  * Shared chrome for the Privacy and Terms pages.
@@ -18,17 +18,13 @@ export function LegalLayout({
   updated: string;
   children: React.ReactNode;
 }) {
-  const { theme } = useTheme();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-foreground/10">
         <div className="container mx-auto max-w-3xl px-6 py-5 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
-            <img src="/logo-mark.svg" alt="" className="h-5 w-auto" />
-            <span className={`text-sm font-bold ${theme === "dark" ? "text-foreground" : "text-black"}`}>
-              DraftFly
-            </span>
+            <Wordmark size="sm" />
           </Link>
           <Link
             href="/"
@@ -51,7 +47,7 @@ export function LegalLayout({
 
       <footer className="border-t border-foreground/10 py-10 px-6">
         <div className="container mx-auto max-w-3xl flex flex-wrap gap-6 text-sm text-muted-foreground">
-          <Link href="/" className="hover:text-foreground transition-colors">draftfly.app</Link>
+          <Link href="/" className="hover:text-foreground transition-colors">DIM map</Link>
           <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
           <Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link>
         </div>

@@ -1,7 +1,7 @@
 /**
  * Self-service settings for the signed-in client.
  *
- * Everything a client needs to connect DraftFly to their own Lemlist account
+ * Everything a client needs to connect DIM map to their own Lemlist account
  * used to live on the operator's client card, behind `requireOperator` — so a
  * client could be handed a dashboard they had no way to configure. These
  * routes close that gap without loosening the operator ones: rather than
@@ -55,11 +55,16 @@ function keyHint(key: string | null | undefined): string | null {
   return trimmed.length <= 4 ? "••••" : `••••${trimmed.slice(-4)}`;
 }
 
-function webhookUrl(req: import("express").Request, clientId: number, secret: string | null): string | null {
+function webhookUrl(
+  req: import("express").Request,
+  clientId: number,
+  secret: string | null,
+  source: "lemlist" | "meta" | "whatsapp" = "lemlist",
+): string | null {
   if (!secret) return null;
   const configured = process.env["APP_BASE_URL"]?.trim().replace(/\/+$/, "");
   const base = configured || `${req.protocol}://${req.get("host") ?? ""}`;
-  return `${base}/api/webhooks/lemlist/${clientId}?secret=${encodeURIComponent(secret)}`;
+  return `${base}/api/webhooks/${source}/${clientId}?secret=${encodeURIComponent(secret)}`;
 }
 
 async function buildSettings(req: import("express").Request, clientId: number) {
@@ -101,6 +106,16 @@ async function buildSettings(req: import("express").Request, clientId: number) {
       url: webhookUrl(req, client.id, client.lemlistWebhookSecret),
       hasSecret: !!client.lemlistWebhookSecret,
       headerName: "X-Webhook-Secret",
+      // Same secret, one URL per lead source. Meta's subscription handshake
+      // also asks for a verify token: it is this same secret.
+      metaUrl: webhookUrl(req, client.id, client.lemlistWebhookSecret, "meta"),
+      whatsappUrl: webhookUrl(req, client.id, client.lemlistWebhookSecret, "whatsapp"),
+    },
+    whatsapp: {
+      phoneNumberId: client.whatsappPhoneNumberId,
+      // Write-only, like the Lemlist key.
+      hasAccessToken: !!client.whatsappAccessToken?.trim(),
+      tokenHint: keyHint(client.whatsappAccessToken),
     },
     slack: {
       channel: client.slackChannel,
@@ -130,7 +145,7 @@ router.get("/me/settings", async (req, res): Promise<void> => {
 });
 
 /**
- * The only two fields a client may change about themselves.
+ * The only fields a client may change about themselves.
  *
  * Listed explicitly rather than filtered out of the body: a deny-list would
  * silently start accepting any column added to `clients` later.
@@ -138,6 +153,9 @@ router.get("/me/settings", async (req, res): Promise<void> => {
 const MeSettingsBody = z.object({
   lemlistApiKey: z.string().trim().min(1).optional(),
   slackChannel: z.string().trim().nullable().optional(),
+  // Empty string clears the value.
+  whatsappPhoneNumberId: z.string().trim().regex(/^\d*$/, "The phone number ID is digits only").optional(),
+  whatsappAccessToken: z.string().trim().optional(),
 });
 
 router.patch("/me/settings", async (req, res): Promise<void> => {
@@ -154,6 +172,12 @@ router.patch("/me/settings", async (req, res): Promise<void> => {
 
   const update: Record<string, unknown> = {};
   if (parsed.data.lemlistApiKey !== undefined) update["lemlistApiKey"] = parsed.data.lemlistApiKey;
+  if (parsed.data.whatsappPhoneNumberId !== undefined) {
+    update["whatsappPhoneNumberId"] = parsed.data.whatsappPhoneNumberId || null;
+  }
+  if (parsed.data.whatsappAccessToken !== undefined) {
+    update["whatsappAccessToken"] = parsed.data.whatsappAccessToken || null;
+  }
 
   if (parsed.data.slackChannel !== undefined) {
     const channel = parsed.data.slackChannel;
@@ -236,7 +260,7 @@ router.post("/me/settings/webhook/regenerate", async (req, res): Promise<void> =
 });
 
 /**
- * The client's real Lemlist campaigns, each marked with whether DraftFly
+ * The client's real Lemlist campaigns, each marked with whether DIM map
  * already has a mapping for it — so the Campaigns page can offer the ones that
  * are missing instead of asking anyone to copy an ID by hand.
  */

@@ -211,13 +211,13 @@ export async function postUnmatchedCampaignAlert(params: {
     const client = getClient();
     await client.chat.postMessage({
       channel: channelId,
-      text: `⚠️ Received reply from ${params.leadEmail} for unknown campaign \`${params.campaignId}\` — add it in DraftFly to enable auto-drafting`,
+      text: `⚠️ Received reply from ${params.leadEmail} for unknown campaign \`${params.campaignId}\` — add it in DIM map to enable auto-drafting`,
       blocks: [
         {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: `⚠️ *Unmatched Lemlist campaign*\n\nReceived a reply from *${params.leadEmail}* for campaign ID \`${params.campaignId}\`, but no matching campaign was found in DraftFly.\n\nAdd the campaign in DraftFly and map it to this Lemlist campaign ID to enable auto-drafting.`,
+            text: `⚠️ *Unmatched Lemlist campaign*\n\nReceived a reply from *${params.leadEmail}* for campaign ID \`${params.campaignId}\`, but no matching campaign was found in DIM map.\n\nAdd the campaign in DIM map and map it to this Lemlist campaign ID to enable auto-drafting.`,
           },
         },
       ],
@@ -236,13 +236,13 @@ export async function postTestMessage(channelId: string, botToken?: string): Pro
     const client = getClient(botToken);
     const result = await client.chat.postMessage({
       channel: channelId,
-      text: "✅ DraftFly test message — Slack connection verified.",
+      text: "✅ DIM map test message — Slack connection verified.",
       blocks: [
         {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: "*DraftFly* — test connection successful.\nYour approval channel is correctly configured.",
+            text: "*DIM map* — test connection successful.\nYour approval channel is correctly configured.",
           },
         },
       ],
@@ -388,13 +388,13 @@ export async function postTestApprovalCard(
     const client = getClient(botToken);
     const result = await client.chat.postMessage({
       channel: channelId,
-      text: "🧪 TEST — DraftFly approval card (no real reply will be sent)",
+      text: "🧪 TEST — DIM map approval card (no real reply will be sent)",
       blocks: [
         {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: "🧪 *TEST approval card* — DraftFly channel-binding check. These buttons are safe: clicking them sends *no* email and changes *no* draft.",
+            text: "🧪 *TEST approval card* — DIM map channel-binding check. These buttons are safe: clicking them sends *no* email and changes *no* draft.",
           },
         },
         {
@@ -600,7 +600,7 @@ export async function postFallbackFailureNotification(params: {
   if (params.lemlistError) lines.push(`*Lemlist error:* ${params.lemlistError}`);
   lines.push(
     `The Slack card could not be updated automatically${params.cardUpdateError ? `: ${params.cardUpdateError}` : "."}`,
-    "Please check DraftFly to retry or review the draft.",
+    "Please check DIM map to retry or review the draft.",
   );
   const bodyText = lines.join("\n");
 
@@ -613,7 +613,7 @@ export async function postFallbackFailureNotification(params: {
     try {
       await client.chat.postMessage({
         channel: target,
-        text: `⚠️ Send failed for draft #${params.draftId} — Slack card update also failed. Check DraftFly to retry.`,
+        text: `⚠️ Send failed for draft #${params.draftId} — Slack card update also failed. Check DIM map to retry.`,
         blocks: [
           {
             type: "section",
@@ -653,7 +653,7 @@ export async function updateMessageAfterAction(
   const byLine = operatorName ? ` by ${operatorName}` : "";
   const text = `${labels[action]}${byLine}`;
   const statusLine = action === "send_failed"
-    ? `${labels[action]}${byLine}. ${errorDetail ? `Error: ${errorDetail}. ` : ""}The draft is still pending — retry from DraftFly.`
+    ? `${labels[action]}${byLine}. ${errorDetail ? `Error: ${errorDetail}. ` : ""}The draft is still pending — retry from DIM map.`
     : `${labels[action]}${byLine}. No further action needed.`;
 
   const blocks: KnownBlock[] = [

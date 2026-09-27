@@ -74,7 +74,7 @@ export function ClientBillingBadge({
       return <Badge variant="secondary" className="bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700">Managed</Badge>;
     case "trial": {
       const label = trialDaysLeft != null ? `Trial — ${trialDaysLeft}d left` : "Trial";
-      return <Badge variant="secondary" className="bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300 dark:border-indigo-900/50">{label}</Badge>;
+      return <Badge variant="secondary" className="bg-lime-100 text-green-900 border-lime-300 hover:bg-lime-100 dark:bg-lime-400/15 dark:text-lime-300 dark:border-lime-400/30">{label}</Badge>;
     }
     case "active":
       return <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 hover:bg-green-50 dark:bg-green-900/30 dark:text-green-400 dark:border-green-900/50">Subscribed</Badge>;
@@ -85,4 +85,41 @@ export function ClientBillingBadge({
     default:
       return <Badge variant="outline">{status}</Badge>;
   }
+}
+
+const CHANNEL_LABELS = { lemlist: "Lemlist", meta: "Meta Ads", whatsapp: "WhatsApp" } as const;
+
+/** Where the lead came from. Absent on rows from before channels existed: those are Lemlist. */
+export function LeadChannelBadge({ channel }: { channel?: "lemlist" | "meta" | "whatsapp" | null }) {
+  const c = channel ?? "lemlist";
+  const styles = {
+    lemlist: "bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700",
+    meta: "bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-900/30 dark:text-sky-300 dark:border-sky-900/50",
+    whatsapp: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-900/50",
+  }[c];
+  return <Badge variant="secondary" className={`${styles} hover:opacity-100`}>{CHANNEL_LABELS[c]}</Badge>;
+}
+
+export const QUALIFICATION_LABELS = { hot: "Hot lead", warm: "Warm lead", cold: "Cold lead", unqualified: "Unqualified" } as const;
+
+/** The AI's read on how ready the lead is to buy. Renders nothing when not graded. */
+export function LeadQualificationBadge({
+  qualification,
+  reason,
+}: {
+  qualification?: "hot" | "warm" | "cold" | "unqualified" | null;
+  reason?: string | null;
+}) {
+  if (!qualification) return null;
+  const styles = {
+    hot: "bg-lime-300 text-black border-lime-400 dark:bg-lime-400 dark:text-black dark:border-lime-300",
+    warm: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-900/50",
+    cold: "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700",
+    unqualified: "bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-900/50",
+  }[qualification];
+  return (
+    <Badge variant="secondary" className={styles} title={reason ?? undefined}>
+      {QUALIFICATION_LABELS[qualification]}
+    </Badge>
+  );
 }

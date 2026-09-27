@@ -5,6 +5,7 @@
  * DraftFly API — AI-powered reply automation for B2B sales agencies
  * OpenAPI spec version: 0.2.0
  */
+import type { CampaignChannel } from './campaignChannel';
 
 export interface Campaign {
   id: number;
@@ -12,6 +13,9 @@ export interface Campaign {
   /** @nullable */
   personaId?: number | null;
   name: string;
+  /** Lead source the campaign listens on. Defaults to lemlist. */
+  channel: CampaignChannel;
+  /** The campaign's id in its source system — the Lemlist campaign id, a Meta Lead Ads form id, or a label for a WhatsApp number. */
   lemlistCampaignId: string;
   /** @nullable */
   tone?: string | null;

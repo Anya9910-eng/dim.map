@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { useMySettings, useLemlistCampaignOptions } from "@/hooks/use-my-settings";
+import { LeadChannelBadge } from "@/components/status-badges";
 
 export default function CampaignsPage() {
   const { data: campaigns, isLoading } = useListCampaigns();
@@ -35,6 +36,7 @@ export default function CampaignsPage() {
   const [formData, setFormData] = useState({
     clientId: ownClientId != null ? String(ownClientId) : "",
     name: "",
+    channel: "lemlist" as "lemlist" | "meta" | "whatsapp",
     lemlistCampaignId: "",
     personaId: "",
     tone: "",
@@ -105,6 +107,7 @@ export default function CampaignsPage() {
       data: {
         clientId: parseInt(formData.clientId, 10),
         name: formData.name,
+        channel: formData.channel,
         lemlistCampaignId: formData.lemlistCampaignId,
         ...(formData.personaId ? { personaId: parseInt(formData.personaId, 10) } : {}),
         ...(formData.tone.trim() ? { tone: formData.tone.trim() } : {}),
@@ -115,7 +118,7 @@ export default function CampaignsPage() {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListCampaignsQueryKey() });
         setOpen(false);
-        setFormData({ clientId: "", name: "", lemlistCampaignId: "", personaId: "", tone: "", replyRules: "", regionRules: "" });
+        setFormData({ clientId: ownClientId != null ? String(ownClientId) : "", name: "", channel: "lemlist", lemlistCampaignId: "", personaId: "", tone: "", replyRules: "", regionRules: "" });
         toast({ title: "Campaign created" });
       },
       onError: () => {
@@ -130,7 +133,7 @@ export default function CampaignsPage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Campaigns</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Map Lemlist campaigns to AI personas. Switch one on to have it draft replies.
+            Connect your cold email (Lemlist), Meta lead ads and WhatsApp to an AI sales persona. Switch one on to have it qualify leads and draft replies.
           </p>
           {activeLimit != null && (
             <Badge variant={atCap ? "destructive" : "outline"} className="mt-2 font-normal">
@@ -145,7 +148,7 @@ export default function CampaignsPage() {
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Create Campaign Mapping</DialogTitle>
+              <DialogTitle>Connect a Campaign</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               {isOperator && (
@@ -163,6 +166,21 @@ export default function CampaignsPage() {
                 <Label htmlFor="name">Campaign Name</Label>
                 <Input id="name" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="channel">Lead source</Label>
+                <Select
+                  value={formData.channel}
+                  onValueChange={(val) => setFormData({ ...formData, channel: val as typeof formData.channel, lemlistCampaignId: "" })}
+                >
+                  <SelectTrigger id="channel"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="lemlist">Lemlist — cold email / LinkedIn replies</SelectItem>
+                    <SelectItem value="meta">Meta — Facebook / Instagram lead ads</SelectItem>
+                    <SelectItem value="whatsapp">WhatsApp — inbound chats</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {formData.channel === "lemlist" ? (
               <div className="space-y-2">
                 <Label htmlFor="lemlistCampaignId">Lemlist campaign</Label>
                 {/* Once a Lemlist key is saved we can list the real campaigns,
@@ -214,6 +232,26 @@ export default function CampaignsPage() {
                   </>
                 )}
               </div>
+              ) : (
+              <div className="space-y-2">
+                <Label htmlFor="lemlistCampaignId">
+                  {formData.channel === "meta" ? "Meta lead form ID" : "WhatsApp label"}
+                </Label>
+                <Input
+                  id="lemlistCampaignId"
+                  required
+                  placeholder={formData.channel === "meta" ? "e.g. 1234567890123456" : "e.g. main-sales-line"}
+                  value={formData.lemlistCampaignId}
+                  onChange={e => setFormData({ ...formData, lemlistCampaignId: e.target.value })}
+                />
+                <p className="text-[11px] text-muted-foreground">
+                  {formData.channel === "meta"
+                    ? "Find it in Meta Ads Manager → Instant Forms. The ad ID or campaign ID also works. If you run only one Meta campaign here, every Meta lead goes to it."
+                    : "Any name you like, or your WhatsApp phone number ID. If you run only one WhatsApp campaign here, every WhatsApp chat goes to it."}
+                  {" "}The webhook URL is in <Link href="/settings" className="underline">Settings</Link>.
+                </p>
+              </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="personaId">Persona</Label>
                 <Select
@@ -254,7 +292,7 @@ export default function CampaignsPage() {
                 <Input id="regionRules" placeholder="e.g. Australian market — informal, avoid US sales language" value={formData.regionRules} onChange={e => setFormData({ ...formData, regionRules: e.target.value })} />
               </div>
               <Button type="submit" className="w-full" disabled={createCampaign.isPending || !formData.clientId}>
-                {createCampaign.isPending ? "Creating..." : "Create Mapping"}
+                {createCampaign.isPending ? "Creating..." : "Connect Campaign"}
               </Button>
             </form>
           </DialogContent>
@@ -265,7 +303,7 @@ export default function CampaignsPage() {
         {isLoading ? (
           <div className="p-8 text-center animate-pulse text-muted-foreground">Loading campaigns...</div>
         ) : campaigns?.length === 0 ? (
-          <div className="p-8 text-center text-muted-foreground">No campaigns mapped yet.</div>
+          <div className="p-8 text-center text-muted-foreground">No campaigns connected yet.</div>
         ) : (
           <table className="w-full text-sm text-left">
             <thead className="bg-muted/50 text-muted-foreground text-xs uppercase font-medium">
@@ -274,7 +312,7 @@ export default function CampaignsPage() {
                 {/* A client user has one client; the column repeats their own name
                     on every row, and its link goes to a page they cannot open. */}
                 {isOperator && <th className="px-4 py-3">Client</th>}
-                <th className="px-4 py-3">Lemlist ID</th>
+                <th className="px-4 py-3">Source</th>
                 <th className="px-4 py-3">Persona</th>
                 <th className="px-4 py-3 text-right">Replies</th>
                 <th className="px-4 py-3 text-right">Drafting</th>
@@ -296,7 +334,12 @@ export default function CampaignsPage() {
                         {client ? <Link href={`/clients/${client.id}`} className="hover:underline">{client.name}</Link> : "Unknown"}
                       </td>
                     )}
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{camp.lemlistCampaignId}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-col items-start gap-1">
+                        <LeadChannelBadge channel={camp.channel} />
+                        <span className="font-mono text-xs text-muted-foreground">{camp.lemlistCampaignId}</span>
+                      </div>
+                    </td>
                     <td className="px-4 py-3 text-xs">
                       {camp.personaId ? (
                         allPersonas?.find(p => p.id === camp.personaId)?.name ?? `#${camp.personaId}`

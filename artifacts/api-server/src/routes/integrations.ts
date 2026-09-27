@@ -188,7 +188,7 @@ router.get("/integrations/n8n/setup", requireOperator, (_req, res): void => {
   const lemlistWebhookUrl = `${appBaseUrl}/api/webhooks/lemlist`;
 
   res.json({
-    overview: "Lemlist → n8n → DraftFly → Claude → Slack",
+    overview: "Lemlist → n8n → DIM map → Claude → Slack",
     steps: [
       {
         step: 1,
@@ -201,7 +201,7 @@ router.get("/integrations/n8n/setup", requireOperator, (_req, res): void => {
       {
         step: 2,
         node: "HTTP Request",
-        description: "Add an HTTP Request node after the Webhook Trigger. Configure it to forward the Lemlist payload to DraftFly's API endpoint.",
+        description: "Add an HTTP Request node after the Webhook Trigger. Configure it to forward the Lemlist payload to DIM map's API endpoint.",
         n8nNodeType: "n8n-nodes-base.httpRequest",
         method: "POST",
         url: lemlistWebhookUrl,
@@ -211,7 +211,7 @@ router.get("/integrations/n8n/setup", requireOperator, (_req, res): void => {
           "Content-Type": "application/json",
           "X-Webhook-Secret": "{{ $env.LEMLIST_WEBHOOK_SECRET }} (set this in n8n credentials or as a fixed value matching your LEMLIST_WEBHOOK_SECRET secret)",
         },
-        note: "Pass the entire Lemlist payload body as-is. DraftFly reads: type, campaignId, leadId, leadEmail, leadFirstName, leadLastName, leadCompanyName, country, jobTitle, replyText",
+        note: "Pass the entire Lemlist payload body as-is. DIM map reads: type, campaignId, leadId, leadEmail, leadFirstName, leadLastName, leadCompanyName, country, jobTitle, replyText",
         security: "REQUIRED for production: add the X-Webhook-Secret header with the value of LEMLIST_WEBHOOK_SECRET. Requests without a matching secret are rejected with HTTP 401.",
       },
     ],
@@ -227,7 +227,7 @@ router.get("/integrations/n8n/setup", requireOperator, (_req, res): void => {
       "jobTitle",
       "replyText",
     ],
-    afterProcessing: "DraftFly generates a Claude draft and posts a Slack approval card with Send / Edit / Discard buttons to the configured Slack channel.",
+    afterProcessing: "DIM map generates a Claude draft and posts a Slack approval card with Send / Edit / Discard buttons to the configured Slack channel.",
   });
 });
 

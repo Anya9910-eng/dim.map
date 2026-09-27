@@ -31,7 +31,7 @@ export function PlanPicker({ compact = false }: { compact?: boolean }) {
               key={plan.key}
               data-testid={`plan-${plan.key}`}
               className={`rounded-xl border p-5 flex flex-col gap-3 ${
-                plan.key === "growth" ? "border-indigo-500/40 bg-indigo-500/5" : "border-border bg-card"
+                plan.key === "growth" ? "border-primary/40 bg-primary/5" : "border-border bg-card"
               }`}
             >
               <div className="flex items-baseline justify-between">
@@ -46,7 +46,7 @@ export function PlanPicker({ compact = false }: { compact?: boolean }) {
               </div>
               <ul className="text-sm space-y-1 text-muted-foreground">
                 <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500" /> {plan.limits.activeCampaigns} active campaigns</li>
-                <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500" /> {plan.limits.repliesPerMonth} replies / month</li>
+                <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500" /> {plan.limits.repliesPerMonth} leads / month</li>
                 <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-green-500" /> Approve in the dashboard or Slack</li>
               </ul>
               <Button

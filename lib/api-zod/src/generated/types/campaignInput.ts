@@ -5,11 +5,14 @@
  * DraftFly API — AI-powered reply automation for B2B sales agencies
  * OpenAPI spec version: 0.2.0
  */
+import type { CampaignInputChannel } from './campaignInputChannel';
 
 export interface CampaignInput {
   clientId: number;
   personaId?: number;
   name: string;
+  /** Lead source the campaign listens on. Defaults to lemlist. */
+  channel?: CampaignInputChannel;
   lemlistCampaignId: string;
   tone?: string;
   replyRules?: string;

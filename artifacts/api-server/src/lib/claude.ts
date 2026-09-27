@@ -37,6 +37,8 @@ export interface DraftParams {
   leadRole?: string;
   leadCountry?: string;
   incomingReply: string;
+  /** Where the lead wrote from. Shapes length and format; email when omitted. */
+  channel?: "lemlist" | "meta" | "whatsapp";
 
   personaName: string;
   productDescription: string;
@@ -56,11 +58,25 @@ export interface DraftParams {
   corrections?: string;
 }
 
+export type LeadQualification = "hot" | "warm" | "cold" | "unqualified";
+
+const QUALIFICATIONS: ReadonlySet<string> = new Set(["hot", "warm", "cold", "unqualified"]);
+
+/** Accepts only a known grade; anything else means the model did not grade the lead. */
+export function parseQualification(value: unknown): LeadQualification | null {
+  return typeof value === "string" && QUALIFICATIONS.has(value.toLowerCase())
+    ? (value.toLowerCase() as LeadQualification)
+    : null;
+}
+
 export interface DraftResult {
   draft: string;
   confidenceScore: number;
   detectedIntent: string;
   suggestedNextAction: string;
+  /** Null when the model returned prose or an unknown grade. */
+  qualification: LeadQualification | null;
+  qualificationReason: string | null;
 }
 
 // ─── Draft generation ──────────────────────────────────────────────────────
@@ -110,12 +126,18 @@ export async function generateDraftReply(params: DraftParams): Promise<DraftResu
       confidence_score?: number;
       detected_intent?: string;
       suggested_next_action?: string;
+      lead_qualification?: string;
+      qualification_reason?: string;
     };
     return {
       draft: parsed.draft ?? jsonCandidate,
       confidenceScore: parsed.confidence_score ?? 0.8,
       detectedIntent: parsed.detected_intent ?? "interest",
       suggestedNextAction: parsed.suggested_next_action ?? "schedule_call",
+      qualification: parseQualification(parsed.lead_qualification),
+      qualificationReason: typeof parsed.qualification_reason === "string" && parsed.qualification_reason.trim()
+        ? parsed.qualification_reason.trim()
+        : null,
     };
   } catch {
     // Not valid JSON. If it does not even look like JSON the model simply
@@ -134,6 +156,8 @@ export async function generateDraftReply(params: DraftParams): Promise<DraftResu
       confidenceScore: 0.75,
       detectedIntent: "interest",
       suggestedNextAction: "schedule_call",
+      qualification: null,
+      qualificationReason: null,
     };
   }
 }
@@ -160,8 +184,16 @@ export async function testConnection(): Promise<{ ok: boolean; tokens?: number; 
 
 // ─── Prompt builders ───────────────────────────────────────────────────────
 
+const CHANNEL_GUIDANCE: Record<NonNullable<DraftParams["channel"]>, string> = {
+  lemlist: "The lead replied to a cold email or LinkedIn campaign. Write an email-style reply.",
+  meta: "The lead filled in a Meta (Facebook / Instagram) Lead Ads form, so they asked to be contacted but have not spoken to anyone yet. Write a short first message that thanks them, references what they asked about, and moves them to a viewing or a call. It will most likely be sent over WhatsApp.",
+  whatsapp: "The lead is chatting on WhatsApp. Write like a person on WhatsApp: short, warm, plain text, no email sign-off, at most three short paragraphs.",
+};
+
 function buildSystemPrompt(p: DraftParams): string {
-  return `You are a B2B sales reply assistant operating as the "${p.personaName}" persona.
+  return `You are a sales reply assistant for a property developer or real-estate brokerage, operating as the "${p.personaName}" persona.
+
+${CHANNEL_GUIDANCE[p.channel ?? "lemlist"]}
 
 Product: ${p.productDescription}
 Tone of voice: ${p.toneOfVoice}
@@ -195,15 +227,25 @@ You must respond with a JSON object in this exact format:
   "draft": "<the reply email/message body>",
   "confidence_score": <0.0-1.0>,
   "detected_intent": "<interest|objection|pricing|timing|referral|not_interested|unsubscribe|complaint|unclear>",
-  "suggested_next_action": "<schedule_call|send_info|handle_objection|discard|follow_up|escalate>"
+  "suggested_next_action": "<schedule_call|send_info|handle_objection|discard|follow_up|escalate>",
+  "lead_qualification": "<hot|warm|cold|unqualified>",
+  "qualification_reason": "<one short sentence: which buying signals are present or missing>"
 }
+
+Qualifying the lead: judge only from what the lead has actually said. The
+signals that matter for property are budget, timeline to buy, financing (cash,
+mortgage, pre-approved), purpose (own use or investment), and the unit type or
+location they want. "hot" = clear intent plus at least budget or timeline;
+"warm" = real interest but key signals missing; "cold" = vague curiosity;
+"unqualified" = not a buyer, wrong fit, or asked to stop. If qualification
+criteria are given above, they outrank this rubric.
 
 Rules:
 - Write the draft as a natural, conversational message (no subject line, no greeting prefix "Hi [Name]," — start directly)
 - Match the persona tone precisely
 - Keep it concise — under 150 words
 - Never mention AI or automation
-- Never fabricate pricing or specific metrics — if pricing is asked and no approved rates are available, set suggested_next_action to "escalate" and write a draft that says a manager will follow up with pricing
+- Never fabricate prices, availability, payment plans, handover dates or yields — if pricing is asked and no approved rates are available, set suggested_next_action to "escalate" and write a draft that says a manager will follow up with pricing
 - The draft should feel like it was written personally by the sender
 - If detected_intent is "unsubscribe": set draft to a brief polite acknowledgement (e.g. "Understood — removing you from our list. All the best."), set suggested_next_action to "discard", confidence_score to 0.99
 - If detected_intent is "complaint": set suggested_next_action to "escalate", set confidence_score below 0.5, draft should be a neutral acknowledgement only — no promises, no specifics
@@ -211,9 +253,8 @@ Rules:
 }
 
 function buildUserMessage(p: DraftParams): string {
-  return `Lead: ${p.leadName} (${p.leadRole ?? "unknown role"}) at ${p.leadCompany}${p.leadCountry ? `, ${p.leadCountry}` : ""}
-Email: ${p.leadEmail}
-${p.conversationHistory ? `Everything already exchanged with this lead, oldest first. Do not repeat what has been said or reintroduce yourself:\n${p.conversationHistory}\n` : ""}
+  return `Lead: ${p.leadName} (${p.leadRole ?? "unknown role"})${p.leadCompany ? ` at ${p.leadCompany}` : ""}${p.leadCountry ? `, ${p.leadCountry}` : ""}
+${p.leadEmail ? `Email: ${p.leadEmail}\n` : ""}${p.conversationHistory ? `Everything already exchanged with this lead, oldest first. Do not repeat what has been said or reintroduce yourself:\n${p.conversationHistory}\n` : ""}
 Their latest reply: "${p.incomingReply}"
 
 Generate the reply draft.`;

@@ -1,7 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, MessageSquare, Slack, CheckCircle, Zap, Shield, GitMerge, BarChart, Mail, Bot, Send, ChevronRight } from "lucide-react";
+import {
+  ArrowRight,
+  MessageCircle,
+  CheckCircle,
+  Shield,
+  GitMerge,
+  BarChart,
+  Mail,
+  Bot,
+  Send,
+  ChevronRight,
+  Flame,
+  Megaphone,
+  Filter,
+  Inbox,
+  MapPin,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
@@ -13,6 +29,7 @@ import {
 } from "@/components/ui/accordion";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
+import { Wordmark, CONTACT_EMAIL } from "@/components/brand";
 
 const DASHBOARD_URL = "/app";
 const SIGNUP_URL = "/app/signup";
@@ -31,68 +48,59 @@ const stagger = {
   visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
 };
 
+/** The brand's highlight: dark green on white, lime on black. */
+const HIGHLIGHT = "text-emerald-800 dark:text-lime-400";
+
 const DEMO_STEPS = [
   {
     id: 0,
-    label: "Reply detected",
-    icon: Mail,
-    color: "text-blue-400",
-    bg: "bg-blue-400/10 border-blue-400/20",
+    label: "Lead arrives",
+    icon: MessageCircle,
     content: (
       <div className="space-y-3">
-        <div className="text-xs text-muted-foreground font-mono mb-4">Incoming reply — Lemlist webhook</div>
+        <div className="text-xs text-muted-foreground font-mono mb-4">New WhatsApp message — +971 50 111 2222</div>
         <div className="bg-background/60 border border-foreground/10 rounded-lg p-4 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">From</span>
-            <span className="text-xs font-mono text-foreground/80">j.smith@acmecorp.io</span>
+            <span className="text-xs font-mono text-foreground/80">Sara Khan</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">Campaign</span>
-            <span className="text-xs font-mono text-primary">Q3 Enterprise Outbound</span>
+            <span className={`text-xs font-mono ${HIGHLIGHT}`}>Marina Tower launch — Meta ad</span>
           </div>
           <div className="border-t border-foreground/10 mt-3 pt-3">
-            <p className="text-sm text-foreground/80 leading-relaxed">"Hey, actually this looks interesting. Can you tell me more about pricing and how the onboarding works?"</p>
+            <p className="text-sm text-foreground/80 leading-relaxed">"Hi, is the 3-bed with sea view still available? Budget around 2.5M, looking to buy in the next 3 months."</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-xs text-green-400 font-mono mt-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-          Positive intent detected — routing to AI
+        <div className="flex items-center gap-2 text-xs text-emerald-700 dark:text-lime-400 font-mono mt-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-lime-400 animate-pulse" />
+          Buying intent detected — qualifying
         </div>
       </div>
     ),
   },
   {
     id: 1,
-    label: "AI drafting",
-    icon: Bot,
-    color: "text-yellow-400",
-    bg: "bg-yellow-400/10 border-yellow-400/20",
+    label: "AI qualifies",
+    icon: Filter,
     content: (
       <div className="space-y-3">
-        <div className="text-xs text-muted-foreground font-mono mb-4">AI model — context loading</div>
+        <div className="text-xs text-muted-foreground font-mono mb-4">Qualification — reading buying signals</div>
         <div className="space-y-2">
           {[
-            { label: "Persona", value: "Enterprise CTO — Acme Corp", done: true },
-            { label: "Thread context", value: "3 previous emails loaded", done: true },
-            { label: "Tone rules", value: "Technical, concise, no fluff", done: true },
-            { label: "Draft", value: "Generating...", done: false },
+            { label: "Budget", value: "AED 2.5M — matches 3-bed range", done: true },
+            { label: "Timeline", value: "Buying within 3 months", done: true },
+            { label: "Unit", value: "3-bed, sea view", done: true },
+            { label: "Grade", value: "HOT — call today", done: false },
           ].map((row, i) => (
             <div key={i} className="flex items-center justify-between bg-background/60 border border-foreground/10 rounded-lg px-4 py-2.5">
               <span className="text-xs text-muted-foreground">{row.label}</span>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono text-foreground/70">{row.value}</span>
                 {row.done ? (
-                  <CheckCircle className="w-3 h-3 text-green-400 shrink-0" />
+                  <CheckCircle className="w-3 h-3 text-emerald-600 dark:text-lime-400 shrink-0" />
                 ) : (
-                  <span className="flex gap-0.5">
-                    {[0, 1, 2].map((j) => (
-                      <span
-                        key={j}
-                        className="w-1 h-1 rounded-full bg-yellow-400 animate-bounce"
-                        style={{ animationDelay: `${j * 0.15}s` }}
-                      />
-                    ))}
-                  </span>
+                  <Flame className="w-3.5 h-3.5 text-lime-500 shrink-0" />
                 )}
               </div>
             </div>
@@ -103,33 +111,30 @@ const DEMO_STEPS = [
   },
   {
     id: 2,
-    label: "Slack approval",
-    icon: Slack,
-    color: "text-primary",
-    bg: "bg-primary/10 border-primary/20",
+    label: "Reply drafted",
+    icon: Bot,
     content: (
       <div className="space-y-3">
-        <div className="text-xs text-muted-foreground font-mono mb-4">Posted to #sales-approvals</div>
+        <div className="text-xs text-muted-foreground font-mono mb-4">Draft ready — waiting for your approval</div>
         <div className="bg-background/60 border border-foreground/10 rounded-lg p-4">
           <div className="flex items-start gap-3 mb-3">
-            <div className="w-8 h-8 rounded-sm bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
-              <Zap className="w-4 h-4 text-primary" />
-            </div>
+            <img src="/logo-mark.svg" alt="" className="w-8 h-8 rounded-md shrink-0" />
             <div>
-              <span className="text-sm font-semibold text-foreground">DraftFly</span>
+              <span className="text-sm font-semibold text-foreground">DIM map</span>
               <span className="text-xs text-muted-foreground ml-2">2:04 PM</span>
             </div>
+            <span className="ml-auto text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-lime-400 text-black">Hot lead</span>
           </div>
-          <p className="text-xs text-muted-foreground mb-3">New draft — <strong className="text-foreground/80">John Smith (Acme Corp)</strong></p>
+          <p className="text-xs text-muted-foreground mb-3">Reply to <strong className="text-foreground/80">Sara Khan</strong> on WhatsApp</p>
           <div className="bg-foreground/5 border border-foreground/10 rounded p-3 text-xs text-foreground/70 leading-relaxed mb-3">
-            "Hi John, happy to break down pricing for you. For an org your size, our Enterprise tier is the right fit — it includes SSO, dedicated onboarding and SLA guarantees. Onboarding typically takes 2 weeks..."
+            "Hi Sara! Yes — we still have two 3-beds with full sea view on the upper floors, both within your budget. Would Thursday or Saturday suit you for a private viewing?"
           </div>
           <div className="flex gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-green-600 hover:bg-green-500 text-white text-xs font-medium transition-colors">
+            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-lime-400 hover:bg-lime-300 text-black text-xs font-semibold transition-colors">
               <Send className="w-3 h-3" /> Approve & Send
             </button>
             <button className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-foreground/10 hover:bg-foreground/15 text-foreground/80 text-xs font-medium transition-colors">
-              Edit Draft
+              Edit Reply
             </button>
           </div>
         </div>
@@ -169,8 +174,8 @@ function DemoSection() {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-xs font-medium text-muted-foreground mb-6">
             Live demo
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Watch a reply get handled</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">From inbox to Slack in under 3 seconds. No manual writing, no context switching.</p>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Watch a buyer get qualified</h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">From a WhatsApp message to a graded lead and a ready reply in seconds. No copy-pasting between apps.</p>
         </motion.div>
 
         <motion.div
@@ -180,7 +185,6 @@ function DemoSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
         >
-          {/* Step tabs */}
           <div className="flex flex-col gap-2">
             {DEMO_STEPS.map((step, i) => {
               const Icon = step.icon;
@@ -195,8 +199,8 @@ function DemoSection() {
                       : "border-foreground/5 text-muted-foreground hover:border-foreground/10 hover:text-foreground/70"
                   }`}
                 >
-                  <div className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 transition-all ${isActive ? step.bg : "bg-foreground/5 border-foreground/10"}`}>
-                    <Icon className={`w-4 h-4 ${isActive ? step.color : "text-muted-foreground"}`} />
+                  <div className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 transition-all ${isActive ? "bg-lime-400/15 border-lime-500/40" : "bg-foreground/5 border-foreground/10"}`}>
+                    <Icon className={`w-4 h-4 ${isActive ? HIGHLIGHT : "text-muted-foreground"}`} />
                   </div>
                   <div>
                     <div className="text-xs text-muted-foreground mb-0.5">Step {i + 1}</div>
@@ -207,34 +211,31 @@ function DemoSection() {
               );
             })}
 
-            {/* Auto-play indicator */}
             <div className="hidden md:flex items-center gap-2 px-4 pt-2">
               <button
                 onClick={() => setAuto((a) => !a)}
-                className={`flex items-center gap-2 text-xs transition-colors ${auto ? "text-primary" : "text-muted-foreground"}`}
+                className={`flex items-center gap-2 text-xs transition-colors ${auto ? HIGHLIGHT : "text-muted-foreground"}`}
               >
-                <span className={`w-1.5 h-1.5 rounded-full ${auto ? "bg-primary animate-pulse" : "bg-muted-foreground"}`} />
+                <span className={`w-1.5 h-1.5 rounded-full ${auto ? "bg-lime-500 animate-pulse" : "bg-muted-foreground"}`} />
                 {auto ? "Auto-playing" : "Paused — click steps"}
               </button>
             </div>
           </div>
 
-          {/* Content panel */}
           <div className="rounded-xl border border-foreground/10 bg-card/60 backdrop-blur-sm overflow-hidden">
             <div className="flex items-center px-4 py-3 border-b border-foreground/10 bg-foreground/[0.02]">
               <div className="flex gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-500/30 border border-red-500/50" />
-                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/30 border border-yellow-500/50" />
-                <div className="w-2.5 h-2.5 rounded-full bg-green-500/30 border border-green-500/50" />
+                <div className="w-2.5 h-2.5 rounded-full bg-foreground/15" />
+                <div className="w-2.5 h-2.5 rounded-full bg-foreground/15" />
+                <div className="w-2.5 h-2.5 rounded-full bg-lime-500/60" />
               </div>
               <div className="mx-auto text-xs text-muted-foreground font-mono">
-                draftfly — {DEMO_STEPS[activeStep].label.toLowerCase()}
+                dim map — {DEMO_STEPS[activeStep].label.toLowerCase()}
               </div>
-              {/* Progress bar */}
               <div className="w-20 h-0.5 bg-foreground/10 rounded-full overflow-hidden ml-auto">
                 <motion.div
                   key={activeStep}
-                  className="h-full bg-primary rounded-full"
+                  className="h-full bg-lime-500 rounded-full"
                   initial={{ width: "0%" }}
                   animate={{ width: "100%" }}
                   transition={{ duration: auto ? 3.2 : 0 }}
@@ -261,9 +262,6 @@ function DemoSection() {
     </section>
   );
 }
-
-/** The mailbox published on the legal pages — the one place people can reach a person. */
-const CONTACT_EMAIL = "outreach@draftfly.app";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -313,17 +311,13 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground selection:bg-lime-300/60 font-sans overflow-x-hidden">
 
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-foreground/5 bg-background/80 backdrop-blur-md">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src="/logo-mark.svg" alt="" className="h-9 w-auto" />
-            <span className={`text-2xl font-bold ${theme === "dark" ? "text-foreground" : "text-black"}`}>DraftFly</span>
-          </div>
+          <Wordmark />
           <div className="flex items-center gap-3">
-            {/* Theme toggle */}
             <div className="hidden sm:flex items-center bg-foreground/5 border border-foreground/10 rounded-lg p-0.5">
               <button
                 onClick={() => setTheme("light")}
@@ -364,16 +358,22 @@ export default function Home() {
       <main>
         {/* Hero */}
         <section className="pt-40 pb-20 md:pt-52 md:pb-32 px-6 relative">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-lime-400/15 via-background to-background pointer-events-none" />
           <div className="container mx-auto text-center max-w-4xl relative z-10">
             <motion.div initial="hidden" animate="visible" variants={stagger}>
+              <motion.div
+                variants={fadeIn}
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-lime-400/15 border border-lime-500/30 text-xs font-semibold text-emerald-900 dark:text-lime-300 mb-8"
+              >
+                <MapPin className="w-3.5 h-3.5" /> For property developers &amp; brokers
+              </motion.div>
               <motion.h1
                 variants={fadeIn}
                 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.1] mb-6"
               >
-                The inbox is chaos. <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-400">
-                  We make it a pipeline.
+                Every lead. Every channel. <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-800 to-lime-600 dark:from-lime-400 dark:to-lime-200">
+                  One map to close them.
                 </span>
               </motion.h1>
 
@@ -381,7 +381,7 @@ export default function Home() {
                 variants={fadeIn}
                 className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
               >
-                Get on-brand replies for your campaigns drafted and waiting for you before you've even seen the prospect's email — powered by AI, approved in one click.
+                DIM map pulls in the leads from your cold email, Meta ads and WhatsApp, qualifies each buyer as hot, warm or cold, and drafts the reply — so your agents spend their day on viewings, not inboxes.
               </motion.p>
 
               <motion.div
@@ -409,7 +409,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Operator log visual */}
+        {/* Lead feed visual — always dark: it is a window into the product. */}
         <section className="py-10 px-6 relative z-10">
           <div className="container mx-auto max-w-5xl">
             <motion.div
@@ -417,44 +417,41 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8 }}
-              className="rounded-xl border border-white/10 bg-[#0A0A0F]/80 backdrop-blur-xl overflow-hidden shadow-2xl shadow-primary/5"
+              className="rounded-xl border border-lime-400/15 bg-[#0A0A0A] overflow-hidden shadow-2xl shadow-emerald-950/30"
             >
-              <div className="flex items-center px-4 py-3 border-b border-white/10 bg-white/5">
+              <div className="flex items-center px-4 py-3 border-b border-white/10 bg-[#0B3D2E]/40">
                 <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50" />
+                  <div className="w-3 h-3 rounded-full bg-white/15" />
+                  <div className="w-3 h-3 rounded-full bg-white/15" />
+                  <div className="w-3 h-3 rounded-full bg-lime-400/70" />
                 </div>
-                <div className="mx-auto text-xs text-muted-foreground font-mono">draftfly-operator-log</div>
+                <div className="mx-auto text-xs text-white/50 font-mono">dim-map — live lead feed</div>
               </div>
-              <div className="p-6 md:p-8 font-mono text-sm md:text-base leading-relaxed text-muted-foreground">
-                <div className="flex items-start gap-4 mb-4">
-                  <span className="text-blue-400 shrink-0">14:02:11</span>
-                  <span className="text-white/80">Incoming reply detected: <span className="text-primary">"Tell me more about pricing"</span> from j.smith@acme.co</span>
-                </div>
-                <div className="flex items-start gap-4 mb-4">
-                  <span className="text-blue-400 shrink-0">14:02:12</span>
-                  <span className="text-white/80">AI drafting response based on <span className="text-yellow-400">Acme_Corp_Persona</span> context...</span>
-                </div>
-                <div className="flex items-start gap-4 mb-4">
-                  <span className="text-blue-400 shrink-0">14:02:14</span>
-                  <span className="text-green-400">Draft completed. Routing to #sales-approvals in Slack.</span>
-                </div>
+              <div className="p-6 md:p-8 font-mono text-sm md:text-base leading-relaxed">
+                {[
+                  { time: "09:12:04", src: "META", text: <>Lead form: <span className="text-lime-300">"2-bed, off-plan, payment plan?"</span> — Omar H.</>, grade: "WARM" },
+                  { time: "09:14:37", src: "LEMLIST", text: <>Reply to investor sequence: <span className="text-lime-300">"What yields on the Q4 units?"</span> — P. Nair</>, grade: "WARM" },
+                  { time: "09:15:02", src: "WHATSAPP", text: <>Message: <span className="text-lime-300">"3-bed sea view, budget 2.5M, buying in 3 months"</span> — Sara K.</>, grade: "HOT" },
+                ].map((row, i) => (
+                  <div key={i} className="flex items-start gap-4 mb-4">
+                    <span className="text-white/40 shrink-0">{row.time}</span>
+                    <span className="text-emerald-400 shrink-0 w-20">{row.src}</span>
+                    <span className="text-white/80 flex-1">{row.text}</span>
+                    <span className={`shrink-0 text-[11px] font-bold px-2 py-0.5 rounded ${row.grade === "HOT" ? "bg-lime-400 text-black" : "bg-white/10 text-white/70"}`}>{row.grade}</span>
+                  </div>
+                ))}
                 <div className="mt-8 pt-6 border-t border-white/10 relative">
-                  <div className="absolute top-[-10px] left-8 bg-[#0A0A0F] px-2 text-xs text-muted-foreground">Slack Notification</div>
+                  <div className="absolute top-[-10px] left-8 bg-[#0A0A0A] px-2 text-xs text-white/50">Ready for approval</div>
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded bg-primary/20 flex items-center justify-center shrink-0 border border-primary/30">
-                      <Zap className="w-5 h-5 text-primary" />
-                    </div>
+                    <img src="/logo-mark.svg" alt="" className="w-10 h-10 rounded shrink-0" />
                     <div>
-                      <p className="text-white font-sans font-medium mb-1">DraftFly Bot <span className="text-xs font-normal text-muted-foreground ml-2">2:02 PM</span></p>
-                      <p className="text-white/80 font-sans text-sm mb-3">New draft ready for <strong>John Smith (Acme Corp)</strong>.</p>
-                      <div className="bg-white/5 border border-white/10 rounded-md p-4 font-sans text-sm text-white/70 mb-3">
-                        "Hi John, happy to share pricing details. For a team your size, our Enterprise tier makes the most sense..."
+                      <p className="text-white font-sans font-medium mb-1">Reply to Sara Khan <span className="text-xs font-normal text-white/50 ml-2">WhatsApp · Hot lead</span></p>
+                      <div className="bg-white/5 border border-white/10 rounded-md p-4 font-sans text-sm text-white/75 mb-3">
+                        "Hi Sara! Yes — two 3-beds with full sea view are still available, both within your budget. Would Thursday or Saturday suit you for a private viewing?"
                       </div>
                       <div className="flex gap-2 font-sans">
-                        <Button size="sm" className="h-8 bg-green-600 hover:bg-green-700 text-white border-0">Approve &amp; Send</Button>
-                        <Button size="sm" variant="outline" className="h-8 border-white/10 hover:bg-white/5">Edit Draft</Button>
+                        <Button size="sm" className="h-8 bg-lime-400 hover:bg-lime-300 text-black border-0 font-semibold">Approve &amp; Send</Button>
+                        <Button size="sm" variant="outline" className="h-8 bg-transparent border-white/15 text-white hover:bg-white/5 hover:text-white">Edit Reply</Button>
                       </div>
                     </div>
                   </div>
@@ -468,15 +465,15 @@ export default function Home() {
         <section className="py-24 px-6 relative">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">A system built for scale</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Stop digging through shared inboxes. DraftFly creates a deterministic, highly-visible workflow for handling replies.</p>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">From ad spend to site visit</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">You pay for every lead. DIM map makes sure none of them go cold waiting for a reply.</p>
             </div>
             <div className="grid md:grid-cols-4 gap-8">
               {[
-                { icon: MessageSquare, title: "1. Intercept", desc: "Monitors your sending domains and pulls positive or interrogative replies instantly." },
-                { icon: Zap, title: "2. Draft", desc: "Uses AI to generate highly contextual, persona-matched responses in seconds." },
-                { icon: Slack, title: "3. Route", desc: "Pushes the draft, context, and original thread into a dedicated Slack channel." },
-                { icon: CheckCircle, title: "4. Approve", desc: "One click in Slack to approve and send, or drop into the web app to edit." },
+                { icon: Inbox, title: "1. Capture", desc: "Replies to your cold email campaigns, Meta lead-form submissions and WhatsApp chats land in one inbox." },
+                { icon: Filter, title: "2. Qualify", desc: "AI reads budget, timeline, financing and unit type, and grades every buyer hot, warm, cold or unqualified." },
+                { icon: Bot, title: "3. Draft", desc: "A reply in your project's voice — right channel, right length, never an invented price or handover date." },
+                { icon: CheckCircle, title: "4. Approve", desc: "One click sends it back on WhatsApp or email. Your agents follow up with the hot ones first." },
               ].map((step, i) => (
                 <motion.div
                   key={i}
@@ -486,10 +483,10 @@ export default function Home() {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   className="relative"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-foreground/5 border border-foreground/10 flex items-center justify-center mb-6 relative z-10">
-                    <step.icon className="w-5 h-5 text-primary" />
+                  <div className="w-12 h-12 rounded-lg bg-lime-400/10 border border-lime-500/25 flex items-center justify-center mb-6 relative z-10">
+                    <step.icon className={`w-5 h-5 ${HIGHLIGHT}`} />
                   </div>
-                  {i < 3 && <div className="hidden md:block absolute top-6 left-12 right-0 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />}
+                  {i < 3 && <div className="hidden md:block absolute top-6 left-12 right-0 h-[1px] bg-gradient-to-r from-lime-500/30 to-transparent" />}
                   <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">{step.desc}</p>
                 </motion.div>
@@ -503,7 +500,7 @@ export default function Home() {
           <DemoSection />
         </div>
 
-        {/* Features */}
+        {/* Features — Meta campaigns */}
         <section className="py-24 px-6 bg-foreground/[0.02] border-y border-foreground/5">
           <div className="container mx-auto max-w-6xl">
             <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -513,15 +510,15 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-6">
-                  Operator Grade
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-lime-400/15 text-emerald-900 dark:text-lime-300 text-xs font-semibold mb-6">
+                  <Megaphone className="w-3.5 h-3.5" /> Meta campaigns
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">Precision context mapping.</h2>
-                <p className="text-lg text-muted-foreground mb-6">Generic AI replies destroy trust. DraftFly uses Persona mapping to ensure every drafted response aligns with the specific campaign context, pricing tier, and pain points the prospect was initially pitched.</p>
+                <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">Your Meta leads, answered in minutes.</h2>
+                <p className="text-lg text-muted-foreground mb-6">A Facebook or Instagram lead that waits a day is a lead your competitor already called. DIM map picks up every lead-form submission the moment it lands, reads the answers, and has a first message ready before your agent has finished their coffee.</p>
                 <ul className="space-y-3">
-                  {["Campaign-specific instructions", "Historical context retention", "Tone and style matching"].map((item, i) => (
+                  {["Every Meta lead form, mapped to its launch", "Form answers read as buying signals", "First reply sent over WhatsApp from your own number"].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm text-foreground/80">
-                      <Shield className="w-4 h-4 text-primary" />
+                      <Shield className={`w-4 h-4 ${HIGHLIGHT}`} />
                       {item}
                     </li>
                   ))}
@@ -534,15 +531,20 @@ export default function Home() {
                 transition={{ duration: 0.6 }}
                 className="relative aspect-square md:aspect-auto md:h-[400px] rounded-xl bg-card border border-foreground/10 overflow-hidden p-6"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
-                <div className="space-y-4">
+                <div className="absolute inset-0 bg-gradient-to-br from-lime-400/10 to-transparent pointer-events-none" />
+                <div className="space-y-4 relative">
                   <div className="bg-background border border-foreground/5 p-4 rounded-lg">
-                    <div className="text-xs text-muted-foreground mb-2">Persona: Enterprise CTO</div>
-                    <div className="font-mono text-sm text-foreground/80">"Emphasize SOC2 compliance and SSO availability. Keep tone technical but concise."</div>
+                    <div className="text-xs text-muted-foreground mb-2">Persona: Marina Tower sales team</div>
+                    <div className="font-mono text-sm text-foreground/80">"1–3 bed apartments from AED 1.4M. 60/40 payment plan. Never quote a unit price — offer a viewing."</div>
                   </div>
                   <div className="bg-background border border-foreground/5 p-4 rounded-lg">
-                    <div className="text-xs text-muted-foreground mb-2">Persona: VP Sales</div>
-                    <div className="font-mono text-sm text-foreground/80">"Focus on ROI and ramp time. Mention the recent case study with Acme Corp."</div>
+                    <div className="text-xs text-muted-foreground mb-2">Qualification rule</div>
+                    <div className="font-mono text-sm text-foreground/80">"Hot = budget over 1.4M and buying within 6 months. Investors asking for yield go to the investment desk."</div>
+                  </div>
+                  <div className="flex gap-2">
+                    {["Hot", "Warm", "Cold"].map((g) => (
+                      <span key={g} className={`text-xs font-bold px-3 py-1 rounded-full ${g === "Hot" ? "bg-lime-400 text-black" : "bg-foreground/5 text-muted-foreground border border-foreground/10"}`}>{g}</span>
+                    ))}
                   </div>
                 </div>
               </motion.div>
@@ -559,25 +561,25 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <GitMerge className="w-10 h-10 text-primary mx-auto mb-6" />
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">Plugs into your stack.</h2>
-              <p className="text-lg text-muted-foreground mb-12">No need to replace your sending infrastructure. DraftFly sits on top of your existing tools and acts as a routing layer. Lemlist and Slack are live today; the rest are on the way.</p>
+              <GitMerge className={`w-10 h-10 mx-auto mb-6 ${HIGHLIGHT}`} />
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">Where your buyers already are.</h2>
+              <p className="text-lg text-muted-foreground mb-12">Keep your ad accounts, your sequences and your WhatsApp number. DIM map sits on top as the layer that qualifies and answers. Lemlist, Meta and WhatsApp are live today; CRM sync is on the way.</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                   { name: "Lemlist", status: "live" },
+                  { name: "Meta Lead Ads", status: "live" },
+                  { name: "WhatsApp Business", status: "live" },
                   { name: "Slack", status: "live" },
-                  { name: "Smartlead", status: "soon" },
-                  { name: "Instantly", status: "soon" },
-                  { name: "Gmail Workspace", status: "soon" },
-                  { name: "Outlook", status: "soon" },
                   { name: "HubSpot", status: "soon" },
                   { name: "Salesforce", status: "soon" },
+                  { name: "Property Finder", status: "soon" },
+                  { name: "Bayut", status: "soon" },
                 ].map((tool, i) => (
                   <div
                     key={i}
                     className={`relative flex flex-col items-center justify-center h-20 rounded-xl border text-sm font-medium ${
                       tool.status === "live"
-                        ? "bg-foreground/5 border-foreground/10 text-foreground/80"
+                        ? "bg-lime-400/10 border-lime-500/30 text-foreground/90"
                         : "bg-foreground/[0.02] border-dashed border-foreground/10 text-foreground/40"
                     }`}
                   >
@@ -593,13 +595,13 @@ export default function Home() {
         </section>
 
         {/* ROI */}
-        <section className="py-24 px-6 bg-foreground/[0.02] border-y border-foreground/5">
+        <section className="py-24 px-6 bg-[#0B3D2E] text-white">
           <div className="container mx-auto max-w-6xl">
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { metric: "4x", label: "Faster response times", desc: "SDRs approve drafts in seconds instead of writing from scratch." },
-                { metric: "100%", label: "Visibility", desc: "No more black-box inboxes. Every reply is tracked in Slack." },
-                { metric: "0", label: "Context lost", desc: "AI retains full thread history and persona data for every reply." },
+                { metric: "< 5 min", label: "First response", desc: "Every lead gets a drafted reply the moment it arrives — nights and weekends included." },
+                { metric: "3", label: "Channels, one inbox", desc: "Cold email, Meta lead ads and WhatsApp side by side, each lead tagged by source." },
+                { metric: "Hot first", label: "Agents' time spent right", desc: "Leads graded by budget and timeline, so the team calls buyers before browsers." },
               ].map((stat, i) => (
                 <motion.div
                   key={i}
@@ -607,12 +609,12 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
-                  className="bg-card border border-foreground/10 rounded-2xl p-8"
+                  className="bg-black/25 border border-lime-400/20 rounded-2xl p-8"
                 >
-                  <BarChart className="w-6 h-6 text-primary mb-6" />
-                  <div className="text-5xl font-bold text-foreground mb-4">{stat.metric}</div>
-                  <div className="text-lg font-semibold text-foreground/90 mb-2">{stat.label}</div>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{stat.desc}</p>
+                  <BarChart className="w-6 h-6 text-lime-400 mb-6" />
+                  <div className="text-5xl font-bold text-lime-400 mb-4">{stat.metric}</div>
+                  <div className="text-lg font-semibold text-white mb-2">{stat.label}</div>
+                  <p className="text-white/70 text-sm leading-relaxed">{stat.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -633,8 +635,8 @@ export default function Home() {
                 Pricing
               </div>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Simple, transparent pricing</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Every plan starts with a 3-day free trial — no card needed. Pay monthly, cancel anytime. Running outreach for several clients?{" "}
-                <a href={`mailto:${CONTACT_EMAIL}?subject=DraftFly%20for%20agencies`} className="text-foreground underline underline-offset-4 hover:text-primary transition-colors">Talk to us.</a>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Every plan starts with a 3-day free trial — no card needed. Pay monthly, cancel anytime. A brokerage running campaigns for several developers?{" "}
+                <a href={`mailto:${CONTACT_EMAIL}?subject=DIM%20map%20for%20brokerages`} className="text-foreground underline underline-offset-4 hover:text-emerald-700 dark:hover:text-lime-400 transition-colors">Talk to us.</a>
               </p>
             </motion.div>
 
@@ -643,16 +645,16 @@ export default function Home() {
                 {
                   name: "Starter",
                   price: "$49",
-                  desc: "For running DraftFly on a campaign or two before rolling it out further.",
-                  features: ["2 campaigns", "100 replies / mo", "AI drafting in your voice", "Approve in the dashboard", "Slack approvals (optional)", "Email support"],
+                  desc: "For a single project or launch, before rolling it out across your portfolio.",
+                  features: ["2 campaigns", "100 leads / mo", "Lemlist, Meta & WhatsApp", "AI lead qualification", "Replies in your project's voice", "Email support"],
                   cta: "Start free trial",
                   highlight: false,
                 },
                 {
                   name: "Growth",
                   price: "$149",
-                  desc: "For teams running real outreach across several campaigns at once.",
-                  features: ["10 campaigns", "500 replies / mo", "AI drafting in your voice", "Learns from your approved replies", "Slack approvals (optional)", "Priority support"],
+                  desc: "For developers and brokers running several launches and ad sets at once.",
+                  features: ["10 campaigns", "500 leads / mo", "Lemlist, Meta & WhatsApp", "AI lead qualification", "Learns from your approved replies", "Priority support"],
                   cta: "Start free trial",
                   highlight: true,
                 },
@@ -663,10 +665,10 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
-                  className={`relative rounded-2xl border p-8 flex flex-col ${plan.highlight ? "border-primary bg-primary/5" : "border-foreground/10 bg-card"}`}
+                  className={`relative rounded-2xl border p-8 flex flex-col ${plan.highlight ? "border-lime-500 bg-lime-400/5" : "border-foreground/10 bg-card"}`}
                 >
                   {plan.highlight && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-primary text-white text-xs font-semibold">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-lime-400 text-black text-xs font-bold">
                       Most popular
                     </div>
                   )}
@@ -681,7 +683,7 @@ export default function Home() {
                   <ul className="space-y-3 mb-8 flex-1">
                     {plan.features.map((f, j) => (
                       <li key={j} className="flex items-center gap-3 text-sm text-foreground/80">
-                        <CheckCircle className="w-4 h-4 text-primary shrink-0" />
+                        <CheckCircle className={`w-4 h-4 shrink-0 ${HIGHLIGHT}`} />
                         {f}
                       </li>
                     ))}
@@ -714,7 +716,7 @@ export default function Home() {
                 FAQ
               </div>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Common questions</h2>
-              <p className="text-muted-foreground text-lg max-w-xl mx-auto">Everything you need to know before you request access.</p>
+              <p className="text-muted-foreground text-lg max-w-xl mx-auto">Everything you need to know before you start.</p>
             </motion.div>
 
             <motion.div
@@ -724,40 +726,11 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.1 }}
             >
               <Accordion type="single" collapsible className="space-y-3">
-                {[
-                  {
-                    q: "How does the free trial work?",
-                    a: "Sign up with your email — no card — and you get three days on Starter's limits: two active campaigns, a hundred replies. Connect Lemlist, add a persona, switch a campaign on, and the next reply becomes a draft. When the three days are up, pick a plan to carry on; nothing you set up is lost in the meantime.",
-                  },
-                  {
-                    q: "What does DraftFly actually do?",
-                    a: "DraftFly connects your inbox, AI drafting engine, and Slack approvals into one deterministic workflow. When a reply comes in, our backend detects it, generates a contextual draft using AI, and routes it to the right Slack channel for human approval — before anything is sent.",
-                  },
-                  {
-                    q: "Does it replace my SDRs?",
-                    a: "No. DraftFly is a precision tool for your reps, not a replacement. Every draft requires human approval before it leaves your domain. We eliminate the time spent writing, not the judgment call on whether to send.",
-                  },
-                  {
-                    q: "What sending tools does it work with?",
-                    a: "Lemlist, today: replies to your Lemlist campaigns reach DraftFly by webhook the moment they arrive, and approved replies go back out through Lemlist from the same mailbox that sent the campaign. Smartlead, Instantly, Gmail Workspace, Outlook, HubSpot and Salesforce are on the roadmap but not live yet. DraftFly sits on top of your sending tool — there is nothing to migrate.",
-                  },
-                  {
-                    q: "How does the AI know what to write?",
-                    a: "DraftFly uses Persona profiles — per-campaign instructions that tell the AI the prospect's role, pain points, tone expectations, and deal context. The model also loads the full email thread before drafting, so replies are always contextually grounded.",
-                  },
-                  {
-                    q: "What is DraftFly's API?",
-                    a: "The API is the internal operating layer that connects reply detection, AI drafting, Slack routing, and email sending. Think of it as the nervous system of the product — it's not a public developer API, but the backbone that lets every part of the service talk to each other in real time.",
-                  },
-                  {
-                    q: "Is my email data secure?",
-                    a: "DraftFly stores what it needs to draft and to keep an approval record: the prospect's name, email address and the text of their reply, plus the draft and who approved it. That data is deleted automatically after 12 months. Everything travels over TLS, each client's users see only that client's drafts, and deleting a client removes its drafts and configuration with it.",
-                  },
-                ].map((item, i) => (
+                {FAQ.map((item, i) => (
                   <AccordionItem
                     key={i}
                     value={`item-${i}`}
-                    className="bg-card border border-foreground/10 rounded-xl px-6 data-[state=open]:border-foreground/20 transition-colors"
+                    className="bg-card border border-foreground/10 rounded-xl px-6 data-[state=open]:border-lime-500/40 transition-colors"
                   >
                     <AccordionTrigger className="text-left text-sm font-medium text-foreground/90 hover:no-underline py-5">
                       {item.q}
@@ -774,10 +747,10 @@ export default function Home() {
 
         {/* Early access form */}
         <section id="early-access" className="py-32 px-6 relative overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-lime-400/10 rounded-full blur-[120px] pointer-events-none" />
           <div className="container mx-auto max-w-2xl text-center relative z-10">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Ready to regain control?</h2>
-            <p className="text-lg text-muted-foreground mb-8">Three days free, no card, nothing to install. Your first drafted reply is about ten minutes away.</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">Stop letting leads go cold.</h2>
+            <p className="text-lg text-muted-foreground mb-8">Three days free, no card, nothing to install. Your first qualified lead is about ten minutes away.</p>
             <Button size="lg" className="h-12 px-8 text-base group mb-14" onClick={startTrial}>
               Start free trial
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -790,7 +763,7 @@ export default function Home() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-green-500/10 border border-green-500/20 text-green-400 p-6 rounded-xl flex flex-col items-center gap-4"
+                className="bg-lime-400/10 border border-lime-500/30 text-emerald-800 dark:text-lime-400 p-6 rounded-xl flex flex-col items-center gap-4"
               >
                 <CheckCircle className="w-8 h-8" />
                 <div>
@@ -809,8 +782,8 @@ export default function Home() {
                       name="name"
                       autoComplete="name"
                       required
-                      placeholder="John Doe"
-                      className="bg-background border-foreground/10 focus-visible:ring-primary h-12"
+                      placeholder="Jane Doe"
+                      className="bg-background border-foreground/10 focus-visible:ring-lime-500 h-12"
                     />
                   </div>
                   <div>
@@ -822,8 +795,8 @@ export default function Home() {
                       autoComplete="email"
                       required
                       type="email"
-                      placeholder="john@company.com"
-                      className="bg-background border-foreground/10 focus-visible:ring-primary h-12"
+                      placeholder="jane@yourdevelopment.com"
+                      className="bg-background border-foreground/10 focus-visible:ring-lime-500 h-12"
                     />
                   </div>
                 </div>
@@ -839,11 +812,8 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-foreground/10 py-12 px-6 bg-background">
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center">
-            <div className="flex items-center gap-1.5 opacity-70">
-              <img src="/logo-mark.svg" alt="" className="h-5 w-auto" />
-              <span className={`text-sm font-bold ${theme === "dark" ? "text-foreground" : "text-black"}`}>DraftFly</span>
-            </div>
+          <div className="opacity-80">
+            <Wordmark size="sm" />
           </div>
           <div className="flex gap-6 text-sm text-muted-foreground">
             <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-foreground transition-colors">{CONTACT_EMAIL}</a>
@@ -855,3 +825,34 @@ export default function Home() {
     </div>
   );
 }
+
+const FAQ = [
+  {
+    q: "How does the free trial work?",
+    a: "Sign up with your email — no card — and you get three days on Starter's limits: two active campaigns and a hundred leads. Connect Lemlist, a Meta lead form or your WhatsApp number, describe your project in a persona, switch a campaign on, and the next lead is qualified with a reply drafted. When the three days are up, pick a plan to carry on; nothing you set up is lost.",
+  },
+  {
+    q: "Who is DIM map for?",
+    a: "Property developers and real-estate brokers who generate leads from outbound email, Meta (Facebook and Instagram) lead ads and WhatsApp — and lose buyers because nobody answers fast enough, or because agents spend their day on tyre-kickers.",
+  },
+  {
+    q: "How does lead qualification work?",
+    a: "Every incoming message or form is read for the signals that matter in property: budget, timeline to buy, financing, own-use or investment, and the unit or location they want. Each lead is graded hot, warm, cold or unqualified, with a one-line reason. You can write your own qualification rules per project, and they take priority.",
+  },
+  {
+    q: "Which channels does it work with?",
+    a: "Lemlist for cold email and LinkedIn replies, Meta Lead Ads for Facebook and Instagram forms, and WhatsApp Business for inbound chats — all live today. Approved replies go back out the way the lead came in: through Lemlist for email, and from your own WhatsApp Business number for WhatsApp and Meta leads. CRM sync is on the roadmap.",
+  },
+  {
+    q: "Does it replace my sales agents?",
+    a: "No. DIM map does the first touch and the triage; your agents do the viewings and the closing. Every reply waits for a person to approve it before it is sent, and the AI never invents prices, availability, payment plans or handover dates — if it doesn't know, it offers a call.",
+  },
+  {
+    q: "Can I run Meta campaigns through it?",
+    a: "Yes. Connect each Meta lead form to a campaign in DIM map, and every submission arrives with the form answers attached — ready to qualify and answer. Forward leads from Meta directly, or through n8n, Zapier or Make if you already use them.",
+  },
+  {
+    q: "Is my buyers' data secure?",
+    a: "DIM map stores what it needs to qualify and reply and to keep an approval record: the lead's name, contact details and message, plus the draft and who approved it. That data is deleted automatically after 12 months. Everything travels over TLS, API keys and tokens are encrypted at rest, each account sees only its own leads, and deleting an account removes its leads and configuration with it.",
+  },
+];

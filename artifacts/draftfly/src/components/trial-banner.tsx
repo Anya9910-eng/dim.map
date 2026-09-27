@@ -16,7 +16,7 @@ export function TrialBanner() {
     const days = s.daysLeft;
     return (
       <div
-        className="bg-indigo-500/10 border-b border-indigo-500/20 px-6 py-2 text-sm text-center"
+        className="bg-primary/10 border-b border-primary/20 px-6 py-2 text-sm text-center"
         data-testid="trial-banner"
       >
         {days <= 1 ? "Your free trial ends today." : `${days} days left in your free trial.`}{" "}

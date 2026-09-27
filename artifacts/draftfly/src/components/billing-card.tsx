@@ -67,7 +67,7 @@ export function BillingCard() {
         <CardDescription>
           {subscribed
             ? "Change plan, update your card, or cancel — all through Stripe."
-            : "Pick a plan to keep DraftFly after your trial. Cancel any time."}
+            : "Pick a plan to keep DIM map after your trial. Cancel any time."}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

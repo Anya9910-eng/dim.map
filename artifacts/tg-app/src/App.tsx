@@ -252,7 +252,7 @@ function DraftCard({
 function HistoryCard({ draft }: { draft: Draft }) {
   const statusColor: Record<DraftStatus, string> = {
     sent: "#22c55e",
-    edited: "#6366f1",
+    edited: "#65a30d",
     discarded: "#ef4444",
     pending: "#f59e0b",
     send_failed: "#ef4444",
@@ -357,7 +357,7 @@ function AppInner() {
     <div className="app">
       <header className="app-header">
         <div className="logo">
-          <img src={theme === "dark" ? "/logo-dark.png" : "/logo.png"} alt="DraftFly" className="logo-img" />
+          <img src={theme === "dark" ? "/logo-dark.png" : "/logo.png"} alt="DIM map" className="logo-img" />
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {userName && <span className="user-name">{tr.hiUser} {userName}</span>}
@@ -528,18 +528,18 @@ function TelegramAuthGate({ children }: { children: React.ReactNode }) {
 
   if (auth === "loading") {
     return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#0A0A0F" }}>
-        <div style={{ width: 32, height: 32, borderRadius: "50%", border: "2px solid #6366f1", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#0A0A0A" }}>
+        <div style={{ width: 32, height: 32, borderRadius: "50%", border: "2px solid #a3e635", borderTopColor: "transparent", animation: "spin 0.8s linear infinite" }} />
       </div>
     );
   }
 
   if (auth === "denied") {
     return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", background: "#0A0A0F", padding: 24, textAlign: "center" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", background: "#0A0A0A", padding: 24, textAlign: "center" }}>
         <div style={{ fontSize: 40, marginBottom: 16 }}>🔒</div>
         <div style={{ color: "#fff", fontSize: 18, fontWeight: 600, marginBottom: 8 }}>Access denied</div>
-        <div style={{ color: "#888", fontSize: 14 }}>Your account is not authorized to use DraftFly.</div>
+        <div style={{ color: "#888", fontSize: 14 }}>Your account is not authorized to use DIM map.</div>
       </div>
     );
   }

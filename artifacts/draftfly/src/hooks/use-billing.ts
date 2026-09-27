@@ -78,6 +78,6 @@ export function useOpenPortal() {
 }
 
 export const PLAN_COPY: Record<PlanKey, { name: string; price: string; blurb: string }> = {
-  starter: { name: "Starter", price: "$49", blurb: "For running DraftFly on a campaign or two." },
-  growth: { name: "Growth", price: "$149", blurb: "For teams running real outreach across several campaigns." },
+  starter: { name: "Starter", price: "$49", blurb: "For a single project or launch." },
+  growth: { name: "Growth", price: "$149", blurb: "For developers and brokers running several launches at once." },
 };

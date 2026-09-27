@@ -217,12 +217,27 @@ export interface PersonaUpdate {
   qualificationRules?: string;
 }
 
+/**
+ * Lead source the campaign listens on. Defaults to lemlist.
+ */
+export type CampaignChannel = typeof CampaignChannel[keyof typeof CampaignChannel];
+
+
+export const CampaignChannel = {
+  lemlist: 'lemlist',
+  meta: 'meta',
+  whatsapp: 'whatsapp',
+} as const;
+
 export interface Campaign {
   id: number;
   clientId: number;
   /** @nullable */
   personaId?: number | null;
   name: string;
+  /** Lead source the campaign listens on. Defaults to lemlist. */
+  channel: CampaignChannel;
+  /** The campaign's id in its source system — the Lemlist campaign id, a Meta Lead Ads form id, or a label for a WhatsApp number. */
   lemlistCampaignId: string;
   /** @nullable */
   tone?: string | null;
@@ -235,10 +250,24 @@ export interface Campaign {
   createdAt: string;
 }
 
+/**
+ * Lead source the campaign listens on. Defaults to lemlist.
+ */
+export type CampaignInputChannel = typeof CampaignInputChannel[keyof typeof CampaignInputChannel];
+
+
+export const CampaignInputChannel = {
+  lemlist: 'lemlist',
+  meta: 'meta',
+  whatsapp: 'whatsapp',
+} as const;
+
 export interface CampaignInput {
   clientId: number;
   personaId?: number;
   name: string;
+  /** Lead source the campaign listens on. Defaults to lemlist. */
+  channel?: CampaignInputChannel;
   lemlistCampaignId: string;
   tone?: string;
   replyRules?: string;
@@ -247,9 +276,23 @@ export interface CampaignInput {
   isActive?: boolean;
 }
 
+/**
+ * Lead source the campaign listens on. Defaults to lemlist.
+ */
+export type CampaignUpdateChannel = typeof CampaignUpdateChannel[keyof typeof CampaignUpdateChannel];
+
+
+export const CampaignUpdateChannel = {
+  lemlist: 'lemlist',
+  meta: 'meta',
+  whatsapp: 'whatsapp',
+} as const;
+
 export interface CampaignUpdate {
   personaId?: number;
   name?: string;
+  /** Lead source the campaign listens on. Defaults to lemlist. */
+  channel?: CampaignUpdateChannel;
   lemlistCampaignId?: string;
   tone?: string;
   replyRules?: string;
@@ -268,6 +311,28 @@ export interface CampaignStats {
   avgResponseTimeMs?: number | null;
 }
 
+export type DraftChannel = typeof DraftChannel[keyof typeof DraftChannel];
+
+
+export const DraftChannel = {
+  lemlist: 'lemlist',
+  meta: 'meta',
+  whatsapp: 'whatsapp',
+} as const;
+
+/**
+ * @nullable
+ */
+export type DraftQualification = typeof DraftQualification[keyof typeof DraftQualification] | null;
+
+
+export const DraftQualification = {
+  hot: 'hot',
+  warm: 'warm',
+  cold: 'cold',
+  unqualified: 'unqualified',
+} as const;
+
 export type DraftStatus = typeof DraftStatus[keyof typeof DraftStatus];
 
 
@@ -283,7 +348,14 @@ export interface Draft {
   id: number;
   clientId: number;
   campaignId: number;
+  channel?: DraftChannel;
   prospectEmail: string;
+  /** @nullable */
+  prospectPhone?: string | null;
+  /** @nullable */
+  qualification?: DraftQualification;
+  /** @nullable */
+  qualificationReason?: string | null;
   prospectName: string;
   /** @nullable */
   prospectCompany?: string | null;
@@ -338,6 +410,8 @@ export const LogEntrySource = {
   claude: 'claude',
   slack: 'slack',
   system: 'system',
+  meta: 'meta',
+  whatsapp: 'whatsapp',
 } as const;
 
 /**
@@ -505,6 +579,8 @@ export const ListLogsSource = {
   claude: 'claude',
   slack: 'slack',
   system: 'system',
+  meta: 'meta',
+  whatsapp: 'whatsapp',
 } as const;
 
 export type ListSetupItemsParams = {

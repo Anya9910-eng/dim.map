@@ -55,8 +55,14 @@ function isRealEdit(generated: string, edited: string | null): edited is string 
 export async function buildDraftHistory(params: {
   clientId: number;
   prospectEmail: string;
+  /** Matches the lead by number instead when they have no address (WhatsApp). */
+  prospectPhone?: string;
 }): Promise<DraftHistory> {
   const { clientId, prospectEmail } = params;
+  const prospectPhone = params.prospectPhone?.trim() ?? "";
+  const byPhone = !prospectEmail.trim() && !!prospectPhone;
+  const isThisLead = (d: { prospectEmail: string; prospectPhone?: string | null }) =>
+    byPhone ? d.prospectPhone === prospectPhone : d.prospectEmail === prospectEmail;
 
   try {
     const [threadRows, approvedRows, correctedRows] = await Promise.all([
@@ -65,7 +71,10 @@ export async function buildDraftHistory(params: {
       db
         .select()
         .from(draftsTable)
-        .where(and(eq(draftsTable.clientId, clientId), eq(draftsTable.prospectEmail, prospectEmail)))
+        .where(and(
+          eq(draftsTable.clientId, clientId),
+          byPhone ? eq(draftsTable.prospectPhone, prospectPhone) : eq(draftsTable.prospectEmail, prospectEmail),
+        ))
         .orderBy(desc(draftsTable.createdAt))
         .limit(THREAD_LIMIT),
 
@@ -111,7 +120,7 @@ export async function buildDraftHistory(params: {
     // A lead's own thread is already shown above; repeating it as an "example"
     // wastes tokens and over-weights one conversation.
     const approved = approvedRows
-      .filter((d) => d.prospectEmail !== prospectEmail)
+      .filter((d) => !isThisLead(d))
       .slice(0, APPROVED_LIMIT);
     if (approved.length > 0) {
       history.approvedExamples = approved

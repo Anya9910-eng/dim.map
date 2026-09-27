@@ -3,11 +3,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link, useSearch } from "wouter";
-import { DraftStatusBadge } from "@/components/status-badges";
+import { DraftStatusBadge, LeadChannelBadge, LeadQualificationBadge } from "@/components/status-badges";
 import { ConversationMessage } from "@/components/conversation-message";
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Check, X, Clock, Mail, RefreshCw } from "lucide-react";
+import { Check, X, Clock, Mail, RefreshCw, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { API_BASE } from "@/lib/api-base";
 
@@ -24,13 +24,21 @@ export default function DraftsPage() {
   const search = useSearch();
   const [statusFilter, setStatusFilter] = useState<string>(() => getInitialStatus(search));
   const [clientFilter, setClientFilter] = useState<string>("all");
+  // Channel and grade are narrowed here rather than on the server: the list is
+  // already scoped to one client's drafts, and this keeps the API unchanged.
+  const [channelFilter, setChannelFilter] = useState<string>("all");
+  const [qualificationFilter, setQualificationFilter] = useState<string>("all");
   const [retryingId, setRetryingId] = useState<number | null>(null);
   
   const queryParams: any = {};
   if (statusFilter !== "all") queryParams.status = statusFilter;
   if (clientFilter !== "all") queryParams.clientId = parseInt(clientFilter, 10);
 
-  const { data: drafts, isLoading, refetch } = useListDrafts(queryParams);
+  const { data: allDrafts, isLoading, refetch } = useListDrafts(queryParams);
+  const drafts = allDrafts?.filter((d) =>
+    (channelFilter === "all" || (d.channel ?? "lemlist") === channelFilter) &&
+    (qualificationFilter === "all" || d.qualification === qualificationFilter),
+  );
   const { data: clients } = useListClients();
   const applyAction = useApplyDraftAction();
   const queryClient = useQueryClient();
@@ -41,7 +49,11 @@ export default function DraftsPage() {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListDraftsQueryKey(queryParams) });
         toast({ title: `Draft ${action === 'send' ? 'sent' : 'discarded'}` });
-      }
+      },
+      onError: (err) => {
+        queryClient.invalidateQueries({ queryKey: getListDraftsQueryKey(queryParams) });
+        toast({ title: `Could not ${action} this draft`, description: err instanceof Error ? err.message : undefined, variant: "destructive" });
+      },
     });
   };
 
@@ -68,10 +80,33 @@ export default function DraftsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Draft Inbox</h1>
-          <p className="text-sm text-muted-foreground mt-1">Review, edit, and approve AI-generated replies.</p>
+          <h1 className="text-2xl font-semibold tracking-tight">Lead Inbox</h1>
+          <p className="text-sm text-muted-foreground mt-1">Every lead from Lemlist, Meta and WhatsApp — qualified by AI, with a reply drafted and ready to approve.</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          <Select value={channelFilter} onValueChange={setChannelFilter}>
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="All Sources" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Sources</SelectItem>
+              <SelectItem value="lemlist">Lemlist</SelectItem>
+              <SelectItem value="meta">Meta Ads</SelectItem>
+              <SelectItem value="whatsapp">WhatsApp</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={qualificationFilter} onValueChange={setQualificationFilter}>
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="All Leads" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Leads</SelectItem>
+              <SelectItem value="hot">Hot</SelectItem>
+              <SelectItem value="warm">Warm</SelectItem>
+              <SelectItem value="cold">Cold</SelectItem>
+              <SelectItem value="unqualified">Unqualified</SelectItem>
+            </SelectContent>
+          </Select>
           <Select value={clientFilter} onValueChange={setClientFilter}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All Clients" />
@@ -104,7 +139,7 @@ export default function DraftsPage() {
         ) : drafts?.length === 0 ? (
           <div className="p-12 text-center border rounded-lg bg-card text-muted-foreground">
             <Mail className="mx-auto h-12 w-12 opacity-20 mb-4" />
-            <p>Inbox zero. No drafts match your filters.</p>
+            <p>Inbox zero. No leads match your filters.</p>
           </div>
         ) : (
           drafts?.map(draft => {
@@ -119,6 +154,8 @@ export default function DraftsPage() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="font-semibold text-base">{draft.prospectName}</span>
                           <span className="text-sm text-muted-foreground">{draft.prospectCompany}</span>
+                          <LeadChannelBadge channel={draft.channel} />
+                          <LeadQualificationBadge qualification={draft.qualification} reason={draft.qualificationReason} />
                           <span className="text-xs text-muted-foreground px-2 py-0.5 bg-muted rounded-full ml-2 font-mono">
                             {clients?.find(c => c.id === draft.clientId)?.name}
                           </span>
@@ -126,6 +163,18 @@ export default function DraftsPage() {
                         <DraftStatusBadge status={draft.status as any} autoFailed={isAutoFailed} />
                       </div>
                       
+                      {(draft.prospectEmail || draft.prospectPhone) && (
+                        <div className="text-xs text-muted-foreground flex items-center gap-3 flex-wrap">
+                          {draft.prospectEmail && <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{draft.prospectEmail}</span>}
+                          {draft.prospectPhone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />+{draft.prospectPhone}</span>}
+                        </div>
+                      )}
+                      {draft.qualificationReason && (
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          <span className="font-medium text-foreground/80">Why: </span>{draft.qualificationReason}
+                        </p>
+                      )}
+
                       {/* The reply the lead actually sent. Approving a draft
                           without it means judging an answer to a question you
                           cannot see. */}

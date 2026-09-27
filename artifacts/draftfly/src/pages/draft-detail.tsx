@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Check, X, Send, User, Building, Mail, RefreshCw, Clock, Activity } from "lucide-react";
-import { DraftStatusBadge } from "@/components/status-badges";
+import { ArrowLeft, Check, X, Send, User, Building, Mail, RefreshCw, Clock, Activity, Phone, Flame } from "lucide-react";
+import { DraftStatusBadge, LeadChannelBadge, LeadQualificationBadge } from "@/components/status-badges";
 import { ConversationMessage } from "@/components/conversation-message";
 import { API_BASE } from "@/lib/api-base";
 
@@ -58,8 +58,9 @@ export default function DraftDetail() {
         setIsEditing(false);
         toast({ title: `Draft ${action === 'edit' ? 'edited' : action + 't'}` });
       },
-      onError: () => {
-        toast({ title: "Failed to apply action", variant: "destructive" });
+      // The server says why — e.g. WhatsApp sending not set up yet.
+      onError: (err) => {
+        toast({ title: "Failed to apply action", description: err instanceof Error ? err.message : undefined, variant: "destructive" });
       }
     });
   };
@@ -100,6 +101,8 @@ export default function DraftDetail() {
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-semibold tracking-tight">Review Reply</h1>
               <DraftStatusBadge status={draft.status as any} autoFailed={isAutoFailed} />
+              <LeadChannelBadge channel={draft.channel} />
+              <LeadQualificationBadge qualification={draft.qualification} reason={draft.qualificationReason} />
             </div>
             <p className="text-sm text-muted-foreground mt-1">Generated {new Date(draft.createdAt).toLocaleString()}</p>
           </div>
@@ -129,7 +132,7 @@ export default function DraftDetail() {
         <div className="space-y-6">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold">Prospect Details</CardTitle>
+              <CardTitle className="text-base font-semibold">Lead Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-sm">
               <div className="flex items-center gap-3">
@@ -139,20 +142,42 @@ export default function DraftDetail() {
                   <div className="text-muted-foreground text-xs">Name</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary"><Building className="h-4 w-4" /></div>
-                <div>
-                  <div className="font-medium">{draft.prospectCompany || "Unknown"}</div>
-                  <div className="text-muted-foreground text-xs">Company</div>
+              {draft.prospectCompany && (
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary"><Building className="h-4 w-4" /></div>
+                  <div>
+                    <div className="font-medium">{draft.prospectCompany}</div>
+                    <div className="text-muted-foreground text-xs">Company</div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary"><Mail className="h-4 w-4" /></div>
-                <div>
-                  <div className="font-medium">{draft.prospectEmail}</div>
-                  <div className="text-muted-foreground text-xs">Email</div>
+              )}
+              {draft.prospectEmail && (
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary"><Mail className="h-4 w-4" /></div>
+                  <div>
+                    <div className="font-medium">{draft.prospectEmail}</div>
+                    <div className="text-muted-foreground text-xs">Email</div>
+                  </div>
                 </div>
-              </div>
+              )}
+              {draft.prospectPhone && (
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary"><Phone className="h-4 w-4" /></div>
+                  <div>
+                    <div className="font-medium">+{draft.prospectPhone}</div>
+                    <div className="text-muted-foreground text-xs">Phone / WhatsApp</div>
+                  </div>
+                </div>
+              )}
+              {draft.qualification && (
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0"><Flame className="h-4 w-4" /></div>
+                  <div>
+                    <LeadQualificationBadge qualification={draft.qualification} />
+                    {draft.qualificationReason && <div className="text-muted-foreground text-xs mt-1">{draft.qualificationReason}</div>}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 

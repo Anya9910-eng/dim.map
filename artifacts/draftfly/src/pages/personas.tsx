@@ -66,7 +66,7 @@ export default function PersonasPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Personas</h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage AI personas for your campaigns.</p>
+          <p className="text-sm text-muted-foreground mt-1">Describe each project and how your sales team talks to buyers. The AI writes and qualifies as this persona.</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
@@ -90,23 +90,23 @@ export default function PersonasPage() {
               )}
               <div className="space-y-2">
                 <Label htmlFor="name">Persona Name</Label>
-                <Input id="name" data-testid="input-persona-name" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="e.g. Sales Engineer" />
+                <Input id="name" data-testid="input-persona-name" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="e.g. Marina Tower sales team" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="productDescription">Product Description</Label>
-                <Textarea id="productDescription" data-testid="input-product-description" required value={formData.productDescription} onChange={e => setFormData({ ...formData, productDescription: e.target.value })} placeholder="Briefly describe the product..." />
+                <Label htmlFor="productDescription">Project Description</Label>
+                <Textarea id="productDescription" data-testid="input-product-description" required value={formData.productDescription} onChange={e => setFormData({ ...formData, productDescription: e.target.value })} placeholder="e.g. 42-storey waterfront tower, 1–3 bed from AED 1.4M, 60/40 payment plan, handover Q4 2027" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="targetAudience">Target Audience</Label>
-                <Input id="targetAudience" data-testid="input-target-audience" required value={formData.targetAudience} onChange={e => setFormData({ ...formData, targetAudience: e.target.value })} placeholder="e.g. CTOs, VP of Engineering" />
+                <Input id="targetAudience" data-testid="input-target-audience" required value={formData.targetAudience} onChange={e => setFormData({ ...formData, targetAudience: e.target.value })} placeholder="e.g. End-users and investors buying 1–3 bed apartments" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="toneOfVoice">Tone of Voice</Label>
-                <Input id="toneOfVoice" data-testid="input-tone-of-voice" required value={formData.toneOfVoice} onChange={e => setFormData({ ...formData, toneOfVoice: e.target.value })} placeholder="e.g. Professional, authoritative, concise" />
+                <Input id="toneOfVoice" data-testid="input-tone-of-voice" required value={formData.toneOfVoice} onChange={e => setFormData({ ...formData, toneOfVoice: e.target.value })} placeholder="e.g. Warm, helpful, confident — never pushy" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="cta">Call to Action (CTA)</Label>
-                <Input id="cta" data-testid="input-cta" required value={formData.cta} onChange={e => setFormData({ ...formData, cta: e.target.value })} placeholder="e.g. Can we schedule a brief 10-minute call?" />
+                <Input id="cta" data-testid="input-cta" required value={formData.cta} onChange={e => setFormData({ ...formData, cta: e.target.value })} placeholder="e.g. Book a private viewing or a 15-minute call" />
               </div>
               <Button type="submit" className="w-full" disabled={createPersona.isPending || !formData.clientId} data-testid="button-submit-persona">
                 {createPersona.isPending ? "Creating..." : "Create Persona"}

@@ -21,7 +21,7 @@ export function BillingGuard({ children }: { children: React.ReactNode }) {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0A0A0F] flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+        <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
       </div>
     );
   }
@@ -44,7 +44,7 @@ export function BillingGuard({ children }: { children: React.ReactNode }) {
       <div className="w-full max-w-2xl space-y-8">
         <div className="flex justify-center items-center gap-2">
           <img src="/logo-mark.svg" alt="" className="h-10 w-auto" />
-          <span className="text-2xl font-bold">DraftFly</span>
+          <span className="text-2xl font-bold">DIM map</span>
         </div>
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-semibold">

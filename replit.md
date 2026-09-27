@@ -1,6 +1,6 @@
-# [Project name]
+# DIM map
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+AI lead qualification and reply drafting for property developers and brokers — leads from Lemlist, Meta lead ads and WhatsApp in one inbox.
 
 ## Run & Operate
 

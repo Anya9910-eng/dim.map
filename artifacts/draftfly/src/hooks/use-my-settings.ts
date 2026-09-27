@@ -4,7 +4,15 @@ import { API_BASE } from "@/lib/api-base";
 export interface MySettings {
   client: { id: number; name: string; company: string | null; plan: string };
   lemlist: { hasApiKey: boolean; keyHint: string | null; usingGlobalFallback: boolean };
-  webhook: { url: string | null; hasSecret: boolean; headerName: string };
+  webhook: {
+    url: string | null;
+    hasSecret: boolean;
+    headerName: string;
+    /** Same secret, per lead source. Absent from servers older than Meta/WhatsApp support. */
+    metaUrl?: string | null;
+    whatsappUrl?: string | null;
+  };
+  whatsapp?: { phoneNumberId: string | null; hasAccessToken: boolean; tokenHint: string | null };
   slack: { channel: string | null };
   usage: {
     activeCampaigns: number;
@@ -40,7 +48,12 @@ export function useMySettings() {
 export function useUpdateMySettings() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (body: { lemlistApiKey?: string; slackChannel?: string | null }) =>
+    mutationFn: async (body: {
+      lemlistApiKey?: string;
+      slackChannel?: string | null;
+      whatsappPhoneNumberId?: string;
+      whatsappAccessToken?: string;
+    }) =>
       json<MySettings>(await fetch(`${API_BASE}/api/me/settings`, {
         method: "PATCH",
         credentials: "include",

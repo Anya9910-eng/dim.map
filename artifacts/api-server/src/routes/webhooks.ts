@@ -21,6 +21,13 @@ import {
 } from "../lib/lemlist";
 import type { LemlistWebhookPayload } from "../lib/lemlist";
 import { logger } from "../lib/logger";
+import {
+  channelLabel,
+  parseMetaPayload,
+  parseWhatsAppPayload,
+  type IncomingLead,
+  type LeadChannel,
+} from "../lib/leadChannels";
 import { limitsFor, currentPeriodStart } from "../lib/plans";
 import { gte, sql } from "drizzle-orm";
 
@@ -292,19 +299,22 @@ async function logEvent(values: {
 
 // ─── Core processing logic ──────────────────────────────────────────────────
 
+interface ProcessResult {
+  draftId?: number;
+  generatedDraft?: string;
+  confidenceScore?: number;
+  detectedIntent?: string;
+  qualification?: string | null;
+  slackTs?: string | null;
+}
+
 async function processLemlistReply(
   payload: LemlistWebhookPayload,
   opts?: {
     /** Set when the request arrived on an authenticated per-client webhook path. */
     client?: Client;
   },
-): Promise<{
-  draftId?: number;
-  generatedDraft?: string;
-  confidenceScore?: number;
-  detectedIntent?: string;
-  slackTs?: string | null;
-}> {
+): Promise<ProcessResult> {
   // 1. Find the campaign by its Lemlist campaign ID — and only by that.
   //    Matching a numeric payload.campaignId against campaigns.id used to be a
   //    fallback here, but a numeric Lemlist id can collide with another
@@ -322,7 +332,7 @@ async function processLemlistReply(
   if (!campaign) {
     logger.warn(
       { campaignId: payload.campaignId, clientId: authenticatedClient?.id ?? null },
-      "No DraftFly campaign found for Lemlist campaign ID",
+      "No DIM map campaign found for Lemlist campaign ID",
     );
     await logEvent({
       level: "warning",
@@ -346,21 +356,66 @@ async function processLemlistReply(
     return {};
   }
 
+  const fields = readLeadFields(payload);
+  return processLead({
+    client,
+    campaign,
+    lead: {
+      channel: "lemlist",
+      externalLeadId: payload.leadId ?? "",
+      campaignRefs: [campaignIdStr],
+      firstName: fields.firstName,
+      lastName: fields.lastName,
+      email: fields.email,
+      phone: "",
+      company: fields.company,
+      jobTitle: fields.jobTitle,
+      country: fields.country,
+      message: fields.replyText,
+    },
+  });
+}
+
+/** Where a channel's events are filed in the client-visible log. */
+function logSourceFor(channel: LeadChannel): "lemlist" | "meta" | "whatsapp" {
+  return channel;
+}
+
+/**
+ * Everything after the campaign is known: plan and state checks, the Claude
+ * draft with its lead qualification, the draft row, logs, and the Slack card.
+ * Shared by every lead source, so a WhatsApp chat and a Lemlist reply are
+ * handled by exactly the same rules.
+ */
+async function processLead(params: {
+  client: Client;
+  campaign: typeof campaignsTable.$inferSelect;
+  lead: IncomingLead;
+}): Promise<ProcessResult> {
+  const { client, campaign, lead } = params;
+  const source = logSourceFor(lead.channel);
+  const sourceLabel = channelLabel(lead.channel);
+  const leadEmail = lead.email;
+  // What identifies this lead in log lines: their address, or for a WhatsApp
+  // lead with none, their number.
+  const leadContact = leadEmail || (lead.phone ? `+${lead.phone}` : "") || "unknown";
+  const leadRef = lead.externalLeadId || leadEmail || lead.phone || undefined;
+
   // An archived client keeps all of its data and can be switched back on, but
   // stops consuming replies: no draft is generated, nothing is posted to their
   // Slack, and no model call is billed. Logged rather than dropped silently, so
   // an archive nobody meant to leave in place is visible.
   if (!client.isActive) {
     logger.info(
-      { clientId: client.id, campaignId: campaign.id, leadEmail: payload.leadEmail },
+      { clientId: client.id, campaignId: campaign.id, leadEmail, channel: lead.channel },
       "Reply ignored — client is archived",
     );
     await logEvent({
       clientId: client.id,
       campaignId: campaign.id,
-      source: "lemlist",
+      source,
       level: "info",
-      message: `Reply from ${payload.leadEmail ?? "unknown"} ignored — client is archived`,
+      message: `Reply from ${leadContact} ignored — client is archived`,
     });
     return {};
   }
@@ -372,26 +427,26 @@ async function processLemlistReply(
   // costs nothing.
   if (!campaign.isActive) {
     logger.info(
-      { clientId: client.id, campaignId: campaign.id, leadEmail: payload.leadEmail },
+      { clientId: client.id, campaignId: campaign.id, leadEmail, channel: lead.channel },
       "Reply ignored — campaign is inactive",
     );
     await logEvent({
       clientId: client.id,
       campaignId: campaign.id,
-      source: "lemlist",
+      source,
       level: "info",
-      message: `Reply from ${payload.leadEmail ?? "unknown"} ignored — campaign "${campaign.name}" is switched off`,
+      message: `Reply from ${leadContact} ignored — campaign "${campaign.name}" is switched off`,
     });
     return {};
   }
 
   // 3. Find persona
-  let persona = campaign.personaId
+  const persona = campaign.personaId
     ? (await db.select().from(personasTable).where(eq(personasTable.id, campaign.personaId)))[0]
     : null;
 
   // Without a persona the draft is generated from hardcoded fallbacks — a
-  // generic SDR with no knowledge of the client's product. It still reads
+  // generic agent with no knowledge of the client's projects. It still reads
   // plausibly, so the only symptom is drafts that are subtly wrong, which is
   // hard to trace back weeks later. Recorded against the client so it shows up
   // in their log rather than only in ours.
@@ -409,26 +464,24 @@ async function processLemlistReply(
     });
   }
 
-  const lead = readLeadFields(payload);
   const leadName = [lead.firstName, lead.lastName].filter(Boolean).join(" ") || "there";
-  const leadEmail = lead.email;
-  const replyText = lead.replyText;
+  const replyText = lead.message;
 
   // 4. Detect auto-replies, bounces, OOO — skip draft generation for system messages
   if (isAutoReply(replyText, leadEmail)) {
-    logger.info({ leadEmail, campaignId: payload.campaignId }, "Auto-reply/bounce detected — skipping draft generation");
+    logger.info({ leadEmail, campaignId: campaign.id }, "Auto-reply/bounce detected — skipping draft generation");
     await db.insert(logsTable).values({
       clientId: client.id,
       campaignId: campaign.id,
-      leadId: payload.leadId ?? leadEmail,
+      leadId: leadRef,
       level: "info",
-      message: `Auto-reply or bounce detected from ${leadEmail} — no draft created`,
+      message: `Auto-reply or bounce detected from ${leadContact} — no draft created`,
       source: "system",
       metadata: JSON.stringify({ replyText: replyText.slice(0, 200) }),
     });
     await db.insert(activityTable).values({
       type: "draft_skipped",
-      description: `Auto-reply / bounce from ${leadEmail} — draft skipped (${campaign.name})`,
+      description: `Auto-reply / bounce from ${leadContact} — draft skipped (${campaign.name})`,
       clientId: client.id,
       campaignId: campaign.id,
       campaignName: campaign.name,
@@ -440,10 +493,10 @@ async function processLemlistReply(
   // because that call is where the cost is actually incurred — a cap enforced
   // after generation would bill for the work it was meant to prevent.
   //
-  // Over the cap the reply is not lost: it is still in the client's Lemlist
-  // inbox to answer by hand. What stops is the drafting. This is logged at
-  // error level rather than dropped quietly, so the reason is visible in the
-  // dashboard instead of looking like the pipeline broke.
+  // Over the cap the reply is not lost: it is still in the source inbox to
+  // answer by hand. What stops is the drafting. This is logged at error level
+  // rather than dropped quietly, so the reason is visible in the dashboard
+  // instead of looking like the pipeline broke.
   const planLimits = limitsFor(client.plan);
   const [{ used = 0 } = {}] = await db
     .select({ used: sql<number>`count(*)::int` })
@@ -458,9 +511,9 @@ async function processLemlistReply(
     await db.insert(logsTable).values({
       clientId: client.id,
       campaignId: campaign.id,
-      leadId: payload.leadId ?? leadEmail,
+      leadId: leadRef,
       level: "error",
-      message: `Monthly reply allowance reached (${used}/${planLimits.repliesPerMonth} on the ${client.plan} plan). This reply was not drafted — answer it in Lemlist, or move to a larger plan.`,
+      message: `Monthly reply allowance reached (${used}/${planLimits.repliesPerMonth} on the ${client.plan} plan). This reply was not drafted — answer it in ${sourceLabel}, or move to a larger plan.`,
       source: "system",
     });
     return {};
@@ -468,25 +521,47 @@ async function processLemlistReply(
 
   // 5. Generate Claude draft — with what has already been said to this lead,
   // replies this client approved untouched, and drafts they had to correct.
-  const history = await buildDraftHistory({ clientId: client.id, prospectEmail: leadEmail });
+  // A WhatsApp lead has no address, so their thread is found by number —
+  // matching on an empty address would pull in every other such lead's chat.
+  const history = await buildDraftHistory({ clientId: client.id, prospectEmail: leadEmail, prospectPhone: lead.phone });
 
   const draftResult = await generateDraftReply({
     ...history,
+    channel: lead.channel,
     leadName,
     leadEmail,
     leadCompany: lead.company,
     leadRole: lead.jobTitle || undefined,
     leadCountry: lead.country || undefined,
     incomingReply: replyText,
-    personaName: persona?.name ?? "SDR",
-    productDescription: persona?.productDescription ?? "AI-powered B2B reply automation",
-    toneOfVoice: persona?.toneOfVoice ?? "Direct, concise, value-driven",
+    personaName: persona?.name ?? "Sales agent",
+    productDescription: persona?.productDescription ?? "New-build residential property from a property developer",
+    toneOfVoice: persona?.toneOfVoice ?? "Warm, direct, professional",
     commonObjections: persona?.commonObjections ?? undefined,
-    cta: persona?.cta ?? "15-minute call",
+    cta: persona?.cta ?? "Book a viewing or a 15-minute call",
     qualificationRules: persona?.qualificationRules ?? undefined,
     regionRules: campaign.regionRules ?? undefined,
     replyRules: campaign.replyRules ?? undefined,
   });
+
+  // Columns every draft for this lead carries, whatever the outcome below.
+  const leadColumns = {
+    clientId: client.id,
+    campaignId: campaign.id,
+    channel: lead.channel,
+    prospectEmail: leadEmail,
+    prospectPhone: lead.phone || null,
+    // Lemlist's own id, needed to send the reply back — sendReply cannot use
+    // an email address for this. Null when the payload did not carry one
+    // (the simulate endpoint, for instance); that draft can still be reviewed
+    // and approved, just not sent back through Lemlist automatically.
+    lemlistLeadId: lead.channel === "lemlist" ? (lead.externalLeadId || null) : null,
+    prospectName: leadName,
+    prospectCompany: lead.company || null,
+    prospectCountry: lead.country || null,
+    prospectRole: lead.jobTitle || null,
+    conversationSnippet: replyText,
+  };
 
   // 5. Create draft record — validate extracted text first
   const cleanDraft = extractDraftText(draftResult.draft);
@@ -497,15 +572,7 @@ async function processLemlistReply(
       "Claude output failed draft validation — raw AI text is empty or too short to be a real reply",
     );
     const [failedDraft] = await db.insert(draftsTable).values({
-      clientId: client.id,
-      campaignId: campaign.id,
-      prospectEmail: leadEmail,
-      lemlistLeadId: payload.leadId ?? null,
-      prospectName: leadName,
-      prospectCompany: lead.company || null,
-      prospectCountry: lead.country || null,
-      prospectRole: lead.jobTitle || null,
-      conversationSnippet: replyText,
+      ...leadColumns,
       replyText: "[Draft generation failed — AI output could not be parsed as a valid reply]",
       status: "send_failed",
     }).returning();
@@ -513,9 +580,9 @@ async function processLemlistReply(
       clientId: client.id,
       campaignId: campaign.id,
       draftId: failedDraft.id,
-      leadId: payload.leadId ?? leadEmail,
+      leadId: leadRef,
       level: "error",
-      message: `Draft validation failed for ${leadName} (${leadEmail}) — AI returned an empty or unparseable reply (${cleanDraft.trim().length} chars after unwrapping)`,
+      message: `Draft validation failed for ${leadName} (${leadContact}) — AI returned an empty or unparseable reply (${cleanDraft.trim().length} chars after unwrapping)`,
       source: "claude",
       metadata: JSON.stringify({ rawDraft: draftResult.draft.slice(0, 500) }),
     });
@@ -523,38 +590,31 @@ async function processLemlistReply(
   }
 
   const [draft] = await db.insert(draftsTable).values({
-    clientId: client.id,
-    campaignId: campaign.id,
-    prospectEmail: leadEmail,
-    // Lemlist's own id, needed to send the reply back — sendReply cannot use
-    // an email address for this. Null when the payload did not carry one
-    // (the simulate endpoint, for instance); that draft can still be reviewed
-    // and approved, just not sent back through Lemlist automatically.
-    lemlistLeadId: payload.leadId ?? null,
-    prospectName: leadName,
-    prospectCompany: lead.company || null,
-    prospectCountry: lead.country || null,
-    prospectRole: lead.jobTitle || null,
-    conversationSnippet: replyText,
+    ...leadColumns,
     replyText: cleanDraft,
+    qualification: draftResult.qualification ?? null,
+    qualificationReason: draftResult.qualificationReason ?? null,
     status: "pending",
-    // store extra metadata in slackMessageTs field temporarily — will be overwritten
   }).returning();
+
+  const qualificationNote = draftResult.qualification ? `, lead: ${draftResult.qualification}` : "";
 
   // 6. Log the event
   await db.insert(logsTable).values({
     clientId: client.id,
     campaignId: campaign.id,
     draftId: draft.id,
-    leadId: payload.leadId ?? leadEmail,
+    leadId: leadRef,
     level: "info",
-    message: `Lemlist reply from ${leadName} (${leadEmail}) — draft generated (confidence: ${Math.round(draftResult.confidenceScore * 100)}%)`,
-    source: "lemlist",
+    message: `${sourceLabel} ${lead.channel === "meta" ? "lead" : "reply"} from ${leadName} (${leadContact}) — draft generated (confidence: ${Math.round(draftResult.confidenceScore * 100)}%${qualificationNote})`,
+    source,
     generatedDraft: cleanDraft,
     metadata: JSON.stringify({
       detectedIntent: draftResult.detectedIntent,
       suggestedNextAction: draftResult.suggestedNextAction,
       confidenceScore: draftResult.confidenceScore,
+      qualification: draftResult.qualification ?? null,
+      qualificationReason: draftResult.qualificationReason ?? null,
     }),
   });
 
@@ -563,9 +623,9 @@ async function processLemlistReply(
     clientId: client.id,
     campaignId: campaign.id,
     draftId: draft.id,
-    leadId: payload.leadId ?? leadEmail,
+    leadId: leadRef,
     level: "info",
-    message: `Claude draft generated — intent: ${draftResult.detectedIntent}, confidence: ${Math.round(draftResult.confidenceScore * 100)}%, next: ${draftResult.suggestedNextAction}`,
+    message: `Claude draft generated — intent: ${draftResult.detectedIntent}, confidence: ${Math.round(draftResult.confidenceScore * 100)}%, next: ${draftResult.suggestedNextAction}${qualificationNote}`,
     source: "claude",
     generatedDraft: cleanDraft,
     metadata: JSON.stringify({}),
@@ -584,7 +644,7 @@ async function processLemlistReply(
   // 8. Activity feed
   await db.insert(activityTable).values({
     type: "draft_created",
-    description: `Claude generated reply for ${leadName} (${leadEmail}) — ${campaign.name}`,
+    description: `Claude generated reply for ${leadName} (${leadContact}) — ${campaign.name}`,
     clientId: client.id,
     campaignId: campaign.id,
     draftId: draft.id,
@@ -605,6 +665,14 @@ async function processLemlistReply(
     ? (client.slackBotToken ?? undefined)
     : undefined;
 
+  const result = {
+    draftId: draft.id,
+    generatedDraft: cleanDraft,
+    confidenceScore: draftResult.confidenceScore,
+    detectedIntent: draftResult.detectedIntent,
+    qualification: draftResult.qualification ?? null,
+  };
+
   // No channel anywhere is a normal configuration, not a failure: the client
   // approves in the dashboard. Attempting the post regardless would throw on
   // every single reply and write an error log for something working as
@@ -614,13 +682,7 @@ async function processLemlistReply(
       { draftId: draft.id, clientId: client.id },
       "No Slack channel for this client — draft awaits approval in the dashboard",
     );
-    return {
-      draftId: draft.id,
-      generatedDraft: cleanDraft,
-      confidenceScore: draftResult.confidenceScore,
-      detectedIntent: draftResult.detectedIntent,
-      slackTs: null,
-    };
+    return { ...result, slackTs: null };
   }
 
   try {
@@ -630,11 +692,11 @@ async function processLemlistReply(
       draftId: draft.id,
       leadName,
       leadCompany: lead.company,
-      leadEmail,
+      leadEmail: leadContact,
       incomingReply: replyText,
       generatedDraft: cleanDraft,
       campaignName: campaign.name,
-      personaName: persona?.name ?? "SDR",
+      personaName: persona?.name ?? "Sales agent",
       region: lead.country || "US",
       confidenceScore: draftResult.confidenceScore,
     });
@@ -649,7 +711,7 @@ async function processLemlistReply(
       clientId: client.id,
       campaignId: campaign.id,
       draftId: draft.id,
-      leadId: payload.leadId ?? leadEmail,
+      leadId: leadRef,
       level: "info",
       message: `Slack approval card posted to ${approvalChannel}${isSlackConfigured() ? "" : " (mock)"}`,
       source: "slack",
@@ -668,17 +730,113 @@ async function processLemlistReply(
   }
 
   logger.info(
-    { draftId: draft.id, slackTs, confidence: draftResult.confidenceScore },
-    "Lemlist reply processed successfully",
+    { draftId: draft.id, slackTs, confidence: draftResult.confidenceScore, channel: lead.channel },
+    "Lead reply processed successfully",
   );
 
-  return {
-    draftId: draft.id,
-    generatedDraft: cleanDraft,
-    confidenceScore: draftResult.confidenceScore,
-    detectedIntent: draftResult.detectedIntent,
-    slackTs,
+  return { ...result, slackTs };
+}
+
+// ─── Meta Lead Ads & WhatsApp ───────────────────────────────────────────────
+
+/**
+ * Which of this client's campaigns a Meta or WhatsApp lead belongs to.
+ *
+ * First an exact match of any id the lead carries (form, ad, campaign, or the
+ * WhatsApp business number) against the campaign's external id. Failing that,
+ * the client's single campaign on that channel — most clients run one WhatsApp
+ * number and would otherwise have to copy an id they never see. With several
+ * candidates and no match, the lead is not guessed into one.
+ */
+async function resolveChannelCampaign(
+  client: Client,
+  lead: IncomingLead,
+): Promise<typeof campaignsTable.$inferSelect | undefined> {
+  const campaigns = await db
+    .select()
+    .from(campaignsTable)
+    .where(and(eq(campaignsTable.clientId, client.id), eq(campaignsTable.channel, lead.channel)));
+
+  for (const ref of lead.campaignRefs) {
+    const match = campaigns.find((c) => c.lemlistCampaignId === ref);
+    if (match) return match;
+  }
+  return campaigns.length === 1 ? campaigns[0] : undefined;
+}
+
+async function processChannelLead(client: Client, lead: IncomingLead): Promise<ProcessResult> {
+  const campaign = await resolveChannelCampaign(client, lead);
+  if (!campaign) {
+    const label = channelLabel(lead.channel);
+    logger.warn(
+      { clientId: client.id, channel: lead.channel, refs: lead.campaignRefs },
+      "No campaign found for incoming lead",
+    );
+    await logEvent({
+      clientId: client.id,
+      level: "warning",
+      source: logSourceFor(lead.channel),
+      leadId: lead.externalLeadId || lead.email || lead.phone || undefined,
+      message: `${label} lead ${lead.email || (lead.phone ? `+${lead.phone}` : "unknown")} received, but no ${label} campaign matches it${lead.campaignRefs.length ? ` (ids: ${lead.campaignRefs.join(", ")})` : ""}. Add a ${label} campaign with one of these ids.`,
+    });
+    return {};
+  }
+  return processLead({ client, campaign, lead });
+}
+
+/**
+ * Meta's subscription handshake: a GET with hub.mode=subscribe and a
+ * hub.challenge to echo back. The per-client secret is already verified by the
+ * middleware (it sits in the callback URL); hub.verify_token must match it too,
+ * so pasting only the URL into Meta is not enough to subscribe.
+ */
+function verifyMetaSubscription(req: import("express").Request, res: import("express").Response): void {
+  const client = getWebhookClient(res);
+  const mode = String(req.query["hub.mode"] ?? "");
+  const token = String(req.query["hub.verify_token"] ?? "");
+  const challenge = String(req.query["hub.challenge"] ?? "");
+  if (mode === "subscribe" && client?.lemlistWebhookSecret && token === client.lemlistWebhookSecret && challenge) {
+    res.status(200).type("text/plain").send(challenge);
+    return;
+  }
+  res.status(403).json({ ok: false, error: "Verification failed" });
+}
+
+function receiveChannelWebhook(channel: "meta" | "whatsapp") {
+  return (req: import("express").Request, res: import("express").Response): void => {
+    const client = getWebhookClient(res);
+    // Acknowledge first: Meta retries anything that is not a quick 200.
+    res.status(200).json({ ok: true });
+    if (!client) return;
+
+    let leads: IncomingLead[];
+    if (channel === "meta") {
+      const parsed = parseMetaPayload(req.body);
+      leads = parsed.leads;
+      if (parsed.unresolvedLeadgenIds.length) {
+        void logEvent({
+          clientId: client.id,
+          level: "warning",
+          source: "meta",
+          message: `Meta sent ${parsed.unresolvedLeadgenIds.length} lead notification(s) without the form answers (leadgen ids: ${parsed.unresolvedLeadgenIds.join(", ")}). Forward leads through n8n or Zapier with the lead's field_data included.`,
+        });
+      }
+    } else {
+      leads = parseWhatsAppPayload(req.body);
+    }
+
+    req.log.info({ channel, clientId: client.id, leads: leads.length }, "Lead webhook received");
+    for (const lead of leads) {
+      void processChannelLead(client, lead).catch((err) => {
+        logger.error({ err, channel }, "Error processing lead webhook");
+      });
+    }
   };
 }
+
+router.get("/webhooks/meta/:clientId", requireClientWebhookSecret, verifyMetaSubscription);
+router.post("/webhooks/meta/:clientId", requireClientWebhookSecret, receiveChannelWebhook("meta"));
+router.get("/webhooks/whatsapp/:clientId", requireClientWebhookSecret, verifyMetaSubscription);
+router.post("/webhooks/whatsapp/:clientId", requireClientWebhookSecret, receiveChannelWebhook("whatsapp"));
 
 export default router;

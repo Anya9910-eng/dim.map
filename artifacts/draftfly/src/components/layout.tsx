@@ -58,10 +58,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background font-sans text-foreground">
-        <Sidebar className="border-r border-border bg-card">
+        {/* Always the brand's dark green, in either theme: `dark` scopes the
+            dark palette to the sidebar alone. */}
+        <Sidebar className="dark border-r border-border bg-sidebar text-sidebar-foreground">
           <SidebarHeader className="p-4 border-b border-border flex flex-row items-center gap-2">
             <img src="/logo-mark.svg" alt="" className="h-7 w-auto" />
-            <span className="text-lg font-bold text-foreground">DraftFly</span>
+            <span className="text-lg font-bold text-foreground tracking-tight">DIM <span className="text-primary">map</span></span>
           </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
@@ -72,7 +74,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       <SidebarMenuButton
                         asChild
                         isActive={location === item.href || (location.startsWith(item.href) && item.href !== "/")}
-                        className="data-[active=true]:border-t data-[active=true]:border-primary/20 data-[active=true]:bg-accent/50 transition-all"
+                        className="data-[active=true]:border-t data-[active=true]:border-primary/20 data-[active=true]:bg-accent data-[active=true]:text-primary transition-all"
                       >
                         <Link href={item.href} className="flex items-center gap-3" data-testid={`nav-${item.href.replace(/^\//, '') || 'overview'}`}>
                           <item.icon className="h-4 w-4" />
@@ -94,7 +96,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       <SidebarMenuButton
                         asChild
                         isActive={location === item.href || (location.startsWith(item.href) && item.href !== "/")}
-                        className="data-[active=true]:border-t data-[active=true]:border-primary/20 data-[active=true]:bg-accent/50 transition-all"
+                        className="data-[active=true]:border-t data-[active=true]:border-primary/20 data-[active=true]:bg-accent data-[active=true]:text-primary transition-all"
                       >
                         <Link href={item.href} className="flex items-center gap-3" data-testid={`nav-${item.href.replace(/^\//, '')}`}>
                           <item.icon className="h-4 w-4" />
@@ -158,7 +160,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   <>
                     <div className="flex-1" />
                     <a
-                      href="mailto:outreach@draftfly.app?subject=DraftFly%20support"
+                      href="mailto:outreach@draftfly.app?subject=DIM%20map%20support"
                       data-testid="support-link"
                       className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-all"
                     >

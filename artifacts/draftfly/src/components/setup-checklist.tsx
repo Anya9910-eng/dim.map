@@ -22,29 +22,31 @@ export function SetupChecklist() {
   const steps = [
     {
       key: "lemlist",
-      title: "Connect your Lemlist account",
-      detail: "Paste your Lemlist API key so DraftFly can see your campaigns and send approved replies.",
-      done: settings.lemlist.hasApiKey,
+      title: "Connect a lead source",
+      detail: "Add your Lemlist API key, or your WhatsApp Business details, in Settings — or connect a Meta lead form on the Campaigns page.",
+      // A Meta-only account needs no key at all: its leads arrive by webhook
+      // once a Meta campaign exists.
+      done: settings.lemlist.hasApiKey || !!settings.whatsapp?.hasAccessToken || settings.usage.totalCampaigns > 0,
       href: "/settings",
     },
     {
       key: "persona",
-      title: "Create a persona",
-      detail: "Tell the AI who it's writing as and how — tone, what to emphasise, what to avoid.",
+      title: "Create a sales persona",
+      detail: "Describe your project — units, price range, payment plans — and how your team talks to buyers.",
       done: (personas?.length ?? 0) > 0,
       href: "/personas",
     },
     {
       key: "campaign",
       title: "Activate a campaign",
-      detail: "Pick a Lemlist campaign, attach the persona, and switch it on.",
+      detail: "Pick a Lemlist campaign, Meta lead form or WhatsApp line, attach the persona, and switch it on.",
       done: settings.usage.activeCampaigns > 0,
       href: "/campaigns",
     },
     {
       key: "reply",
-      title: "Receive your first reply",
-      detail: "Point Lemlist's reply webhook at DraftFly (the URL is in Settings). The next reply becomes a draft.",
+      title: "Receive your first lead",
+      detail: "Point your Lemlist, Meta or WhatsApp webhook at DIM map (the URLs are in Settings). The next lead is qualified and gets a draft.",
       done: settings.usage.repliesThisMonth > 0,
       href: "/settings",
     },
@@ -55,7 +57,7 @@ export function SetupChecklist() {
   const next = steps.find((s) => !s.done);
 
   return (
-    <Card className="border-indigo-500/30" data-testid="setup-checklist">
+    <Card className="border-primary/30" data-testid="setup-checklist">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-4">
           <div>

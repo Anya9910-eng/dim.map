@@ -42,7 +42,7 @@ function isPlausibleEmail(value: unknown): value is string {
  * Step 1 — ask for a code.
  *
  * Always answers `{ ok: true }`, whatever happened. A response that differed
- * for an unknown address would let anyone test which emails have DraftFly
+ * for an unknown address would let anyone test which emails have DIM map
  * accounts, and the client list is exactly the thing worth not leaking. So a
  * stranger's address, a throttled address and a genuine one are indistinguishable
  * from outside; the difference is only whether an email actually goes out.
@@ -168,7 +168,7 @@ router.post("/auth/verify-code", async (req, res) => {
     const identity = await resolveIdentity(normalized);
     if (!identity) {
       logger.warn({ email: normalized }, "Valid code but the address no longer has access");
-      res.status(403).json({ error: "This address does not have access to DraftFly." });
+      res.status(403).json({ error: "This address does not have access to DIM map." });
       return;
     }
 

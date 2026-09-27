@@ -597,14 +597,14 @@ export default function TestFlow() {
                       <MessageSquare className="h-4 w-4 text-primary-foreground" />
                     </div>
                     <div className="flex items-baseline gap-2">
-                      <span className="font-bold text-[#D1D2D3]">DraftFly</span>
+                      <span className="font-bold text-[#D1D2D3]">DIM map</span>
                       <span className="bg-[#2C3136] text-[#ABABAD] text-[9px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">App</span>
                       <span className="text-xs text-[#7E7E7E]">{new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}</span>
                     </div>
                   </div>
 
                   <p className="text-[#D1D2D3] font-semibold">
-                    New reply from <span className="text-[#6366F1]">{fields.leadName}</span> — {fields.leadCompany}
+                    New reply from <span className="text-[#A3E635]">{fields.leadName}</span> — {fields.leadCompany}
                   </p>
 
                   <div className="border-l-[3px] border-[#3F4147] pl-3">
@@ -613,7 +613,7 @@ export default function TestFlow() {
 
                   <div className="bg-[#222529] border border-[#35373B] rounded-md p-3">
                     <div className="flex items-center gap-1.5 mb-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#6366F1]" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#A3E635]" />
                       <span className="text-[9px] font-bold uppercase tracking-wider text-[#ABABAD]">Claude Draft</span>
                     </div>
                     <pre className="text-[#D1D2D3] text-[12px] leading-relaxed font-sans whitespace-pre-wrap">{draft}</pre>

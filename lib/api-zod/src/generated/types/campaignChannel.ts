@@ -6,15 +6,14 @@
  * OpenAPI spec version: 0.2.0
  */
 
-export type LogEntrySource = typeof LogEntrySource[keyof typeof LogEntrySource];
+/**
+ * Lead source the campaign listens on. Defaults to lemlist.
+ */
+export type CampaignChannel = typeof CampaignChannel[keyof typeof CampaignChannel];
 
 
-export const LogEntrySource = {
+export const CampaignChannel = {
   lemlist: 'lemlist',
-  n8n: 'n8n',
-  claude: 'claude',
-  slack: 'slack',
-  system: 'system',
   meta: 'meta',
   whatsapp: 'whatsapp',
 } as const;

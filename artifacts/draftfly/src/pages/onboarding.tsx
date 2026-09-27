@@ -19,7 +19,7 @@ export default function OnboardingPage() {
 
   // Hardcode the onboarding steps to match the specific requirement, using checklist items if they match
   const onboardingSteps = [
-    { title: "Install Slack App", description: "Invite the DraftFly bot to your workspace." },
+    { title: "Install Slack App", description: "Invite the DIM map bot to your workspace." },
     { title: "Provide Lemlist API key", description: "Securely share your Lemlist key for connection." },
     { title: "Select approval channel", description: "Choose which Slack channel receives drafts." },
     { title: "Provide campaign IDs", description: "List the Lemlist campaigns to monitor." },
@@ -51,7 +51,7 @@ export default function OnboardingPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight" data-testid="text-title">Client Onboarding</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Step-by-step setup wizard to connect a new client to DraftFly.
+          Step-by-step setup wizard to connect a new client to DIM map.
         </p>
       </div>
 

@@ -29,8 +29,8 @@ function fromAddress(): string {
   // Must be an address on a domain verified with the provider, or Resend
   // rejects the send. Falls back to Resend's shared sandbox sender, which
   // delivers only to the account owner's own address — enough to test with
-  // before draftfly.app's DNS records exist.
-  return process.env["EMAIL_FROM"] ?? "DraftFly <onboarding@resend.dev>";
+  // before the sending domain's DNS records exist.
+  return process.env["EMAIL_FROM"] ?? "DIM map <onboarding@resend.dev>";
 }
 
 async function send(to: string, subject: string, text: string, html?: string): Promise<SendResult> {
@@ -64,11 +64,13 @@ async function send(to: string, subject: string, text: string, html?: string): P
 //
 // Email HTML is its own dialect: no external CSS, no flexbox, tables for
 // layout, styles inlined, and everything degrading to the plain-text version
-// its `send` call always carries. The palette is DraftFly's (#6870E8), on a
+// its `send` call always carries. The palette is DIM map's dark green (#0B3D2E)
+// with a lime accent (#A3E635), on a
 // light card so it reads the same in every client's light and dark chrome. The
 // logo is the hosted mark — inlining an image would bloat every message.
 
-const BRAND = "#6870E8";
+const BRAND = "#0B3D2E";
+const LIME = "#A3E635";
 const APP_URL = "https://draftfly.app";
 const SUPPORT_EMAIL = "outreach@draftfly.app";
 
@@ -89,8 +91,8 @@ function layout(inner: string): string {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
         <tr><td style="padding:28px 32px 8px;">
           <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-            <td style="vertical-align:middle;"><img src="${APP_URL}/logo-mark.png" width="28" height="28" alt="DraftFly" style="display:block;border:0;"></td>
-            <td style="vertical-align:middle;padding-left:10px;font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.01em;">DraftFly</td>
+            <td style="vertical-align:middle;"><img src="${APP_URL}/logo-mark.png" width="28" height="28" alt="DIM map" style="display:block;border:0;"></td>
+            <td style="vertical-align:middle;padding-left:10px;font-size:20px;font-weight:700;color:#111827;letter-spacing:-0.01em;">DIM <span style="color:#4D7C0F;">map</span></td>
           </tr></table>
         </td></tr>
         <tr><td style="padding:12px 32px 32px;color:#111827;font-size:15px;line-height:1.6;">
@@ -99,7 +101,7 @@ function layout(inner: string): string {
       </table>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;">
         <tr><td style="padding:16px 32px;text-align:center;color:#9ca3af;font-size:12px;line-height:1.5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-          DraftFly — AI reply automation for cold email.<br>
+          DIM map — AI lead qualification and replies for property developers.<br>
           <a href="${APP_URL}" style="color:#9ca3af;">draftfly.app</a>
         </td></tr>
       </table>
@@ -111,8 +113,8 @@ function layout(inner: string): string {
 export function loginCodeHtml(code: string): string {
   return layout(
     `<h1 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#111827;">Your sign-in code</h1>
-     <p style="margin:0 0 20px;color:#4b5563;">Enter this code to sign in to DraftFly.</p>
-     <div style="margin:0 0 20px;padding:18px;text-align:center;background:#f0f1fe;border:1px solid #dcdcfb;border-radius:12px;">
+     <p style="margin:0 0 20px;color:#4b5563;">Enter this code to sign in to DIM map.</p>
+     <div style="margin:0 0 20px;padding:18px;text-align:center;background:#f4fbe6;border:1px solid #d9f99d;border-radius:12px;">
        <span style="font-family:'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;font-size:32px;font-weight:700;letter-spacing:10px;color:${BRAND};">${esc(code)}</span>
      </div>
      <p style="margin:0 0 6px;color:#4b5563;">It expires in 10 minutes and can be used once.</p>
@@ -124,19 +126,19 @@ export function welcomeHtml(name: string): string {
   const step = (n: number, title: string, body: string) =>
     `<tr>
        <td style="vertical-align:top;width:30px;padding:6px 0;">
-         <span style="display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;background:${BRAND};color:#ffffff;border-radius:12px;font-size:13px;font-weight:700;">${n}</span>
+         <span style="display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;background:${BRAND};color:#ffffff;border-radius:12px;font-size:13px;font-weight:700;border:2px solid ${LIME};">${n}</span>
        </td>
        <td style="vertical-align:top;padding:6px 0 6px 12px;color:#111827;">
          <strong>${title}</strong><br><span style="color:#4b5563;">${body}</span>
        </td>
      </tr>`;
   return layout(
-    `<h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;">Welcome to DraftFly, ${esc(name)}</h1>
-     <p style="margin:0 0 8px;color:#4b5563;">Your 3-day free trial is live — no card needed. Here's how to get your first AI-drafted reply in a few minutes:</p>
+    `<h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;">Welcome to DIM map, ${esc(name)}</h1>
+     <p style="margin:0 0 8px;color:#4b5563;">Your 3-day free trial is live — no card needed. Here's how to get your first lead qualified and answered in a few minutes:</p>
      <table role="presentation" cellpadding="0" cellspacing="0" style="margin:16px 0 8px;">
-       ${step(1, "Connect Lemlist", "Link your account so campaign replies flow into DraftFly the moment they land.")}
-       ${step(2, "Add a persona", "Tell the AI your product, tone, and who you're talking to, so every draft sounds like you.")}
-       ${step(3, "Turn a campaign on", "The next reply becomes a draft, waiting for your one-click approval in Slack or the dashboard.")}
+       ${step(1, "Connect Lemlist, Meta or WhatsApp", "Link your cold-email account, your Meta lead forms or your WhatsApp Business number so every new lead flows into DIM map.")}
+       ${step(2, "Add a sales persona", "Tell the AI about your project — units, price range, payment plans, tone — so every reply sounds like your best agent.")}
+       ${step(3, "Turn a campaign on", "The next lead is qualified hot, warm or cold, with a reply drafted for your one-click approval.")}
      </table>
      <div style="margin:24px 0 8px;">
        <a href="${APP_URL}/app" style="display:inline-block;background:${BRAND};color:#ffffff;text-decoration:none;font-weight:600;font-size:15px;padding:12px 22px;border-radius:10px;">Open your dashboard</a>
@@ -160,9 +162,9 @@ export function welcomeHtml(name: string): string {
 export async function sendLoginCodeEmail(email: string, code: string): Promise<SendResult> {
   const result = await send(
     email,
-    `${code} is your DraftFly sign-in code`,
+    `${code} is your DIM map sign-in code`,
     [
-      `Your DraftFly sign-in code is ${code}`,
+      `Your DIM map sign-in code is ${code}`,
       "",
       "It expires in 10 minutes and can be used once.",
       "If you did not try to sign in, you can ignore this email — without the code nothing happens.",
@@ -202,15 +204,15 @@ export async function sendLoginCodeEmail(email: string, code: string): Promise<S
 export async function sendWelcomeEmail(email: string, name: string): Promise<SendResult> {
   return send(
     email,
-    "Welcome to DraftFly — let's get your first draft",
+    "Welcome to DIM map — let's qualify your first lead",
     [
-      `Welcome to DraftFly, ${name}.`,
+      `Welcome to DIM map, ${name}.`,
       "",
-      "Your 3-day free trial is live — no card needed. Three steps to your first AI-drafted reply:",
+      "Your 3-day free trial is live — no card needed. Three steps to your first qualified lead:",
       "",
-      "1. Connect Lemlist so campaign replies flow in.",
-      "2. Add a persona — your product, tone, and who you're talking to.",
-      "3. Turn a campaign on. The next reply becomes a draft for your one-click approval.",
+      "1. Connect Lemlist, Meta lead ads or WhatsApp so new leads flow in.",
+      "2. Add a sales persona — your project, pricing rules and tone.",
+      "3. Turn a campaign on. The next lead is qualified and gets a reply drafted for your one-click approval.",
       "",
       `Open your dashboard: ${APP_URL}/app`,
       "",
@@ -232,9 +234,9 @@ export async function sendEarlyAccessNotification(
   name: string,
   email: string,
 ): Promise<SendResult> {
-  const subject = `DraftFly early access request: ${name}`;
+  const subject = `DIM map early access request: ${name}`;
   const text = [
-    `${name} <${email}> requested early access from draftfly.app.`,
+    `${name} <${email}> requested early access from the DIM map website.`,
     "",
     `Reply to them directly: ${email}`,
     "",

@@ -81,7 +81,7 @@ export default function SlackAppSetup() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight" data-testid="text-title">Slack App Setup</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Configuration reference for the DraftFly Slack bot. Set <span className="font-mono text-foreground">SLACK_BOT_TOKEN</span> and <span className="font-mono text-foreground">SLACK_SIGNING_SECRET</span> in Replit Secrets to activate.
+          Configuration reference for the DIM map Slack bot. Set <span className="font-mono text-foreground">SLACK_BOT_TOKEN</span> and <span className="font-mono text-foreground">SLACK_SIGNING_SECRET</span> in Replit Secrets to activate.
         </p>
       </div>
 
@@ -111,13 +111,13 @@ export default function SlackAppSetup() {
                 </CardTitle>
                 <StatusBadge status="connected" />
               </div>
-              <CardDescription>DraftFly Slack app — installed in 3 client workspaces</CardDescription>
+              <CardDescription>DIM map Slack app — installed in 3 client workspaces</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="space-y-0.5">
                   <p className="text-xs text-muted-foreground uppercase tracking-wider">App Name</p>
-                  <p className="font-medium">DraftFly</p>
+                  <p className="font-medium">DIM map</p>
                 </div>
                 <div className="space-y-0.5">
                   <p className="text-xs text-muted-foreground uppercase tracking-wider">App ID</p>
@@ -241,7 +241,7 @@ export default function SlackAppSetup() {
                     <MessageSquare className="h-4 w-4 text-primary-foreground" />
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="font-bold text-[#D1D2D3]">DraftFly</span>
+                    <span className="font-bold text-[#D1D2D3]">DIM map</span>
                     <span className="bg-[#2C3136] text-[#ABABAD] text-[9px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">App</span>
                     <span className="text-xs text-[#7E7E7E]">1:47 PM</span>
                   </div>
@@ -327,7 +327,7 @@ export default function SlackAppSetup() {
               {/* Explanation */}
               <div className="mt-3 rounded-md bg-muted/20 border border-border px-3 py-2.5 text-xs text-muted-foreground space-y-1">
                 <p className="font-medium text-foreground">Client experience</p>
-                <p>The client installs the DraftFly Slack app, selects an approval channel, and receives cards like the above for every prospect reply. They never visit a web dashboard. Operator manages everything else internally.</p>
+                <p>The client installs the DIM map Slack app, selects an approval channel, and receives cards like the above for every prospect reply. They never visit a web dashboard. Operator manages everything else internally.</p>
               </div>
             </CardContent>
           </Card>
