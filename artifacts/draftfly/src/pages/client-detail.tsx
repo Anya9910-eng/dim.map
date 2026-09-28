@@ -1,4 +1,5 @@
 import { useGetClient, useUpdateClient, useListCampaigns, getGetClientQueryKey } from "@workspace/api-client-react";
+import { ConnectGuide, type LeadSource } from "@/components/connect-guide";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams, Link, useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -266,15 +267,15 @@ interface LeadSourcesInfo {
   whatsappSendingReady?: boolean;
 }
 
-const SOURCE_ROWS: Array<{ key: "lemlist" | "meta" | "google" | "youtube" | "whatsapp"; label: string; hint: string }> = [
+const SOURCE_ROWS: Array<{ key: LeadSource; label: string; hint: string }> = [
   { key: "lemlist", label: "Lemlist", hint: "Lemlist → Settings → Integrations → Webhooks, subscribed to the replied event." },
-  { key: "meta", label: "Meta lead ads", hint: "Forward new leads (with their field_data) from n8n, Zapier or Make, or subscribe the Page's leadgen webhook." },
+  { key: "meta", label: "Meta lead ads", hint: "Passed on by Zapier or Make — Meta's own webhook leaves out the answers." },
   { key: "google", label: "Google Ads", hint: "Lead form → Lead delivery → Webhook integration. Use the secret at the end of the URL as the key." },
   { key: "youtube", label: "YouTube", hint: "Same as Google Ads, for lead forms on YouTube video campaigns." },
   { key: "whatsapp", label: "WhatsApp", hint: "Meta for Developers → WhatsApp → Configuration: callback URL; verify token = the secret; subscribe to messages." },
 ];
 
-function CopyRow({ label, url, hint }: { label: string; url: string; hint: string }) {
+function CopyRow({ label, url, hint, source }: { label: string; url: string; hint: string; source: LeadSource }) {
   const [copied, setCopied] = useState(false);
   return (
     <div className="space-y-1">
@@ -300,6 +301,7 @@ function CopyRow({ label, url, hint }: { label: string; url: string; hint: strin
         </Button>
       </div>
       <p className="text-muted-foreground text-[11px]">{hint}</p>
+      <ConnectGuide source={source} url={url} />
     </div>
   );
 }
@@ -397,7 +399,7 @@ function LeadSourcesCard({ clientId }: { clientId: number }) {
           <>
             {sources && info.hasSecret ? (
               SOURCE_ROWS.map((row) =>
-                sources[row.key] ? <CopyRow key={row.key} label={row.label} url={sources[row.key] as string} hint={row.hint} /> : null,
+                sources[row.key] ? <CopyRow key={row.key} source={row.key} label={row.label} url={sources[row.key] as string} hint={row.hint} /> : null,
               )
             ) : (
               <div className="flex items-start gap-1.5">

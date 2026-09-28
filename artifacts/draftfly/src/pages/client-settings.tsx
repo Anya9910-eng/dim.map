@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { BillingCard } from "@/components/billing-card";
+import { ConnectGuide } from "@/components/connect-guide";
 import { CheckCircle2, AlertCircle, Copy, Check, RefreshCw, Loader2, KeyRound, Webhook, Gauge, MessageCircle } from "lucide-react";
 import {
   useMySettings,
@@ -192,10 +193,13 @@ export default function ClientSettingsPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           {data.webhook.url ? (
-            <div className="flex gap-2">
-              <Input readOnly value={data.webhook.url} className="font-mono text-xs" data-testid="webhook-url" />
-              <CopyButton value={data.webhook.url} />
-            </div>
+            <>
+              <div className="flex gap-2">
+                <Input readOnly value={data.webhook.url} className="font-mono text-xs" data-testid="webhook-url" />
+                <CopyButton value={data.webhook.url} />
+              </div>
+              <ConnectGuide source="lemlist" url={data.webhook.url} />
+            </>
           ) : (
             <p className="text-sm text-muted-foreground">No webhook secret yet — generate one to get your URL.</p>
           )}
@@ -251,8 +255,9 @@ export default function ClientSettingsPage() {
                     <CopyButton value={data.webhook.metaUrl} />
                   </div>
                   <p className="text-[11px] text-muted-foreground">
-                    Send each new lead here from n8n, Zapier or Make — including the lead's <span className="font-mono">field_data</span> — or subscribe your Page's <span className="font-mono">leadgen</span> webhook.
+                    New Facebook / Instagram leads are passed on here by Zapier or Make — Meta's own webhook leaves out the lead's answers.
                   </p>
+                  <ConnectGuide source="meta" url={data.webhook.metaUrl} />
                 </div>
               )}
               {data.webhook.googleUrl && (
@@ -266,6 +271,7 @@ export default function ClientSettingsPage() {
                     In Google Ads, open your lead form → Lead delivery → Webhook integration. Paste this as the webhook URL and the
                     <span className="font-mono"> secret </span> at the end of the URL as the key, then press Send test data to check it.
                   </p>
+                  <ConnectGuide source="google" url={data.webhook.googleUrl} />
                 </div>
               )}
               {data.webhook.youtubeUrl && (
@@ -279,6 +285,7 @@ export default function ClientSettingsPage() {
                     For lead forms on YouTube video campaigns. Set it up the same way as Google Ads — using this URL means
                     those leads are labelled YouTube in your inbox.
                   </p>
+                  <ConnectGuide source="youtube" url={data.webhook.youtubeUrl} />
                 </div>
               )}
               {data.webhook.whatsappUrl && (
@@ -292,6 +299,7 @@ export default function ClientSettingsPage() {
                     In Meta for Developers → WhatsApp → Configuration, paste this as the callback URL, use the
                     <span className="font-mono"> secret </span> at the end of the URL as the verify token, and subscribe to <span className="font-mono">messages</span>.
                   </p>
+                  <ConnectGuide source="whatsapp" url={data.webhook.whatsappUrl} />
                 </div>
               )}
             </>
