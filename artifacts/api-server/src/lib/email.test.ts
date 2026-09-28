@@ -31,6 +31,7 @@ describe("invite email", () => {
     const body = JSON.parse((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body as string);
     expect(body.to).toEqual(["agent@skyline.ae"]);
     expect(body.subject).toBe("You've been invited to Skyline Towers on DIM Convert");
+    expect(body.reply_to).toBe("outreach@dim.capital");
   });
 
   it("reports not delivered when no provider is configured", async () => {

@@ -48,7 +48,16 @@ async function send(to: string, subject: string, text: string, html?: string): P
       // `text` always rides along with `html`: it is the fallback for plain-text
       // clients and, in practice, a small nudge to spam filters that a message
       // carrying both is a real one.
-      body: JSON.stringify({ from: fromAddress(), to: [to], subject, text, ...(html ? { html } : {}) }),
+      // A monitored reply-to beats a bare noreply for spam filters, and gives a
+      // confused recipient somewhere real to answer.
+      body: JSON.stringify({
+        from: fromAddress(),
+        to: [to],
+        reply_to: SUPPORT_EMAIL,
+        subject,
+        text,
+        ...(html ? { html } : {}),
+      }),
     });
 
     if (!res.ok) {
